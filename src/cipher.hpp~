@@ -1,0 +1,9 @@
+namespace paracrypt {
+
+	class Cipher {
+		public:
+			encrypt((void*) blocks, int n_blocks);
+			decrypt((void*) blocks, int n_blocks);
+	}
+
+}
