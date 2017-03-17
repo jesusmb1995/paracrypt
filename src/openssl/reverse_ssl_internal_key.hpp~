@@ -1,0 +1,1 @@
+AES_get_store_internal_key(uint32_t* store, AES_KEY* key);

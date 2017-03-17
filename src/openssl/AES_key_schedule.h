@@ -48,6 +48,9 @@
  * ====================================================================
  *
  */
+#ifndef AES_KEY_SCHEDULE_H
+#define AES_KEY_SCHEDULE_H
+ 
 #include <stdint.h>
 
 # define AES_MAXNR 14
@@ -63,3 +66,4 @@ int AES_set_encrypt_key(const unsigned char *userKey, const int bits,
                         AES_KEY *key);
 int AES_set_decrypt_key(const unsigned char *userKey, const int bits,
                         AES_KEY *key);
+#endif

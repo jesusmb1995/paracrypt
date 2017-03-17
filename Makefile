@@ -21,13 +21,16 @@ CudaAES.o: $(SRC_DIR)/CudaAES.cu
 
 AES_key_schedule.o: $(SRC_DIR)/openssl/AES_key_schedule.c
 	$(CXX) $(FLAGS) -c $< -o $(OBJ_DIR)/$@
+	
+reverse_ssl_internal_key.o: $(SRC_DIR)/openssl/reverse_ssl_internal_key.c
+	$(CXX) $(FLAGS) -c $< -o $(OBJ_DIR)/$@
 
 tests.o: $(TST_DIR)/tests.cpp
 	$(CXX) $(FLAGS) -c $< -o $(OBJ_DIR)/$@
 	
-tests: tests.o AES_key_schedule.o
+tests: tests.o AES_key_schedule.o reverse_ssl_internal_key.o
 	$(CXX) $(FLAGS) $(OBJ_DIR)/tests.o $(OBJ_DIR)/AES_key_schedule.o \
-	 -o $(BIN_DIR)/paracrypt_tests
+	 $(OBJ_DIR)/reverse_ssl_internal_key.o -o $(BIN_DIR)/paracrypt_tests
 
 clean: 
 	rm -f $(OBJ_DIR)/*.o
