@@ -4,4 +4,4 @@ shopt -s extglob
 
 # Kernighan and Ritchie style
 indent -kr src/*.@(c|cpp|cu|h|hpp|cuh)
-indent -kr test/*.@(c|cpp|cu|h|hpp|cuh)
+indent -kr src/tests/*.@(c|cpp|cu|h|hpp|cuh)

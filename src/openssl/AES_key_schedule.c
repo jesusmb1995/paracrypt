@@ -7,6 +7,8 @@
  * https://www.openssl.org/source/license.html
  */
 
+#include "aes_loc.h"
+
 /**
  * rijndael-alg-fst.c
  *
