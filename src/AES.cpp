@@ -1,9 +1,30 @@
 #include "AES.hpp"
-#include "openssl/AES_key_schedule.h"
 
-int paracrypt::AES::setKey(char key[], int bits)
+paracrypt::AES::AES()
 {
-    return 0;
+	this->roundKeys = malloc(sizeof(AES_KEY));
+}
+
+paracrypt::AES::~AES()
+{
+	free(this->roundKeys);
+}
+
+int paracrypt::AES::setKey(const unsigned char key[], int bits)
+{
+	AES_set_encrypt_key(key,bits,this->roundKeys);
+}
+
+// Warning: If we destruct the object who owns the key 
+//  we will point to nowhere
+int paracrypt::AES::setKey(AES_KEY* expandedKey)
+{
+	this->roundKeys = expandedKey;
+}
+
+AES_KEY* paracrypt::AES::getExpandedKey()
+{
+	return this->roundKeys;
 }
 
 int paracrypt::AES::setBlockSize(int bits)

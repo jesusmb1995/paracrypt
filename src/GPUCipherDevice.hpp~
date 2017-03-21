@@ -1,0 +1,11 @@
+namespace paracrypt {
+
+    class GPUCipherDevice: {
+      private:
+      public:
+	virtual int getThreadsPerBlock() = 0;
+	virtual int getNWarps() = 0;
+	virtual int getMaxBlocksPerSM() = 0;
+    };
+
+}

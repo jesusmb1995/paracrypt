@@ -4,6 +4,20 @@
 
 // NIST FIPS 197 tests vector
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+void
+hexdump(FILE *f, const char *title, const unsigned char *s, int length)
+{
+    for(int n = 0; n < length ; ++n) {
+        if((n%16) == 0)
+            fprintf(f, "\n%s  %04x", title, n);
+        fprintf(f, " %02x", s[n]);
+    }
+    fprintf(f, "\n");
+}   
+
 BOOST_AUTO_TEST_CASE(key_schedule_128)
 {
     const uint8_t k[128] =
@@ -53,7 +67,7 @@ BOOST_AUTO_TEST_CASE(key_schedule_128)
 		    0x575c006eU};
 	AES_KEY ek;
 	AES_set_encrypt_key((const unsigned char*)&k,128,&ek);
-	//uint32_t w2[40];
-	//AES_get_key((uint32_t*)&w2,&ek);
+	hexdump(stdout, "TV_KEY", (unsigned char*) &w, sizeof(w));
+	hexdump(stdout, "AES_KEY", (unsigned char*) &ek.rd_key, sizeof(ek.rd_key));	
 	BOOST_CHECK_EQUAL_COLLECTIONS(w,w+40,ek.rd_key,ek.rd_key+40);
 }

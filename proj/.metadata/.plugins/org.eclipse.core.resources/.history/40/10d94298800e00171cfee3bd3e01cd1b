@@ -1,0 +1,21 @@
+#include "AES.hpp"
+
+paracrypt::AES::AES()
+{
+	this->roundKeys = malloc(sizeof(AES_KEY));
+}
+
+paracrypt::AES::~AES()
+{
+	free(this->roundKeys);
+}
+
+int paracrypt::AES::setKey(const unsigned char key[], int bits)
+{
+	AES_set_encrypt_key(key,bits,this->roundKeys);
+}
+
+int paracrypt::AES::setBlockSize(int bits)
+{
+    return 0;
+}
