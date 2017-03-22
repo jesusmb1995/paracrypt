@@ -8,17 +8,19 @@ namespace paracrypt {
 #define AES_BLOCK_SIZE AES_STATE_SIZE
 
       private:
-	AES_KEY* roundKeys = NULL;
+	AES_KEY * roundKeys = NULL;
       public:
-         AES();
-        ~AES();
-	virtual int encrypt(const unsigned char in[], const unsigned char out[], int n_blocks)
+	AES();
+	~AES();
+	virtual int encrypt(const unsigned char in[],
+			    const unsigned char out[], int n_blocks)
 	    = 0;
-	virtual int decrypt(const unsigned char in[], const unsigned char out[], int n_blocks)
+	virtual int decrypt(const unsigned char in[],
+			    const unsigned char out[], int n_blocks)
 	    = 0;
 	int setKey(const unsigned char key[], int bits);
-        int setKey(AES_KEY* expandedKey);
-        AES_KEY* getExpandedKey();
+	int setKey(AES_KEY * expandedKey);
+	AES_KEY *getExpandedKey();
 	int setBlockSize(int bits);
     };
 

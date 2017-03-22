@@ -1,11 +1,3 @@
-#include "AES.hpp"
 
-namespace paracrypt {
+__global__ void cuda_ecb_aes_16b_encrypt
 
-    class AES16B:public AES {
-      public:
-	encrypt(char in[], char out[], int n_blocks);
-	 decrypt(char in[], char out[], int n_blocks);
-    };
-
-}
