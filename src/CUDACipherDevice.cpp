@@ -79,6 +79,12 @@ int paracrypt::CUDACipherDevice::getMaxBlocksPerSM()
     return this->maxCudaBlocksPerSM;
 }
 
+int paracrypt::CUDACipherDevice::getGridSize(int n_blocks, int threadsPerCipherBlock)
+{
+	int gridSize = n_blocks * threadsPerCipherBlock / this->getThreadsPerThreadBlock();
+	return gridSize;
+}
+
 const cudaDeviceProp* paracrypt::CUDACipherDevice::getDeviceProperties()
 {
     return &(this->devProp);
@@ -99,12 +105,29 @@ void paracrypt::CUDACipherDevice::malloc(void** data, int size)
 	HANDLE_ERROR(cudaMalloc(data,size));
 }
 
-void paracrypt::CUDACipherDevice::memcpyTo(void* host, void* dev, int size)
+void paracrypt::CUDACipherDevice::free(void* data)
 {
-	HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice));
+	HANDLE_ERROR(cudaFree(data));
 }
 
-void paracrypt::CUDACipherDevice::memcpyFrom(void* dev, void* host, int size)
+void paracrypt::CUDACipherDevice::memcpyTo(void* host, void* dev, int size, cudaStream_t stream)
 {
-	HANDLE_ERROR(cudaMemcpy(host, dev, size, cudaMemcpyDeviceToHost));
+	HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice, stream));
+}
+
+void paracrypt::CUDACipherDevice::memcpyFrom(void* dev, void* host, int size, cudaStream_t stream)
+{
+	HANDLE_ERROR(cudaMemcpy(host, dev, size, cudaMemcpyDeviceToHost, stream));
+}
+
+cudaStream_t paracrypt::CUDACipherDevice::getNewStream()
+{
+	cudaStream_t s;
+	HANDLE_ERROR(cudaStreamCreate(&s));
+	return s;
+}
+
+void paracrypt::CUDACipherDevice::freeStream(cudaStream_t s)
+{
+	HANDLE_ERROR(cudaStreamDestroy(s));
 }

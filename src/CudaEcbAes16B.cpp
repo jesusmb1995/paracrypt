@@ -1,34 +1,16 @@
 #include "CudaEcbAes16B.hpp"
 
-// PARALELIZATION_LEVEL = 1B
-//
-// AES_BLOCK_SIZE / PARALELIZATION_LEVEL
-//  => THREADS_PER_CIPHER_BLOCK = 1
-//
-
-int paracrypt::CudaEcbAES16B::getGridSize(int n_blocks)
-{
-	// gridSize = n_(cipher)_blocks * (THREADS_PER_CIPHER_BLOCK/THREADS_PER_THREAD_BLOCK)
-	int gridSize = n_blocks / this->getDevice()->getThreadsPerThreadBlock();
-	return gridSize;
-}
-
 int paracrypt::CudaEcbAES16B::encrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      int n_blocks)
 {
-    int gridSize = getGridSize(n_blocks);
+    int gridSize = this->device->getGridSize(n_blocks,1);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+    int dataSize = n_blocks*AES_BLOCK_SIZE;
 
-    unsigned char data[];
-
-	HANDLE_ERROR(cudaMemcpy(this->data, in, keySize,cudaMemcpyHostToDevice)); //TODO change by CUDACipherDevic malloc and memcpy
-
-    // in-place processing, ignore interface out argument
-    cuda_ecb_aes_16b_encrypt<<gridSize,threadsPerBlock >>
-    		(data,this->getDeviceKey(),n_blocks);
-
-    HANDLE_ERROR(cudaMemcpy(this->data, in, keySize,cudaMemcpyHostToDevice));
+	this->device->memcpyTo(in, this->data, dataSize, this->stream);
+	cuda_ecb_aes_16b_encrypt<<gridSize,threadsPerBlock>>(data,n_blocks,this->getDeviceKey());
+	this->device->memcpyFrom(this->data, out, dataSize, this->stream);
 
     return 0;
 }
@@ -37,11 +19,13 @@ int paracrypt::CudaEcbAES16B::decrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      int n_blocks)
 {
-    int gridSize = getGridSize(n_blocks);
+    int gridSize = this->device->getGridSize(n_blocks,1);
+    int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+    int dataSize = n_blocks*AES_BLOCK_SIZE;
 
-
-    cuda_ecb_aes_16b_decrypt << gridSize, threadsPerBlock >> (in, key,
-							      n_blocks);
+	this->device->memcpyTo(in, this->data, dataSize, this->stream);
+	cuda_ecb_aes_16b_decrypt<<gridSize,threadsPerBlock>>(data,n_blocks,this->getDeviceKey()); // TODO get decrypt key
+	this->device->memcpyFrom(this->data, out, dataSize, this->stream);
 
     return 0;
 }

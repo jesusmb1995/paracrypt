@@ -1,0 +1,3 @@
+#include "CudaEcbAes16B.cuh"
+
+AES_KEY* key

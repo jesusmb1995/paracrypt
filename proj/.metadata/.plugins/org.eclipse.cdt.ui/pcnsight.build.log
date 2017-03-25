@@ -1,0 +1,8 @@
+00:07:01 **** Incremental Build of configuration Debug for project pcnsight ****
+make all 
+make: tests: Command not found
+tests
+make: *** [all] Error 127
+
+00:07:01 Build Finished (took 78ms)
+

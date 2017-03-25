@@ -7,7 +7,8 @@ namespace paracrypt {
       private:
 	CUDACipherDevice* device;
 	AES_KEY *deviceKey = NULL;
-	char *data;
+	cudaStream_t stream;
+	unsigned char *data = NULL;
       protected:
 	 AES_KEY * getDeviceKey();
       public:

@@ -1,0 +1,27 @@
+23:21:47 **** Build of configuration Debug for project pcnsight ****
+make tests 
+src/subdir.mk:65: warning: overriding commands for target `src/CudaEcbAes16B.o'
+src/subdir.mk:57: warning: ignoring old commands for target `src/CudaEcbAes16B.o'
+make: *** No rule to make target `tests'.  Stop.
+23:45:51 **** Incremental Build of configuration Debug for project pcnsight ****
+make all 
+src/subdir.mk:65: warning: overriding commands for target `src/CudaEcbAes16B.o'
+src/subdir.mk:57: warning: ignoring old commands for target `src/CudaEcbAes16B.o'
+Building file: /home/jesus/Dropbox/Estudios/octavo_semestre/TFG/repository/src/tests/key_schedule_test.cpp
+Invoking: NVCC Compiler
+/usr/local/cuda-8.0/bin/nvcc -G -g -O0 -gencode arch=compute_35,code=sm_35  -odir "src/tests" -M -o "src/tests/key_schedule_test.d" "/home/jesus/Dropbox/Estudios/octavo_semestre/TFG/repository/src/tests/key_schedule_test.cpp"
+/home/jesus/Dropbox/Estudios/octavo_semestre/TFG/repository/src/tests/key_schedule_test.cpp:2:49: fatal error: ../openssl/reverse_ssl_internal_key.h: No such file or directory
+ #include "../openssl/reverse_ssl_internal_key.h"
+                                                 ^
+compilation terminated.
+make: *** [src/tests/key_schedule_test.o] Error 1
+08:34:59 **** Incremental Build of configuration Debug for project pcnsight ****
+make all 
+tests
+make: tests: Command not found
+make: *** [all] Error 127
+00:07:01 **** Incremental Build of configuration Debug for project pcnsight ****
+make all 
+make: tests: Command not found
+tests
+make: *** [all] Error 127
