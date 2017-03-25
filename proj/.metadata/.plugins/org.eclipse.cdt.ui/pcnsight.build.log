@@ -1,8 +1,29 @@
-00:07:01 **** Incremental Build of configuration Debug for project pcnsight ****
+13:44:03 **** Incremental Build of configuration Debug for project pcnsight ****
 make all 
-make: tests: Command not found
-tests
-make: *** [all] Error 127
+g++  -c src/tests/tests.cpp -o obj/tests.o "-I/usr/local/cuda/include"
+g++  -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -c src/logging.cpp -o obj/logging.o
+g++  -c src/AES.cpp -o obj/AES.o
+g++  -c src/CudaAES.cpp -o obj/CudaAES.o "-I/usr/local/cuda/include"
+g++  -c src/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o "-I/usr/local/cuda/include"
+/usr/local/cuda/bin/nvcc  -c src/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cuo
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -c src/GPUCipherDevice.cpp -o obj/GPUCipherDevice.o
+g++  -c src/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o "-I/usr/local/cuda/include"
+In file included from src/CUDACipherDevice.cpp:1:0:
+src/CUDACipherDevice.cpp: In member function ‘virtual void paracrypt::CUDACipherDevice::memcpyFrom(void*, void*, int, cudaStream_t)’:
+src/CUDACipherDevice.cpp:120:73: error: too many arguments to function ‘cudaError_t cudaMemcpy(void*, const void*, size_t, cudaMemcpyKind)’
+  HANDLE_ERROR(cudaMemcpy(host, dev, size, cudaMemcpyDeviceToHost, stream));
+                                                                         ^
+src/CUDACipherDevice.hpp:17:43: note: in definition of macro ‘HANDLE_ERROR’
+ #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
+                                           ^
+In file included from src/CUDACipherDevice.hpp:5:0,
+                 from src/CUDACipherDevice.cpp:1:
+/usr/local/cuda/include/cuda_runtime_api.h:4130:39: note: declared here
+ extern __host__ cudaError_t CUDARTAPI cudaMemcpy(void *dst, const void *src, size_t count, enum cudaMemcpyKind kind);
+                                       ^
+make: *** [CUDACipherDevice.o] Error 1
 
-00:07:01 Build Finished (took 78ms)
+13:44:11 Build Finished (took 8s.738ms)
 

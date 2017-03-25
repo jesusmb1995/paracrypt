@@ -1,0 +1,57 @@
+#include "CudaEcbAes16B.cuh"
+
+__global__ void cuda_ecb_aes_16b_encrypt(unsigned char data[], int n_blocks, AES_KEY* key)
+{
+
+
+}
+
+
+__global__ void cuda_ecb_aes_16b_decrypt(unsigned char data[], int n_blocks, AES_KEY* key)
+{
+
+
+}
+
+__global__ void cuda_ecb_aes_16b_encrypt(unsigned char data[], int n_blocks, AES_KEY* key)
+{
+
+
+}
+
+
+__global__ void cuda_ecb_aes_16b_decrypt(unsigned char data[], int n_blocks, AES_KEY* key)
+{
+
+
+}
+
+int ::encrypt(const unsigned char in[],
+				      const unsigned char out[],
+				      int n_blocks)
+{
+    int gridSize = this->getDevice()->getGridSize(n_blocks,1);
+    int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+    int dataSize = n_blocks*AES_BLOCK_SIZE;
+
+	this->getDevice()->memcpyTo((void*)in, this->data, dataSize, this->stream);
+	cuda_ecb_aes_16b_encrypt<<gridSize,threadsPerBlock>>(data,n_blocks,this->getDeviceKey());
+	this->getDevice()->memcpyFrom(this->data, out, dataSize, this->stream);
+
+    return 0;
+}
+
+int paracrypt::CudaEcbAES16B::decrypt(const unsigned char in[],
+				      const unsigned char out[],
+				      int n_blocks)
+{
+    int gridSize = this->getDevice()->getGridSize(n_blocks,1);
+    int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+    int dataSize = n_blocks*AES_BLOCK_SIZE;
+
+	this->getDevice()->memcpyTo(in, this->data, dataSize, this->stream);
+	cuda_ecb_aes_16b_decrypt<<gridSize,threadsPerBlock>>(data,n_blocks,this->getDeviceKey()); // TODO get decrypt key
+	this->getDevice()->memcpyFrom(this->data, out, dataSize, this->stream);
+
+    return 0;
+}

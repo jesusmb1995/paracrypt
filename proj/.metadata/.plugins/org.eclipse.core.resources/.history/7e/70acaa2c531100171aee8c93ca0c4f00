@@ -1,0 +1,7 @@
+#include "GPUCipherDevice.hpp"
+
+emplate<typename S>
+int paracrypt::GPUCipherDevice::getGridSize(int n_blocks, int threadsPerCipherBlock) {
+    int gridSize = n_blocks * threadsPerCipherBlock / this->getThreadsPerThreadBlock();
+    return gridSize;
+}

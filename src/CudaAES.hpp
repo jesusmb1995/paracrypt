@@ -1,3 +1,5 @@
+#pragma once
+
 #include "AES.hpp"
 #include "CUDACipherDevice.hpp"
 
@@ -7,10 +9,10 @@ namespace paracrypt {
       private:
 	CUDACipherDevice* device;
 	AES_KEY *deviceKey = NULL;
-	cudaStream_t stream;
-	unsigned char *data = NULL;
       protected:
+	 unsigned char *data = NULL;
 	 AES_KEY * getDeviceKey();
+	 cudaStream_t stream;
       public:
 	~CudaAES();
 	virtual int encrypt(const unsigned char in[],

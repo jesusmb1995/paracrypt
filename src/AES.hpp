@@ -1,3 +1,5 @@
+#pragma once
+
 #include "BlockCipher.hpp"
 #include "openssl/AES_key_schedule.h"
 
@@ -8,7 +10,8 @@ namespace paracrypt {
 #define AES_BLOCK_SIZE AES_STATE_SIZE
 
       private:
-	AES_KEY * roundKeys = NULL;
+	AES_KEY* roundKeys;
+	bool keyPropietary;
       public:
 	AES();
 	~AES();

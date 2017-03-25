@@ -11,6 +11,7 @@
 <includePath path="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 <includePath path="/usr/include/x86_64-linux-gnu"/>
 <includePath path="/usr/include"/>
+<includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>
@@ -288,6 +289,7 @@
 <includePath path="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 <includePath path="/usr/include/x86_64-linux-gnu"/>
 <includePath path="/usr/include"/>
+<includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>
@@ -565,6 +567,7 @@
 <includePath path="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 <includePath path="/usr/include/x86_64-linux-gnu"/>
 <includePath path="/usr/include"/>
+<includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>

@@ -1,0 +1,6 @@
+#define BOOST_TEST_MODULE paracrypt
+#include <boost/test/included/unit_test.hpp>
+
+BOOST_AUTO_TEST_SUITE( key_expansion )
+#include "key_schedule_test.cpp"
+BOOST_AUTO_TEST_SUITE_END()

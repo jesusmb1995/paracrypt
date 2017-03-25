@@ -1,0 +1,7 @@
+#include "GPUCipherDevice.hpp"
+
+invalid use of ‘this’ in non-member function
+int paracrypt::GPUCipherDevice<S>::getGridSize(int n_blocks, int threadsPerCipherBlock) {
+    int gridSize = n_blocks * threadsPerCipherBlock / this->getThreadsPerThreadBlock();
+    return gridSize;
+}

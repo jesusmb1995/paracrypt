@@ -1,6 +1,8 @@
+#pragma once
+
 namespace paracrypt {
 
-    template<S>
+    template<typename S>
     class GPUCipherDevice {
       public:
     virtual ~GPUCipherDevice() {}

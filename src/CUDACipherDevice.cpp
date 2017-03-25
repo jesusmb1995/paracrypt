@@ -1,7 +1,9 @@
 #include "CUDACipherDevice.hpp"
+#include "logging.hpp"
 
-paracrypt::CUDACipherDevice(int device)
+paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
 {
+	this->nConcurrentKernels = 1;
     this->device = device;
     cudaGetDeviceProperties(&(this->devProp), device);
 
@@ -49,15 +51,13 @@ paracrypt::CUDACipherDevice(int device)
 	    	this->maxCudaBlocksPerSM = 16;
 	    }
 	}
-
-	HANDLE_ERROR(cudaEventCreateWithFlags(&event, "flag"));
 }
 
-static void paracrypt::CUDACipherDevice::HandleError(cudaError_t err,
+void paracrypt::CUDACipherDevice::HandleError(cudaError_t err,
 					    const char *file, int line){
     if (err != cudaSuccess) {
-	printf("%s in %s at line %d\n", cudaGetErrorString(err),
-	       file, line);
+    LOG_ERR(boost::format("%s in %s at line %d\n")
+    % cudaGetErrorString(err) % file % line);
 	exit(EXIT_FAILURE);
     }
 }

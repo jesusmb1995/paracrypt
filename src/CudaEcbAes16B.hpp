@@ -1,4 +1,7 @@
+#pragma once
+
 #include "AES.hpp"
+#include "CudaAES.hpp"
 
 namespace paracrypt {
 

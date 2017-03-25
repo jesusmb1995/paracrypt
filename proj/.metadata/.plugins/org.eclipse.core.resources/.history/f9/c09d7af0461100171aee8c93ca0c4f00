@@ -1,0 +1,4 @@
+#pragma once
+#define CUDA_INC "/cuda.h"
+#define CUDA_INC "/cuda_runtime_api.h"
+
