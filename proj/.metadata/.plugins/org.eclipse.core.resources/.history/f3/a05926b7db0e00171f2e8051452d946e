@@ -1,6 +1,0 @@
-#include "GPUCipherDevice.hpp"
-
-paracrypt::GPUCipherDevice::getGridSize {
-
-
-}

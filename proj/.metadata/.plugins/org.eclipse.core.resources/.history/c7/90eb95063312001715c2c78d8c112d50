@@ -1,0 +1,36 @@
+#include "GPUCipherDevice.hpp"
+
+
+    // TODO call delStream desde eldestructor...
+template<typename S, typename F>
+paracrypt::GPUCipherDevice<S,F>::~GPUCipherDevice() {
+	delStream
+
+}
+
+
+template<typename S, typename F>
+int paracrypt::GPUCipherDevice<S,F>::getGridSize(int n_blocks, int threadsPerCipherBlock) {
+    int gridSize = n_blocks * threadsPerCipherBlock / this->getThreadsPerThreadBlock();
+    return gridSize;
+}
+
+template<typename S, typename F>
+int paracrypt::GPUCipherDevice<S,F>::addStream() {
+	boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+	int id = this->streams.size();
+	this->streams[id] = newStream();
+	return id;
+}
+
+template<typename S, typename F>
+void paracrypt::GPUCipherDevice<S,F>::delStream(int stream_id) {
+	boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+	this->streams.erase(stream_id);
+}
+
+template<typename S, typename F>
+S paracrypt::GPUCipherDevice<S,F>::acessStream(int stream_id) {
+	boost::shared_lock < boost::shared_mutex > lock(this->streams_access);
+	return this->streams[stream_id];
+}

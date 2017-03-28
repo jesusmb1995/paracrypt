@@ -2,23 +2,29 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="void free(void* data)" key="selection"/>
+		<item value="" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="void free(void* data)"/>
-			<item value="HandleError"/>
+			<item value="getGridSize"/>
+			<item value="pth"/>
+			<item value="LIBS"/>
+			<item value="CUDA_LIB"/>
+			<item value="void hexdump(FILE * f, const char *title, const unsigned char *s, int length)"/>
+			<item value="void hexdump(FILE * f, const char *title, const unsigned char *s, int length);"/>
+			<item value="cpyFromCallbacks"/>
+			<item value="size"/>
 		</list>
 		<list key="replacehistory">
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="289" key="DIALOG_WIDTH"/>
+		<item value="309" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="460" key="DIALOG_HEIGHT"/>
-		<item value="1136" key="DIALOG_X_ORIGIN"/>
-		<item value="254" key="DIALOG_Y_ORIGIN"/>
+		<item value="452" key="DIALOG_HEIGHT"/>
+		<item value="1195" key="DIALOG_X_ORIGIN"/>
+		<item value="337" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

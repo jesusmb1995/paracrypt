@@ -12,7 +12,7 @@ namespace paracrypt {
       protected:
 	 unsigned char *data = NULL;
 	 AES_KEY * getDeviceKey();
-	 cudaStream_t stream;
+	 int stream;
       public:
 	~CudaAES();
 	virtual int encrypt(const unsigned char in[],

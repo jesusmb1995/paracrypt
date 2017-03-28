@@ -13,4 +13,4 @@
 #endif
 #define LOG_ERR(str) BOOST_LOG_TRIVIAL(error) << #str
 
-void hexdump(FILE * f, const char *title, const unsigned char *s, int length);
+void hexdump(const char *title, const unsigned char *s, int length);

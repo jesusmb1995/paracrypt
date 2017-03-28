@@ -1,5 +1,5 @@
 BOOST (Test)
-============
+------------
 
 boost library download:
 	http://www.boost.org
@@ -9,3 +9,8 @@ install boost unit testing library:
 	cd $boost_path
 	./bootstrap.sh
 	sudo ./b2 --with-test --prefix=$boost_installation_prefix install
+
+--with-format 
+--with-log
+--with-thread
+--with-icl

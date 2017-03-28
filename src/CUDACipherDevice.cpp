@@ -4,10 +4,11 @@
 paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
 {
 	this->nConcurrentKernels = 1;
+	//this->memCpyFromCallback = NULL;
     this->device = device;
     cudaGetDeviceProperties(&(this->devProp), device);
 
-    // There is no CUDA API function for retreiving blocks per SM.
+    // There is no CUDA API function for retrieving blocks per SM.
     // Manually set as described to fit CUDA documentation at table
     // 13 (Maximum number of resident blocks per multiprocessor):
     //  http://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#features-and-technical-specifications
@@ -62,8 +63,6 @@ void paracrypt::CUDACipherDevice::HandleError(cudaError_t err,
     }
 }
 
-// cudaStreamAddCallback(stream, MyCallback, (void*)i, 0);
-
 int paracrypt::CUDACipherDevice::getNWarpsPerBlock()
 {
     return this->nWarpsPerBlock;
@@ -79,13 +78,7 @@ int paracrypt::CUDACipherDevice::getMaxBlocksPerSM()
     return this->maxCudaBlocksPerSM;
 }
 
-int paracrypt::CUDACipherDevice::getGridSize(int n_blocks, int threadsPerCipherBlock)
-{
-	int gridSize = n_blocks * threadsPerCipherBlock / this->getThreadsPerThreadBlock();
-	return gridSize;
-}
-
-const cudaDeviceProp* paracrypt::CUDACipherDevice::getDeviceProperties()
+const cudaDeviceProp* paracrypt::CUDACipherDevice<>::getDeviceProperties()
 {
     return &(this->devProp);
 }
@@ -110,20 +103,34 @@ void paracrypt::CUDACipherDevice::free(void* data)
 	HANDLE_ERROR(cudaFree(data));
 }
 
-void paracrypt::CUDACipherDevice::memcpyTo(void* host, void* dev, int size, cudaStream_t stream)
+void paracrypt::CUDACipherDevice::memcpyTo(void* host, void* dev, int size, int stream_id)
 {
-	HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice, stream));
+	//cudaStream_t stream = this->acessStream(stream_id);
+	//HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice, stream));
 }
 
-void paracrypt::CUDACipherDevice::memcpyFrom(void* dev, void* host, int size, cudaStream_t stream)
+void paracrypt::CUDACipherDevice::memcpyFrom(void* dev, void* host, int size, int stream_id)
 {
-	HANDLE_ERROR(cudaMemcpy(host, dev, size, cudaMemcpyDeviceToHost, stream));
+	//cudaStream_t stream = this->acessStream(stream_id);
+	//HANDLE_ERROR(cudaMemcpyAsync(host, dev, size, cudaMemcpyDeviceToHost, stream));
+	//boost::shared_lock < boost::shared_mutex > lock(this->streams_access);
+	//HANDLE_ERROR(cudaEventRecord(this->cpyFromEvents[stream_id]));
+    //std::unordered_map<int,cudaStreamCallback_t>::const_iterator cb = this->cpyFromCallbacks.find(stream_id);
+	//if(cb != this->cpyFromCallbacks.end()) {
+	//	HANDLE_ERROR(cudaStreamAddCallback(stream,cb->second,host,0));
+	//}
 }
 
-cudaStream_t paracrypt::CUDACipherDevice::getNewStream()
+void paracrypt::CUDACipherDevice::setMemCpyFromCallback(int stream_id, cudaStreamCallback_t func)
+{
+	//boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+	//this->cpyFromCallbacks[stream_id] = func;
+}
+
+cudaStream_t paracrypt::CUDACipherDevice::newStream()
 {
 	cudaStream_t s;
-	HANDLE_ERROR(cudaStreamCreate(&s));
+	//HANDLE_ERROR(cudaStreamCreate(&s));
 	return s;
 }
 
@@ -131,3 +138,42 @@ void paracrypt::CUDACipherDevice::freeStream(cudaStream_t s)
 {
 	HANDLE_ERROR(cudaStreamDestroy(s));
 }
+
+int paracrypt::CUDACipherDevice::addStream() {
+	//int id = paracrypt::GPUCipherDevice::addStream();
+
+	//boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+	//cudaEvent_t ev;
+	//HANDLE_ERROR(cudaEventCreate(&ev));
+	//this->cpyFromEvents[id] = ev;
+
+	return  0;//return id;
+}
+
+void paracrypt::CUDACipherDevice::delStream(int stream_id) {
+	//paracrypt::GPUCipherDevice::delStream(stream_id);
+	//boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+	//HANDLE_ERROR(cudaEventDestroy(this->cpyFromEvents[stream_id]));
+	//this->cpyFromEvents.erase(stream_id);
+}
+
+void paracrypt::CUDACipherDevice::waitMemcpyFrom(int stream_id)
+{
+	//cudaStream_t stream = this->acessStream(stream_id);
+	//HANDLE_ERROR(cudaEventSynchronize(event));
+}
+
+int paracrypt::CUDACipherDevice::checkMemcpyFrom(int stream_id)
+{
+	//cudaStream_t stream = this->acessStream(stream_id);
+	//int status = cudaEventQuery(event);
+//	if(status == cudaSuccess)
+//		return true;
+//	else if(status == cudaErrorNotReady)
+//		return false;
+//	else {
+//		HANDLE_ERROR(status);
+//		return status;
+//	}
+}
+

@@ -10,7 +10,7 @@ paracrypt::CudaAES::~CudaAES()
 		this->getDevice()->free(this->data);
 	}
 	if (this->deviceKey != NULL) {
-		 this->getDevice()->free(this->stream);
+		 this->getDevice()->delStream(this->stream);
 	}
 }
 
@@ -24,10 +24,10 @@ void paracrypt::CudaAES::setDevice(CUDACipherDevice* device)
 		this->getDevice()->free(this->data);
 	}
 	if (this->deviceKey != NULL) {
-		 this->getDevice()->free(this->stream);
+		 this->getDevice()->delStream(this->stream);
 	}
     this->device = device;
-    this->stream = this->getDevice()->getNewStream();
+    this->stream = this->getDevice()->addStream();
     // copy round keys to device
     int keySize = (4 * (this->getExpandedKey()->rounds + 1)) * sizeof(uint32_t);
     this->getDevice()->malloc((void **) &(this->deviceKey),keySize);
@@ -36,6 +36,11 @@ void paracrypt::CudaAES::setDevice(CUDACipherDevice* device)
 
 paracrypt::CUDACipherDevice* paracrypt::CudaAES::getDevice() {
 	       return this->device;
+}
+
+AES_KEY* paracrypt::CudaAES::getDeviceKey()
+{
+		return this->deviceKey;
 }
 
 void paracrypt::CudaAES::malloc(int n_blocks) {
