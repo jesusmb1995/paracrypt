@@ -3,6 +3,7 @@
 <instance id="com.nvidia.cuda.ide.eight_zero.configuration.debug.1894982458;com.nvidia.cuda.ide.eight_zero.configuration.debug.1894982458.;nvcc.compiler.base.1656817741;nvcc.compiler.input.cu.2072879656">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
 <includePath path="/usr/local/cuda-8.0/bin/../targets/x86_64-linux/include"/>
+<includePath path="/usr/local/cuda/targets/x86_64-linux/include"/>
 <includePath path="/usr/include/c++/4.8"/>
 <includePath path="/usr/include/x86_64-linux-gnu/c++/4.8"/>
 <includePath path="/usr/include/c++/4.8/backward"/>
@@ -282,6 +283,7 @@
 <instance id="com.nvidia.cuda.ide.eight_zero.configuration.debug.1894982458;com.nvidia.cuda.ide.eight_zero.configuration.debug.1894982458.;nvcc.compiler.base.1656817741;nvcc.compiler.input.c.99319965">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
 <includePath path="/usr/local/cuda-8.0/bin/../targets/x86_64-linux/include"/>
+<includePath path="/usr/local/cuda/targets/x86_64-linux/include"/>
 <includePath path="/usr/include/c++/4.8"/>
 <includePath path="/usr/include/x86_64-linux-gnu/c++/4.8"/>
 <includePath path="/usr/include/c++/4.8/backward"/>
@@ -561,6 +563,7 @@
 <instance id="com.nvidia.cuda.ide.eight_zero.configuration.debug.1894982458;com.nvidia.cuda.ide.eight_zero.configuration.debug.1894982458.;nvcc.compiler.base.1656817741;nvcc.compiler.input.cpp.1593310528">
 <collector id="org.eclipse.cdt.make.core.PerProjectSICollector">
 <includePath path="/usr/local/cuda-8.0/bin/../targets/x86_64-linux/include"/>
+<includePath path="/usr/local/cuda/targets/x86_64-linux/include"/>
 <includePath path="/usr/include/c++/4.8"/>
 <includePath path="/usr/include/x86_64-linux-gnu/c++/4.8"/>
 <includePath path="/usr/include/c++/4.8/backward"/>

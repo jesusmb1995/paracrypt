@@ -6,10 +6,7 @@
 
 namespace paracrypt {
 
-	template<typename S,typename F> class CUDACipherDevice:public GPUCipherDevice<S,F>{};
-
-	template<>
-    class CUDACipherDevice<cudaStream_t,cudaStreamCallback_t>:public GPUCipherDevice<cudaStream_t,cudaStreamCallback_t> {
+    class CUDACipherDevice :public GPUCipherDevice<cudaStream_t,cudaStreamCallback_t> {
       private:
 	int device;
 	cudaDeviceProp devProp;
@@ -26,12 +23,9 @@ namespace paracrypt {
 #endif
 	static void HandleError(cudaError_t err,
 				const char *file, int line);
-      protected:
-	cudaStream_t newStream();
-	void freeStream(cudaStream_t s);
       public:
 	// 0 <= device < cudaGetDeviceCount()
-	 CUDACipherDevice(int device);
+	CUDACipherDevice(int device);
 	int getNWarpsPerBlock();
 	int getThreadsPerThreadBlock();
 	int getMaxBlocksPerSM();

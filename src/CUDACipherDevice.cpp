@@ -78,7 +78,7 @@ int paracrypt::CUDACipherDevice::getMaxBlocksPerSM()
     return this->maxCudaBlocksPerSM;
 }
 
-const cudaDeviceProp* paracrypt::CUDACipherDevice<>::getDeviceProperties()
+const cudaDeviceProp* paracrypt::CUDACipherDevice::getDeviceProperties()
 {
     return &(this->devProp);
 }
@@ -127,16 +127,20 @@ void paracrypt::CUDACipherDevice::setMemCpyFromCallback(int stream_id, cudaStrea
 	//this->cpyFromCallbacks[stream_id] = func;
 }
 
-cudaStream_t paracrypt::CUDACipherDevice::newStream()
-{
-	cudaStream_t s;
-	//HANDLE_ERROR(cudaStreamCreate(&s));
-	return s;
-}
+namespace paracrypt {
+	template <>
+	cudaStream_t paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::newStream()
+	{
+		cudaStream_t s;
+		//HANDLE_ERROR(cudaStreamCreate(&s));
+		return s;
+	}
 
-void paracrypt::CUDACipherDevice::freeStream(cudaStream_t s)
-{
-	HANDLE_ERROR(cudaStreamDestroy(s));
+	template <>
+	void paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::freeStream(cudaStream_t s)
+	{
+		//HANDLE_ERROR(cudaStreamDestroy(s));
+	}
 }
 
 int paracrypt::CUDACipherDevice::addStream() {

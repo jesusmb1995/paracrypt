@@ -1,5 +1,3 @@
-#include "../CUDACipherDevice.hpp"
-#include "../CudaEcbAes16B.hpp"
 
 BOOST_AUTO_TEST_CASE(cuda_ecb_aes_16b)
 {

@@ -1,0 +1,15 @@
+#include "../CUDACipherDevice.hpp"
+#include "../CudaEcbAes16B.hpp"
+
+int main()
+{
+    paracrypt::CUDACipherDevice* gpu = new paracrypt::CUDACipherDevice(0);
+    paracrypt::CudaAES* aes = new paracrypt::CudaEcbAES16B();
+    aes->setDevice(gpu);
+    aes->malloc(1);
+    aes->encrypt((unsigned char*)&data,(unsigned char*)&data,1);
+
+    delete aes;
+    delete gpu;
+
+}

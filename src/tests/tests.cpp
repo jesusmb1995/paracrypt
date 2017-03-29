@@ -1,8 +1,10 @@
 #define BOOST_TEST_MODULE paracrypt
 #include <boost/test/included/unit_test.hpp>
+#include <stdint.h>
 #include "../logging.hpp"
 #include "../openssl/AES_key_schedule.h"
-#include <stdint.h>
+#include "../CUDACipherDevice.hpp"
+#include "../CudaEcbAes16B.hpp"
 
 const unsigned char k[128] = {
    		0x2bU, 0x7eU, 0x15U, 0x16U,
