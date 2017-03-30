@@ -1,10 +1,21 @@
 #include "CUDACipherDevice.hpp"
 #include "logging.hpp"
 
+
+void paracrypt::HandleError(cudaError_t err,
+					      const char *file, int line)
+{
+    if (err != cudaSuccess) {
+	LOG_ERR(boost::format("%s in %s at line %d\n")
+		% cudaGetErrorString(err) % file % line);
+	exit(EXIT_FAILURE);
+    }
+}
+
 paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
 {
-	this->nConcurrentKernels = 1;
-	//this->memCpyFromCallback = NULL;
+    this->nConcurrentKernels = 1;
+    //this->memCpyFromCallback = NULL;
     this->device = device;
     cudaGetDeviceProperties(&(this->devProp), device);
 
@@ -19,7 +30,7 @@ paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
 	this->maxCudaBlocksPerSM = 8;
     } else if (M <= 3 && m <= 7) {
 	this->maxCudaBlocksPerSM = 16;
-    } else { // cuda capability 5.0
+    } else {			// cuda capability 5.0
 	this->maxCudaBlocksPerSM = 32;
     }
 
@@ -29,38 +40,47 @@ paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
 	this->devProp.warpSize * this->nWarpsPerBlock /
 	this->maxCudaBlocksPerSM;
 
-	if(this->devProp.concurrentKernels) {
-		// From Table 13. Technical Specifications per Compute Capability
-		// Maximum number of resident grids per device (Concurrent Kernel Execution)
-	    if (M <= 3) {
-		this->nConcurrentKernels = 16;
-	    } else if (M == 3 && m == 2) {
+    if (this->devProp.concurrentKernels) {
+	// From Table 13. Technical Specifications per Compute Capability
+	// Maximum number of resident grids per device (Concurrent Kernel Execution)
+	if (M <= 3) {
+	    this->nConcurrentKernels = 16;
+	} else if (M == 3 && m == 2) {
 	    this->nConcurrentKernels = 4;
-	    } else if (M <=5 && m <= 2) {
-		this->maxCudaBlocksPerSM = 32;
-	    }
-	    else if (M == 5 && m == 3) {
-	    	this->maxCudaBlocksPerSM = 16;
-	    }
-	    else if (M == 6 && m == 0) {
-	    	this->maxCudaBlocksPerSM = 128;
-	    }
-	    else if (M == 6 && m == 1) {
-	    	this->maxCudaBlocksPerSM = 32;
-	    }
-	    else {//if (M == 6 && m == 2) {
-	    	this->maxCudaBlocksPerSM = 16;
-	    }
+	} else if (M <= 5 && m <= 2) {
+	    this->maxCudaBlocksPerSM = 32;
+	} else if (M == 5 && m == 3) {
+	    this->maxCudaBlocksPerSM = 16;
+	} else if (M == 6 && m == 0) {
+	    this->maxCudaBlocksPerSM = 128;
+	} else if (M == 6 && m == 1) {
+	    this->maxCudaBlocksPerSM = 32;
+	} else {		//if (M == 6 && m == 2) {
+	    this->maxCudaBlocksPerSM = 16;
 	}
+    }
+
+    this->printDeviceInfo();
 }
 
-void paracrypt::CUDACipherDevice::HandleError(cudaError_t err,
-					    const char *file, int line){
-    if (err != cudaSuccess) {
-    LOG_ERR(boost::format("%s in %s at line %d\n")
-    % cudaGetErrorString(err) % file % line);
-	exit(EXIT_FAILURE);
-    }
+void paracrypt::CUDACipherDevice::printDeviceInfo()
+{
+	LOG_INF(boost::format(
+			"CUDA device %d:\n"
+			"\t blocks per SM: %d\n"
+			"\t warp size: %d\n"
+			"\t warps per block: %d\n"
+			"\t threads per block: %d\n"
+			"\t concurrent kernels: %d\n"
+			"\n"
+		)
+		% this->device
+		% this->maxCudaBlocksPerSM
+		% this->devProp.warpSize
+		% this->warpsPerBlock
+		% this->nThreadsPerThreadBlock
+		% this->nConcurrentKernels
+	);
 }
 
 int paracrypt::CUDACipherDevice::getNWarpsPerBlock()
@@ -78,106 +98,109 @@ int paracrypt::CUDACipherDevice::getMaxBlocksPerSM()
     return this->maxCudaBlocksPerSM;
 }
 
-const cudaDeviceProp* paracrypt::CUDACipherDevice::getDeviceProperties()
+const cudaDeviceProp *paracrypt::CUDACipherDevice::getDeviceProperties()
 {
     return &(this->devProp);
 }
 
 int paracrypt::CUDACipherDevice::getConcurrentKernels()
 {
-	return this->nConcurrentKernels;
+    return this->nConcurrentKernels;
 }
 
 void paracrypt::CUDACipherDevice::set()
 {
-	HANDLE_ERROR(cudaSetDevice(this->device));
+    HANDLE_ERROR(cudaSetDevice(this->device));
 }
 
-void paracrypt::CUDACipherDevice::malloc(void** data, int size)
+void paracrypt::CUDACipherDevice::malloc(void **data, int size)
 {
-	HANDLE_ERROR(cudaMalloc(data,size));
+    HANDLE_ERROR(cudaMalloc(data, size));
 }
 
-void paracrypt::CUDACipherDevice::free(void* data)
+void paracrypt::CUDACipherDevice::free(void *data)
 {
-	HANDLE_ERROR(cudaFree(data));
+    HANDLE_ERROR(cudaFree(data));
 }
 
-void paracrypt::CUDACipherDevice::memcpyTo(void* host, void* dev, int size, int stream_id)
+void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, int size,
+					   int stream_id)
 {
-	//cudaStream_t stream = this->acessStream(stream_id);
-	//HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice, stream));
+    cudaStream_t stream = this->acessStream(stream_id);
+    HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice, stream));
 }
 
-void paracrypt::CUDACipherDevice::memcpyFrom(void* dev, void* host, int size, int stream_id)
+void paracrypt::CUDACipherDevice::memcpyFrom(void *dev, void *host,
+					     int size, int stream_id)
 {
-	//cudaStream_t stream = this->acessStream(stream_id);
-	//HANDLE_ERROR(cudaMemcpyAsync(host, dev, size, cudaMemcpyDeviceToHost, stream));
-	//boost::shared_lock < boost::shared_mutex > lock(this->streams_access);
-	//HANDLE_ERROR(cudaEventRecord(this->cpyFromEvents[stream_id]));
-    //std::unordered_map<int,cudaStreamCallback_t>::const_iterator cb = this->cpyFromCallbacks.find(stream_id);
-	//if(cb != this->cpyFromCallbacks.end()) {
-	//	HANDLE_ERROR(cudaStreamAddCallback(stream,cb->second,host,0));
-	//}
+    cudaStream_t stream = this->acessStream(stream_id);
+    HANDLE_ERROR(cudaMemcpyAsync(host, dev, size, cudaMemcpyDeviceToHost, stream));
+    boost::shared_lock < boost::shared_mutex > lock(this->streams_access);
+    HANDLE_ERROR(cudaEventRecord(this->cpyFromEvents[stream_id]));
+    boost::unordered_map<int,cudaStreamCallback_t>::const_iterator cb = this->cpyFromCallbacks.find(stream_id);
+    if(cb != this->cpyFromCallbacks.end()) {
+          HANDLE_ERROR(cudaStreamAddCallback(stream,cb->second,host,0));
+    }
 }
 
-void paracrypt::CUDACipherDevice::setMemCpyFromCallback(int stream_id, cudaStreamCallback_t func)
+void paracrypt::CUDACipherDevice::setMemCpyFromCallback(int stream_id,
+							cudaStreamCallback_t
+							func)
 {
-	//boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
-	//this->cpyFromCallbacks[stream_id] = func;
+    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+    this->cpyFromCallbacks[stream_id] = func;
 }
 
 namespace paracrypt {
-	template <>
-	cudaStream_t paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::newStream()
-	{
-		cudaStream_t s;
-		//HANDLE_ERROR(cudaStreamCreate(&s));
-		return s;
-	}
-
-	template <>
-	void paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::freeStream(cudaStream_t s)
-	{
-		//HANDLE_ERROR(cudaStreamDestroy(s));
-	}
+    template <>
+	cudaStream_t paracrypt::GPUCipherDevice < cudaStream_t,
+	cudaStreamCallback_t >::newStream() {
+	cudaStream_t s;
+	HANDLE_ERROR(cudaStreamCreate(&s));
+	return s;
+    } template <>
+	void paracrypt::GPUCipherDevice < cudaStream_t,
+	cudaStreamCallback_t >::freeStream(cudaStream_t s) {
+	HANDLE_ERROR(cudaStreamDestroy(s));
+    }
 }
 
-int paracrypt::CUDACipherDevice::addStream() {
-	//int id = paracrypt::GPUCipherDevice::addStream();
+int paracrypt::CUDACipherDevice::addStream()
+{
+    int id = paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::addStream();
 
-	//boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
-	//cudaEvent_t ev;
-	//HANDLE_ERROR(cudaEventCreate(&ev));
-	//this->cpyFromEvents[id] = ev;
+    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+    cudaEvent_t ev;
+    HANDLE_ERROR(cudaEventCreate(&ev));
+    this->cpyFromEvents[id] = ev;
 
-	return  0;//return id;
+    return id;
 }
 
-void paracrypt::CUDACipherDevice::delStream(int stream_id) {
-	//paracrypt::GPUCipherDevice::delStream(stream_id);
-	//boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
-	//HANDLE_ERROR(cudaEventDestroy(this->cpyFromEvents[stream_id]));
-	//this->cpyFromEvents.erase(stream_id);
+void paracrypt::CUDACipherDevice::delStream(int stream_id)
+{
+    paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::delStream(stream_id);
+    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+    HANDLE_ERROR(cudaEventDestroy(this->cpyFromEvents[stream_id]));
+    this->cpyFromEvents.erase(stream_id);
 }
 
 void paracrypt::CUDACipherDevice::waitMemcpyFrom(int stream_id)
 {
-	//cudaStream_t stream = this->acessStream(stream_id);
-	//HANDLE_ERROR(cudaEventSynchronize(event));
+    cudaEvent_t event = this->cpyFromEvents[stream_id];
+    HANDLE_ERROR(cudaEventSynchronize(event));
 }
 
 int paracrypt::CUDACipherDevice::checkMemcpyFrom(int stream_id)
 {
-	//cudaStream_t stream = this->acessStream(stream_id);
-	//int status = cudaEventQuery(event);
-//	if(status == cudaSuccess)
-//		return true;
-//	else if(status == cudaErrorNotReady)
-//		return false;
-//	else {
-//		HANDLE_ERROR(status);
-//		return status;
-//	}
+    cudaEvent_t event = this->cpyFromEvents[stream_id];
+    cudaError_t status = cudaEventQuery(event);
+      if(status == cudaSuccess)
+              return true;
+      else if(status == cudaErrorNotReady)
+              return false;
+      else {
+    	  	  HANDLE_ERROR_NUMBER(status);
+              return status;
+      }
 }
-

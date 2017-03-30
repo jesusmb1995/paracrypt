@@ -1,32 +1,19 @@
-00:39:02 **** Incremental Build of configuration Debug for project pcnsight ****
+00:01:39 **** Incremental Build of configuration Debug for project pcnsight ****
 make all 
-g++  -Wall -DBOOST_LOG_DYN_LINK -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
-In file included from src/tests/tests.cpp:21:0:
-src/tests/cuda_aes_test.cpp: In member function ‘void cuda_aes::cuda_ecb_aes_16b::test_method()’:
-src/tests/cuda_aes_test.cpp:10:25: warning: unused variable ‘expected_output’ [-Wunused-variable]
-     const unsigned char expected_output[128] = {
-                         ^
-g++  -Wall -DBOOST_LOG_DYN_LINK -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
-g++  -Wall -DBOOST_LOG_DYN_LINK -c src/logging.cpp -o obj/logging.o
-g++  -Wall -DBOOST_LOG_DYN_LINK -c src/AES.cpp -o obj/AES.o
-g++  -Wall -DBOOST_LOG_DYN_LINK -c src/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
-g++  -Wall -DBOOST_LOG_DYN_LINK -c src/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -c src/logging.cpp -o obj/logging.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -c src/AES.cpp -o obj/AES.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -c src/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -c src/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
 /usr/local/cuda/bin/nvcc   -c src/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cu.o
 nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
-g++  -Wall -DBOOST_LOG_DYN_LINK -c src/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
-src/CUDACipherDevice.cpp: In member function ‘virtual int paracrypt::CUDACipherDevice::checkMemcpyFrom(int)’:
-src/CUDACipherDevice.cpp:182:1: warning: no return statement in function returning non-void [-Wreturn-type]
- }
- ^
-src/CUDACipherDevice.cpp: In member function ‘S paracrypt::GPUCipherDevice<S, F>::newStream() [with S = CUstream_st*; F = void (*)(CUstream_st*, cudaError, void*)]’:
-src/CUDACipherDevice.cpp:136:10: warning: ‘s’ is used uninitialized in this function [-Wuninitialized]
-   return s;
-          ^
-g++  -Wall -DBOOST_LOG_DYN_LINK obj/tests.o obj/AES_key_schedule.o \
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -c src/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG obj/tests.o obj/AES_key_schedule.o \
 	 obj/AES.o obj/CudaAES.o obj/CudaEcbAes16B.o \
 	 obj/CudaEcbAes16B.cu.o obj/CUDACipherDevice.o \
-	 obj/logging.o -o bin/paracrypt_tests -lboost_log -lboost_log_setup -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+	 obj/logging.o -o bin/paracrypt_tests -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
 # make icc
 
-00:39:12 Build Finished (took 9s.233ms)
+00:02:10 Build Finished (took 31s.554ms)
 

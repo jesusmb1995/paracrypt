@@ -1,0 +1,7 @@
+#include "logging.hpp"
+
+int main()
+{
+	LOG_DEBUG(boost::format("\n%s  %04x") % title % n);
+
+}

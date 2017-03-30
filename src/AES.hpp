@@ -10,10 +10,10 @@ namespace paracrypt {
 #define AES_BLOCK_SIZE AES_STATE_SIZE
 
       private:
-	AES_KEY* roundKeys;
+	AES_KEY * roundKeys;
 	bool keyPropietary;
       public:
-	AES();
+	 AES();
 	~AES();
 	virtual int encrypt(const unsigned char in[],
 			    const unsigned char out[], int n_blocks)

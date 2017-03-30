@@ -1,11 +1,18 @@
-#include "CUDACipherDevice.hpp"
-#include "CudaEcbAes16B.hpp"
+#include "logging.hpp"
+
+void init()
+{
+	boost::log::core::get()->set_filter
+    (
+    		boost::log::trivial::severity >= boost::log::trivial::trace
+    );
+}
 
 int main()
 {
-    paracrypt::CUDACipherDevice* gpu = new paracrypt::CUDACipherDevice(0);
-    paracrypt::CudaAES* aes = new paracrypt::CudaEcbAES16B();
-    delete aes;
-    delete gpu;
-
+	init();
+	//std::string str = "test";
+	//std::string format = boost::format("\n%s") % str;
+	//LOG_DEBUG("a");
+	BOOST_LOG_TRIVIAL(debug) << "a";
 }

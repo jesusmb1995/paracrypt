@@ -1,0 +1,18 @@
+#include "logging.hpp"
+
+bool init_unit_test()
+{
+	boost::log::core::get()->set_filter
+    (
+    		boost::log::trivial::severity >= boost::log::trivial::trace
+    );
+    return true;
+}
+
+int main()
+{
+	//std::string str = "test";
+	//std::string format = boost::format("\n%s") % str;
+	//LOG_DEBUG("a");
+	BOOST_LOG_TRIVIAL(debug) << "a";
+}

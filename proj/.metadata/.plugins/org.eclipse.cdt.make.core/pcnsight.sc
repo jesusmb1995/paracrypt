@@ -14,6 +14,7 @@
 <includePath path="/usr/include"/>
 <includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="BOOST_LOG_DYN_LINK=1"/>
+<definedSymbol symbol="DEBUG=1"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>
@@ -294,6 +295,7 @@
 <includePath path="/usr/include"/>
 <includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="BOOST_LOG_DYN_LINK=1"/>
+<definedSymbol symbol="DEBUG=1"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>
@@ -574,6 +576,7 @@
 <includePath path="/usr/include"/>
 <includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="BOOST_LOG_DYN_LINK=1"/>
+<definedSymbol symbol="DEBUG=1"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>

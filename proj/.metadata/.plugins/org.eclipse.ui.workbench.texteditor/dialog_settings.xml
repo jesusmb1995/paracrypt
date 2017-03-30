@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="virtual" key="selection"/>
+		<item value="stream" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="stream"/>
+			<item value="cpyFromEvents"/>
 			<item value="virtual"/>
 			<item value="newStream"/>
 			<item value="void (*)(cuda_aes::CUstream_st*, cuda_aes::cudaError, void*)"/>
 			<item value="freeStr"/>
 			<item value="getGridSize"/>
 			<item value="pth"/>
-			<item value="LIBS"/>
-			<item value="CUDA_LIB"/>
 		</list>
 		<list key="replacehistory">
 		</list>
@@ -23,8 +23,8 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="309" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="508" key="DIALOG_HEIGHT"/>
-		<item value="-137" key="DIALOG_X_ORIGIN"/>
-		<item value="253" key="DIALOG_Y_ORIGIN"/>
+		<item value="480" key="DIALOG_HEIGHT"/>
+		<item value="2930" key="DIALOG_X_ORIGIN"/>
+		<item value="350" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

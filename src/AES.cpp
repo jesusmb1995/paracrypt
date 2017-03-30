@@ -4,22 +4,22 @@
 
 paracrypt::AES::AES()
 {
-	this->roundKeys = NULL;
-	this->keyPropietary = false;
+    this->roundKeys = NULL;
+    this->keyPropietary = false;
 }
 
 paracrypt::AES::~AES()
 {
-	if(this->keyPropietary && this->roundKeys != NULL)
-		free(this->roundKeys);
+    if (this->keyPropietary && this->roundKeys != NULL)
+	free(this->roundKeys);
 }
 
 int paracrypt::AES::setKey(const unsigned char key[], int bits)
 {
-	if(this->roundKeys == NULL) {
-		this->roundKeys = (AES_KEY*) malloc(sizeof(AES_KEY));
-		this->keyPropietary = true;
-	}
+    if (this->roundKeys == NULL) {
+	this->roundKeys = (AES_KEY *) malloc(sizeof(AES_KEY));
+	this->keyPropietary = true;
+    }
     AES_set_encrypt_key(key, bits, this->roundKeys);
     return 0;
 }
@@ -28,10 +28,10 @@ int paracrypt::AES::setKey(const unsigned char key[], int bits)
 //  we will point to nowhere
 int paracrypt::AES::setKey(AES_KEY * expandedKey)
 {
-	if(this->keyPropietary && this->roundKeys != NULL)  {
-		free(this->roundKeys);
-		this->keyPropietary = false;
-	}
+    if (this->keyPropietary && this->roundKeys != NULL) {
+	free(this->roundKeys);
+	this->keyPropietary = false;
+    }
     this->roundKeys = expandedKey;
     return 0;
 }

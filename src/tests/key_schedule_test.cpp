@@ -46,7 +46,6 @@ BOOST_AUTO_TEST_CASE(key_schedule_128)
     AES_KEY ek;
     AES_set_encrypt_key((const unsigned char *) &k, 128, &ek);
     hexdump("TV_KEY", (unsigned char *) &w, sizeof(w));
-    hexdump("AES_KEY", (unsigned char *) &ek.rd_key,
-	    sizeof(ek.rd_key));
+    //hexdump("AES_KEY", (unsigned char *) &ek.rd_key, sizeof(ek.rd_key));
     BOOST_CHECK_EQUAL_COLLECTIONS(w, w + 40, ek.rd_key, ek.rd_key + 40);
 }
