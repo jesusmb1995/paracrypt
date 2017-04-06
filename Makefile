@@ -33,49 +33,50 @@ OBJ_DIR ?= obj
 # OBJECTS #########################################################################
 ###################################################################################
 #
-AES.o: $(SRC_DIR)/AES.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@
+$(OBJ_DIR)/AES.o: $(SRC_DIR)/AES.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@
 #
-CudaAES.o: $(SRC_DIR)/CudaAES.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@ $(INCL)
+$(OBJ_DIR)/CudaAES.o: $(SRC_DIR)/CudaAES.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-CudaEcbAes16B.o: $(SRC_DIR)/CudaEcbAes16B.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@ $(INCL)
+$(OBJ_DIR)/CudaEcbAes16B.o: $(SRC_DIR)/CudaEcbAes16B.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-CudaEcbAes16B.cu.o: $(SRC_DIR)/CudaEcbAes16B.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $(OBJ_DIR)/$@
+$(OBJ_DIR)/CudaEcbAes16B.cu.o: $(SRC_DIR)/CudaEcbAes16B.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
 #
-CUDACipherDevice.o: $(SRC_DIR)/CUDACipherDevice.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@ $(INCL)
+$(OBJ_DIR)/CUDACipherDevice.o: $(SRC_DIR)/CUDACipherDevice.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-logging.o: $(SRC_DIR)/logging.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@
+$(OBJ_DIR)/logging.o: $(SRC_DIR)/logging.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@
 #
-logging.d.o: $(SRC_DIR)/logging.cpp 
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@
+$(OBJ_DIR)/logging.d.o: $(SRC_DIR)/logging.cpp 
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@
 #
-AES_key_schedule.o: $(SRC_DIR)/openssl/AES_key_schedule.c
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@
+$(OBJ_DIR)/AES_key_schedule.o: $(SRC_DIR)/openssl/AES_key_schedule.c
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@
 
 
 ###################################################################################
 # TESTS ###########################################################################
 ###################################################################################
 #
-tests.o: $(TST_DIR)/tests.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $(OBJ_DIR)/$@ $(INCL)
+$(OBJ_DIR)/tests.o: $(TST_DIR)/tests.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #	
 tests: CXX_FLAGS_ += -g -DDEBUG
-tests: tests.o AES_key_schedule.o logging.o AES.o CudaAES.o CudaEcbAes16B.o  \
-     CudaEcbAes16B.cu.o CUDACipherDevice.o
+tests: NVCC_FLAGS_ += -g
+tests: $(OBJ_DIR)/tests.o $(OBJ_DIR)/AES_key_schedule.o $(OBJ_DIR)/logging.o $(OBJ_DIR)/AES.o $(OBJ_DIR)/CudaAES.o $(OBJ_DIR)/CudaEcbAes16B.o  \
+     $(OBJ_DIR)/CudaEcbAes16B.cu.o $(OBJ_DIR)/CUDACipherDevice.o
 	 $(CXX) $(CXX_FLAGS_) $(OBJ_DIR)/tests.o $(OBJ_DIR)/AES_key_schedule.o \
 	 $(OBJ_DIR)/AES.o $(OBJ_DIR)/CudaAES.o $(OBJ_DIR)/CudaEcbAes16B.o \
 	 $(OBJ_DIR)/CudaEcbAes16B.cu.o $(OBJ_DIR)/CUDACipherDevice.o \
 	 $(OBJ_DIR)/logging.o -o $(BIN_DIR)/paracrypt_tests $(LIBS)
 
-test: CXX_FLAGS_ += -g -DDEBUG
-test: logging.o $(SRC_DIR)/test.cpp
-	 $(CXX) $(CXX_FLAGS_) $(OBJ_DIR)/logging.o $(SRC_DIR)/test.cpp  -o $(BIN_DIR)/test $(LIBS)
+#test: CXX_FLAGS_ += -g -DDEBUG
+#test: logging.o $(SRC_DIR)/test.cpp
+#	$(CXX) $(CXX_FLAGS_) $(OBJ_DIR)/logging.o $(SRC_DIR)/test.cpp  -o $(BIN_DIR)/test $(LIBS)
 
 ###################################################################################
 # BUILDS ##########################################################################

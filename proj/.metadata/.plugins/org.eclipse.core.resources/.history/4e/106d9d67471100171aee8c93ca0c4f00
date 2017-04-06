@@ -1,6 +1,0 @@
-#pragma once
-#define CUDA_H CUDA_INC "/cuda.h"
-#define CUDA_RUNTIME_API_H CUDA_INC "/cuda_runtime_api.h"
-#include CUDA_H
-#include CUDA_RUNTIME_API_H
-

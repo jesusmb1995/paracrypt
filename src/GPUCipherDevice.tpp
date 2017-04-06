@@ -1,11 +1,15 @@
 #include "GPUCipherDevice.hpp"
+#include "logging.hpp"
+#include <math.h> 
 
 template < typename S, typename F >
     paracrypt::GPUCipherDevice < S, F >::~GPUCipherDevice()
 {
+    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
 	typename boost::unordered_map<int,S>::iterator iter;
     for(iter = this->streams.begin(); iter != this->streams.end(); ++iter)
     {
+//    	  LOG_TRACE(boost::format("~GPUCipherDevice(): delStream(%d)") % iter->first);
           delStream(iter->first);
     }
 }
@@ -15,9 +19,10 @@ template < typename S, typename F >
 							 int
 							 threadsPerCipherBlock)
 {
-    int gridSize =
+    float fGridSize =
 	n_blocks * threadsPerCipherBlock /
-	this->getThreadsPerThreadBlock();
+	(float) this->getThreadsPerThreadBlock();
+    int gridSize = ceil(fGridSize);
     return gridSize;
 }
 
@@ -27,6 +32,7 @@ template < typename S, typename F >
     boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
     int id = this->streams.size();
     this->streams[id] = newStream();
+//    LOG_TRACE(boost::format("GPUCipherDevice.addStream() => %d") % id);
     return id;
 }
 

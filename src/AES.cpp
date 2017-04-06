@@ -1,6 +1,7 @@
 #include "AES.hpp"
 #include <cstddef>
 #include <stdlib.h>
+#include "logging.hpp"
 
 paracrypt::AES::AES()
 {
@@ -38,6 +39,9 @@ int paracrypt::AES::setKey(AES_KEY * expandedKey)
 
 AES_KEY *paracrypt::AES::getExpandedKey()
 {
+	if(this->roundKeys == NULL) {
+		LOG_WAR("paracrypt::AES::getExpandedKey == NULL");
+	}
     return this->roundKeys;
 }
 

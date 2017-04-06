@@ -66,18 +66,19 @@ paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
 void paracrypt::CUDACipherDevice::printDeviceInfo()
 {
 	LOG_INF(boost::format(
-			"CUDA device %d:\n"
+			"\nCUDA device %d:\n"
 			"\t blocks per SM: %d\n"
 			"\t warp size: %d\n"
 			"\t warps per block: %d\n"
+			"\t max. threads per block: %d\n"
 			"\t threads per block: %d\n"
 			"\t concurrent kernels: %d\n"
-			"\n"
 		)
 		% this->device
 		% this->maxCudaBlocksPerSM
 		% this->devProp.warpSize
-		% this->warpsPerBlock
+		% this->nWarpsPerBlock
+		% this->devProp.maxThreadsPerBlock
 		% this->nThreadsPerThreadBlock
 		% this->nConcurrentKernels
 	);
@@ -127,6 +128,18 @@ void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, int size,
 					   int stream_id)
 {
     cudaStream_t stream = this->acessStream(stream_id);
+//    LOG_TRACE(boost::format("CUDACipherDevice(%d).cudaMemcpyAsync("
+//    		"dev=%x"
+//    		",host=%x"
+//    		",size=%d"
+//    		",cudaMemcpyHostToDevice,"
+//    		"stream=%x)")
+//    	% this->device
+//    	% host
+//    	% dev
+//    	% size
+//    	% (void*) stream
+//    );
     HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice, stream));
 }
 

@@ -6,14 +6,14 @@
 #include "../CUDACipherDevice.hpp"
 #include "../CudaEcbAes16B.hpp"
 
-bool init_unit_test()
-{
-	boost::log::core::get()->set_filter
-    (
-    		boost::log::trivial::severity >= boost::log::trivial::trace
-    );
-    return true;
-}
+//bool init_unit_test()
+//{
+//	boost::log::core::get()->set_filter
+//    (
+//    		boost::log::trivial::severity >= boost::log::trivial::trace
+//    );
+//    return true;
+//}
 
 const unsigned char k[128] = {
     0x2bU, 0x7eU, 0x15U, 0x16U,

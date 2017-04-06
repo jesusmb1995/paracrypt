@@ -1,4 +1,0 @@
-
-__global__ void cuda_ecb_aes_16b_encrypt(unsigned char data[], );
-__global__ void cuda_ecb_aes_16b_decrypt(unsigned char data[], );
-

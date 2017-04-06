@@ -1,1 +1,0 @@
-void hexdump(FILE * f, const char *title, const unsigned char *s, int length)

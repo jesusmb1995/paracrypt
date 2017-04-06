@@ -33,7 +33,7 @@ void paracrypt::CudaAES::setDevice(CUDACipherDevice * device)
 	(4 * (this->getExpandedKey()->rounds + 1)) * sizeof(uint32_t);
     this->getDevice()->malloc((void **) &(this->deviceKey), keySize);
     this->getDevice()->memcpyTo(this->getExpandedKey()->rd_key,
-				&(this->deviceKey), keySize, this->stream);
+				this->deviceKey, keySize, this->stream);
 }
 
 paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
@@ -41,7 +41,7 @@ paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
     return this->device;
 }
 
-AES_KEY *paracrypt::CudaAES::getDeviceKey()
+uint32_t* paracrypt::CudaAES::getDeviceKey()
 {
     return this->deviceKey;
 }
