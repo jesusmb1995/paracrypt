@@ -1,0 +1,9 @@
+#include "aes_locl.h"
+
+#ifndef HEADER_ENDIANESS_H
+# define HEADER_ENDIANESS_H
+
+
+PUTU32
+
+#endif /* !HEADER_ENDIANESS_H */

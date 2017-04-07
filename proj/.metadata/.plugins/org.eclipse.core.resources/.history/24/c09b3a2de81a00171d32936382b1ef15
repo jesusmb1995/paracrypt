@@ -1,0 +1,9 @@
+#include "endianess.h"
+
+ void big(u32* little, u32* store, int n) {
+	int i;
+	for(i=0;i<n;i++) {
+		GETU32(little[i]);
+		//PUTU32(store+i,little[i]);
+	}
+}

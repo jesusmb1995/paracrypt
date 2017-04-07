@@ -1,10 +1,18 @@
-18:55:43 **** Incremental Build of configuration Debug for project pcnsight ****
+22:49:49 **** Incremental Build of configuration Debug for project pcnsight ****
 make all 
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG obj/tests.o obj/AES_key_schedule.o \
-	 obj/AES.o obj/CudaAES.o obj/CudaEcbAes16B.o \
-	 obj/CudaEcbAes16B.cu.o obj/CUDACipherDevice.o \
-	 obj/logging.o -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG \
+	 obj/tests.o \
+	 obj/cuda_test_kernels.cu.o \
+	 obj/AES_key_schedule.o \
+	 obj/endianess.o \
+	 obj/AES.o \
+	 obj/CudaAES.o \
+	 obj/CudaEcbAes16B.o \
+	 obj/CudaEcbAes16B.cu.o \
+	 obj/CUDACipherDevice.o \
+	 obj/logging.o \
+	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
 # make icc
 
-18:55:44 Build Finished (took 511ms)
+22:49:49 Build Finished (took 474ms)
 

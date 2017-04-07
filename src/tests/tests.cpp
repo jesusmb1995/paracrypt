@@ -5,6 +5,8 @@
 #include "../openssl/AES_key_schedule.h"
 #include "../CUDACipherDevice.hpp"
 #include "../CudaEcbAes16B.hpp"
+#include "../endianess.h"
+#include "cuda_test_kernels.cuh"
 
 //bool init_unit_test()
 //{

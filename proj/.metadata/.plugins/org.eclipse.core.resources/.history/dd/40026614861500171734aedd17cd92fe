@@ -1,9 +1,0 @@
-#include "logging.hpp"
-
-int main()
-{
-	std::string str = "test";
-	std::string format = boost::format("\n%s") % str;
-	LOG_DEBUG(format);
-
-}

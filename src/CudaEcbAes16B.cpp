@@ -26,8 +26,8 @@ int paracrypt::CudaEcbAES16B::encrypt(const unsigned char in[],
 		% n_blocks
 		% key
 		% rounds);
-    cuda_ecb_aes_16b_encrypt(gridSize, threadsPerBlock, this->data, n_blocks,
-			     key, rounds);
+//    cuda_ecb_aes_16b_encrypt(gridSize, threadsPerBlock, this->data, n_blocks,
+//			     key, rounds);
     this->getDevice()->memcpyFrom(this->data, (void *) out, dataSize,
 				  this->stream);
 
@@ -46,7 +46,7 @@ int paracrypt::CudaEcbAES16B::decrypt(const unsigned char in[],
 
     this->getDevice()->memcpyTo((void *) in, this->data, dataSize,
 				this->stream);
-    cuda_ecb_aes_16b_decrypt(gridSize, threadsPerBlock, this->data, n_blocks, key, rounds);	// TODO get decrypt key
+//    cuda_ecb_aes_16b_decrypt(gridSize, threadsPerBlock, this->data, n_blocks, key, rounds);	// TODO get decrypt key
     this->getDevice()->memcpyFrom(this->data, (void *) out, dataSize,
 				  this->stream);
 

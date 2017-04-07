@@ -1,8 +1,0 @@
-#include "logging.hpp"
-
-int main()
-{
-	std::string str = "test";
-	LOG_DEBUG(boost::format("\n%s") % "test");
-
-}

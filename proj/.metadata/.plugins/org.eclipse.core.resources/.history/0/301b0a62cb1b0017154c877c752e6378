@@ -1,0 +1,23 @@
+[2017-04-07 21:40:26.484420] [0x00007f19c32fe780] [trace]
+
+#define LOG_MSG(level,fmt,...) \
+		printf( \
+				"[%s:%d:%s()] [%s] " fmt, \
+                __FILE__, \
+                __LINE__, \
+                __func__, \
+                level, \
+                __VA_ARGS__ \
+		)
+
+#ifdef DEBUG
+#define LOG_TRACE(fmt,...) LOG_MSG("trace",fmt,__VA_ARGS__)
+#define LOG_DEBUG(fmt,...) LOG_MSG("debug",fmt,__VA_ARGS__)
+#else
+#define LOG_TRACE(fmt,...)
+#define LOG_DEBUG(fmt,...)
+#endif
+#define LOG_INF(fmt,...) LOG_MSG("trace",fmt,__VA_ARGS__)
+#define LOG_WAR(fmt,...) LOG_MSG("debug",fmt,__VA_ARGS__)
+#define LOG_ERR(fmt,...) LOG_MSG("trace",fmt,__VA_ARGS__)
+#define LOG_FATAL(fmt,...) LOG_MSG("debug",fmt,__VA_ARGS__)
