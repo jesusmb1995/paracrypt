@@ -1,0 +1,1 @@
+#define BOOST_TEST_MODULE paracrypt_openssl

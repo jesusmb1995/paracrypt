@@ -1,0 +1,14 @@
+#define BOOST_TEST_MODULE paracrypt_openssl
+#include <boost/test/included/unit_test.hpp>
+#include <stdint.h>
+#include "../logging.hpp"
+#include "../openssl/aes.h"
+
+BOOST_AUTO_TEST_SUITE(ecb_aes)
+
+BOOST_AUTO_TEST_CASE(ecb_aes)
+{
+
+}
+
+BOOST_AUTO_TEST_SUITE_END()

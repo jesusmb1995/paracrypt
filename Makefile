@@ -73,6 +73,24 @@ $(OBJ_DIR)/cuda_test_kernels.cu.o: $(TST_DIR)/cuda_test_kernels.cu
 #
 $(OBJ_DIR)/cpu_AES_round_example.o: $(TST_DIR)/cpu_AES_round_example.c
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/openssl_aes.o: $(SRC_DIR)/openssl/aes_core.c
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/openssl_aes_test.o: $(TST_DIR)/openssl_aes_test.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#	
+openssl_aes_test: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
+openssl_aes_test: \
+$(OBJ_DIR)/cpu_AES_round_example.o \
+$(OBJ_DIR)/logging.o \
+$(OBJ_DIR)/openssl_aes.o \
+$(OBJ_DIR)/openssl_aes_test.o
+	 $(CXX) $(CXX_FLAGS_) \
+	 $(OBJ_DIR)/openssl_aes_test.o \
+	 $(OBJ_DIR)/logging.o \
+	 $(OBJ_DIR)/openssl_aes.o \
+	 -o $(BIN_DIR)/openssl_aes_test $(LIBS)
 #	
 cpu_AES_round_example: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
 cpu_AES_round_example: \

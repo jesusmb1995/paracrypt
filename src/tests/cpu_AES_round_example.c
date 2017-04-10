@@ -740,29 +740,29 @@ int main()
 //	LOG_DEBUG(boost::format("(s2le >> 16) & 0xff => %02x") % ((s2le >> 16) & 0xff)); // (s2le >> 16) & 0xff => e2
 //	LOG_DEBUG(boost::format("(s3le >> 16) & 0xff => %02x") % ((s3le >> 16) & 0xff)); // (s3le >> 16) & 0xff => 2b
 
-	// Se pasa a formato especifico de OpenSSL
-	uint32_t ssl_s0 = GETU32(i0);
-	uint32_t ssl_s1 = GETU32(i1);
-	uint32_t ssl_s2 = GETU32(i2);
-	uint32_t ssl_s3 = GETU32(i3);
-	hexdump("ssl_s0",(unsigned char*)&ssl_s0,4);
-	hexdump("ssl_s1",(unsigned char*)&ssl_s1,4);
-	hexdump("ssl_s2",(unsigned char*)&ssl_s2,4);
-	hexdump("ssl_s3",(unsigned char*)&ssl_s3,4);
-	{
-	uint32_t ss0 = ssl_s0;
-	uint32_t ss1 = ssl_s1;
-	uint32_t ss2 = ssl_s2;
-	uint32_t ss3 = ssl_s3;
-	uint32_t t0 = Td0[ss0 >> 24] ^ Td1[(ss3 >> 16) & 0xff] ^ Td2[(ss2 >>  8) & 0xff] ^ Td3[ss1 & 0xff]; //^ keyle_w1;
-	uint32_t t1 = Td0[ss1 >> 24] ^ Td1[(ss0 >> 16) & 0xff] ^ Td2[(ss3 >>  8) & 0xff] ^ Td3[ss2 & 0xff]; //^ keyle_w2;
-	uint32_t t2 = Td0[ss2 >> 24] ^ Td1[(ss1 >> 16) & 0xff] ^ Td2[(ss0 >>  8) & 0xff] ^ Td3[ss3 & 0xff]; //^ keyle_w3;
-	uint32_t t3 = Td0[ss3 >> 24] ^ Td1[(ss2 >> 16) & 0xff] ^ Td2[(ss1 >>  8) & 0xff] ^ Td3[ss0 & 0xff]; //^ keyle_w4;
-	hexdump("t0",(unsigned char*)&t0,4);
-	hexdump("t1",(unsigned char*)&t1,4);
-	hexdump("t2",(unsigned char*)&t2,4);
-	hexdump("t3",(unsigned char*)&t3,4);
-	}
+//	// Se pasa a formato especifico de OpenSSL
+//	uint32_t ssl_s0 = GETU32(i0);
+//	uint32_t ssl_s1 = GETU32(i1);
+//	uint32_t ssl_s2 = GETU32(i2);
+//	uint32_t ssl_s3 = GETU32(i3);
+//	hexdump("ssl_s0",(unsigned char*)&ssl_s0,4);
+//	hexdump("ssl_s1",(unsigned char*)&ssl_s1,4);
+//	hexdump("ssl_s2",(unsigned char*)&ssl_s2,4);
+//	hexdump("ssl_s3",(unsigned char*)&ssl_s3,4);
+//	{
+//	uint32_t ss0 = ssl_s0;
+//	uint32_t ss1 = ssl_s1;
+//	uint32_t ss2 = ssl_s2;
+//	uint32_t ss3 = ssl_s3;
+//	uint32_t t0 = Td0[ss0 >> 24] ^ Td1[(ss3 >> 16) & 0xff] ^ Td2[(ss2 >>  8) & 0xff] ^ Td3[ss1 & 0xff]; //^ keyle_w1;
+//	uint32_t t1 = Td0[ss1 >> 24] ^ Td1[(ss0 >> 16) & 0xff] ^ Td2[(ss3 >>  8) & 0xff] ^ Td3[ss2 & 0xff]; //^ keyle_w2;
+//	uint32_t t2 = Td0[ss2 >> 24] ^ Td1[(ss1 >> 16) & 0xff] ^ Td2[(ss0 >>  8) & 0xff] ^ Td3[ss3 & 0xff]; //^ keyle_w3;
+//	uint32_t t3 = Td0[ss3 >> 24] ^ Td1[(ss2 >> 16) & 0xff] ^ Td2[(ss1 >>  8) & 0xff] ^ Td3[ss0 & 0xff]; //^ keyle_w4;
+//	hexdump("t0",(unsigned char*)&t0,4);
+//	hexdump("t1",(unsigned char*)&t1,4);
+//	hexdump("t2",(unsigned char*)&t2,4);
+//	hexdump("t3",(unsigned char*)&t3,4);
+//	}
 
     // nota como el resultado se devuelve el little endian porque
 

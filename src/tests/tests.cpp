@@ -24,7 +24,7 @@ const unsigned char k[128] = {
     0x09U, 0xcfU, 0x4fU, 0x3cU
 };
 
-BOOST_AUTO_TEST_SUITE(key_expansion)
+	BOOST_AUTO_TEST_SUITE(key_expansion)
 #include "key_schedule_test.cpp"
     BOOST_AUTO_TEST_SUITE_END()
 

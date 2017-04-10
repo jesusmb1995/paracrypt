@@ -1,4 +1,4 @@
-18:46:40 **** Clean-only build of configuration Debug for project pcnsight ****
+23:32:46 **** Clean-only build of configuration Debug for project pcnsight ****
 make clean 
 rm -f obj/*.o
 rm -f lib/*.a
@@ -7,5 +7,5 @@ rm -f src/*~
 rm -f src/tests/*~
 rm -f src/openssl/*~
 
-18:46:40 Build Finished (took 60ms)
+23:32:46 Build Finished (took 73ms)
 
