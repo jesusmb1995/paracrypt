@@ -102,5 +102,5 @@ BOOST_AUTO_TEST_CASE(key_schedule_128)
     big((uint32_t*)&ek.rd_key,(uint32_t*)&big_rd_key,n_words);
     hexdump("TV_KEY", (unsigned char *) &w, sizeof(w));
     hexdump("AES_KEY", (unsigned char *) &big_rd_key, n_bytes);
-    BOOST_CHECK_EQUAL_COLLECTIONS(w, w + n_bytes,(unsigned char *)big_rd_key, ((unsigned char *) big_rd_key) + n_bytes);
+    BOOST_CHECK_EQUAL_COLLECTIONS(w, w + 40*4,(unsigned char *)big_rd_key, ((unsigned char *) big_rd_key) + 40*4);
 }

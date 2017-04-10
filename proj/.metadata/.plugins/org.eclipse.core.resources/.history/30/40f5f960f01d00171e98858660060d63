@@ -1,0 +1,95 @@
+#include <stdint.h>
+#include "../logging.hpp"
+
+int main()
+{
+	// This file test how the OpenSSL library
+	// implement AES rounds using t-boxes
+
+	// From NIST 197 test vectors
+	// 
+	// Round input
+	// -----------
+	// 19 a0 9a e9
+	// 3d f4 c6 f8
+	// e3 e2 8d 48
+	// b3 2b 2a 08
+	//
+	unsigned char i0[4] = {0x19,0xa0,0x9a,0xe9};
+	unsigned char i1[4] = {0x3d,0xf4,0xc6,0xf8};
+	unsigned char i2[4] = {0xe3,0xe2,0x8d,0x48};
+	unsigned char i3[4] = {0xb3,0x2b,0x2a,0x08};
+
+	// integer operators
+	//
+	// s0 = 19 a0 9a e9
+	// s1 = 3d f4 c6 f8
+	// s2 = e3 e2 8d 48
+	// s3 = b3 2b 2a 08
+	//
+	uint32_t s0 = *((uint32_t*)i0);
+	uint32_t s1 = *((uint32_t*)i1);
+	uint32_t s2 = *((uint32_t*)i2);
+	uint32_t s3 = *((uint32_t*)i3);
+	hexdump("s0",(unsigned char*)&s0,4);
+	hexdump("s1",(unsigned char*)&s1,4);
+	hexdump("s2",(unsigned char*)&s2,4);
+	hexdump("s3",(unsigned char*)&s3,4);
+
+	// Because of little-endianess
+	// 19 a9 9a e9, for example, is shifted to:
+	//  a9 9a e9 00 (>> 8)
+	//  9a e9 00 00 (>> 16)
+	//  e9 00 00 00 (>> 24)
+	//
+	// Con una mascara 0xff nos podemos
+	// quedar con los dos primeros bytes
+	//  0x9ae90000 & 0xff000000 -> 0x9a000000
+	//  0xa99ae900 & 0xff000000 -> 0xa9000000
+	//
+	// En resumen, cada uno de los bytes del
+	// estado de entrada es equivalente a:
+	//
+	// 19 a0=(s0>>8)&0xff 9a=(s0>>16)&0xff e9=(s0>>24)
+	// 3d f4=(s0>>8)&0xff c6=(s1>>16)&0xff f8=(s1>>24)
+	// e3 e2=(s0>>8)&0xff 8d=(s2>>16)&0xff 48=(s2>>24)
+	// b3 2b=(s0>>8)&0xff 2a=(s3>>16)&0xff 08=(s3>>24)
+	//
+
+	uint32_t s0_shift24 = s0 >> 24;
+	uint32_t s1_shift24 = s1 >> 24;
+	uint32_t s2_shift24 = s2 >> 24;
+	uint32_t s3_shift24 = s3 >> 24;
+	hexdump("s0_shift24",(unsigned char*)&s0_shift24,4);
+	hexdump("s1_shift24",(unsigned char*)&s1_shift24,4);
+	hexdump("s2_shift24",(unsigned char*)&s2_shift24,4);
+	hexdump("s3_shift24",(unsigned char*)&s3_shift24,4);
+
+	uint32_t s0_shift16 = s0 >> 16;
+	uint32_t s1_shift16 = s1 >> 16;
+	uint32_t s2_shift16 = s2 >> 16;
+	uint32_t s3_shift16 = s3 >> 16;
+	hexdump("s0_shift16",(unsigned char*)&s0_shift16,4);
+	hexdump("s1_shift16",(unsigned char*)&s1_shift16,4);
+	hexdump("s2_shift16",(unsigned char*)&s2_shift16,4);
+	hexdump("s3_shift16",(unsigned char*)&s3_shift16,4);
+	uint32_t s0_shift16andFF = s0_shift16 & 0xff;
+	uint32_t s1_shift16andFF = s1_shift16 & 0xff;
+	uint32_t s2_shift16andFF = s2_shift16 & 0xff;
+	uint32_t s3_shift16andFF = s3_shift16 & 0xff;
+	hexdump("s0_shift16andFF",(unsigned char*)&s0_shift16andFF,4);
+	hexdump("s1_shift16andFF",(unsigned char*)&s1_shift16andFF,4);
+	hexdump("s2_shift16andFF",(unsigned char*)&s2_shift16andFF,4);
+	hexdump("s3_shift16andFF",(unsigned char*)&s3_shift16andFF,4);
+
+	uint32_t s0_shift8 = s0 >> 8;
+	uint32_t s1_shift8 = s1 >> 8;
+	uint32_t s2_shift8 = s2 >> 8;
+	uint32_t s3_shift8 = s3 >> 8;
+	hexdump("s0_shift8",(unsigned char*)&s0_shift8,4);
+	hexdump("s1_shift8",(unsigned char*)&s1_shift8,4);
+	hexdump("s2_shift8",(unsigned char*)&s2_shift8,4);
+	hexdump("s3_shift8",(unsigned char*)&s3_shift8,4);
+
+	return 0;
+}

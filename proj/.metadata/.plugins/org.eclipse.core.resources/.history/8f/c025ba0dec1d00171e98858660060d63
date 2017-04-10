@@ -1,0 +1,34 @@
+#include "endianess.h"
+#include <stdint.h>
+#include "logging.hpp"
+
+int main()
+{
+	// From NIST 197 test vectors
+	// 
+	// Round input
+	// -----------
+	// 19 a0 9a e9
+	// 3d f4 c6 f8
+	// e3 e2 8d 48
+	// b3 2b 2a 08
+	//
+	unsigned char i0[4] = {0x19,0xa0,0x9a,0xe9};
+	unsigned char i1[4] = {0x3d,0xf4,0xc6,0xf8};
+	unsigned char i2[4] = {0xe3,0xe2,0x8d,0x48};
+	unsigned char i3[4] = {0xb3,0x2b,0x2a,0x08};
+
+	// integer operators
+	uint32_t s0 = *((uint32_t*)i0);
+	uint32_t s1 = *((uint32_t*)i1);
+	uint32_t s2 = *((uint32_t*)i2);
+	uint32_t s3 = *((uint32_t*)i3);
+
+	// dump integer operators
+	hexdump("s0",(unsigned char*)&s0,32);
+	hexdump("s1",(unsigned char*)&s0,32);
+	hexdump("s2",(unsigned char*)&s0,32);
+	hexdump("s3",(unsigned char*)&s0,32);
+
+	return 0;
+}

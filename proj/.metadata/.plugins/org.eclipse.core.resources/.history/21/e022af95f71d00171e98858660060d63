@@ -1,0 +1,132 @@
+#include <stdint.h>
+#include "../logging.hpp"
+
+int main()
+{
+	// This file test how the OpenSSL library
+	// implement AES rounds using t-boxes
+
+	// From NIST 197 test vectors
+	// 
+	// Round input
+	// -----------
+	// 19 a0 9a e9
+	// 3d f4 c6 f8
+	// e3 e2 8d 48
+	// b3 2b 2a 08
+	//
+	unsigned char i0[4] = {0x19,0xa0,0x9a,0xe9};
+	unsigned char i1[4] = {0x3d,0xf4,0xc6,0xf8};
+	unsigned char i2[4] = {0xe3,0xe2,0x8d,0x48};
+	unsigned char i3[4] = {0xb3,0x2b,0x2a,0x08};
+
+	// integer operators
+	//
+	// s0 = 19 a0 9a e9
+	// s1 = 3d f4 c6 f8
+	// s2 = e3 e2 8d 48
+	// s3 = b3 2b 2a 08
+	//
+	uint32_t s0 = *((uint32_t*)i0);
+	uint32_t s1 = *((uint32_t*)i1);
+	uint32_t s2 = *((uint32_t*)i2);
+	uint32_t s3 = *((uint32_t*)i3);
+	hexdump("s0",(unsigned char*)&s0,4);
+	hexdump("s1",(unsigned char*)&s1,4);
+	hexdump("s2",(unsigned char*)&s2,4);
+	hexdump("s3",(unsigned char*)&s3,4);
+
+	// Because of little-endianess
+	// 19 a9 9a e9, for example, is shifted to:
+	//  a9 9a e9 00 (>> 8)
+	//  9a e9 00 00 (>> 16)
+	//  e9 00 00 00 (>> 24)
+	//
+	// Con una mascara 0xff nos podemos
+	// quedar con los dos primeros bytes
+	//  0x9ae90000 & 0xff000000 -> 0x9a000000
+	//  0xa99ae900 & 0xff000000 -> 0xa9000000
+	//
+	// En resumen, cada uno de los bytes del
+	// estado de entrada es equivalente a:
+	//  a00=s0&0xff a01=(s0>>8)&0xff a02=(s0>>16)&0xff a03=(s0>>24)
+	//  a10=s1&0xff a11=(s1>>8)&0xff a12=(s1>>16)&0xff a13=(s1>>24)
+	//  a20=s2&0xff a21=(s2>>8)&0xff a22=(s2>>16)&0xff a23=(s2>>24)
+	//  a30=s3&0xff a31=(s3>>8)&0xff a32=(s3>>16)&0xff a33=(s3>>24)
+	//
+	// Para este ejemplo:
+	//  19=s0&0xff a0=(s0>>8)&0xff 9a=(s0>>16)&0xff e9=(s0>>24)
+	//  3d=s1&0xff f4=(s1>>8)&0xff c6=(s1>>16)&0xff f8=(s1>>24)
+	//  e3=s2&0xff e2=(s2>>8)&0xff 8d=(s2>>16)&0xff 48=(s2>>24)
+	//  b3=s3&0xff 2b=(s3>>8)&0xff 2a=(s3>>16)&0xff 08=(s3>>24)
+	//
+
+	uint32_t s0_shift24 = s0 >> 24;
+	uint32_t s1_shift24 = s1 >> 24;
+	uint32_t s2_shift24 = s2 >> 24;
+	uint32_t s3_shift24 = s3 >> 24;
+	hexdump("s0_shift24",(unsigned char*)&s0_shift24,4);
+	hexdump("s1_shift24",(unsigned char*)&s1_shift24,4);
+	hexdump("s2_shift24",(unsigned char*)&s2_shift24,4);
+	hexdump("s3_shift24",(unsigned char*)&s3_shift24,4);
+
+	uint32_t s0_shift16 = s0 >> 16;
+	uint32_t s1_shift16 = s1 >> 16;
+	uint32_t s2_shift16 = s2 >> 16;
+	uint32_t s3_shift16 = s3 >> 16;
+	hexdump("s0_shift16",(unsigned char*)&s0_shift16,4);
+	hexdump("s1_shift16",(unsigned char*)&s1_shift16,4);
+	hexdump("s2_shift16",(unsigned char*)&s2_shift16,4);
+	hexdump("s3_shift16",(unsigned char*)&s3_shift16,4);
+	uint32_t s0_shift16andFF = s0_shift16 & 0xff;
+	uint32_t s1_shift16andFF = s1_shift16 & 0xff;
+	uint32_t s2_shift16andFF = s2_shift16 & 0xff;
+	uint32_t s3_shift16andFF = s3_shift16 & 0xff;
+	hexdump("s0_shift16andFF",(unsigned char*)&s0_shift16andFF,4);
+	hexdump("s1_shift16andFF",(unsigned char*)&s1_shift16andFF,4);
+	hexdump("s2_shift16andFF",(unsigned char*)&s2_shift16andFF,4);
+	hexdump("s3_shift16andFF",(unsigned char*)&s3_shift16andFF,4);
+
+	uint32_t s0_shift8 = s0 >> 8;
+	uint32_t s1_shift8 = s1 >> 8;
+	uint32_t s2_shift8 = s2 >> 8;
+	uint32_t s3_shift8 = s3 >> 8;
+	hexdump("s0_shift8",(unsigned char*)&s0_shift8,4);
+	hexdump("s1_shift8",(unsigned char*)&s1_shift8,4);
+	hexdump("s2_shift8",(unsigned char*)&s2_shift8,4);
+	hexdump("s3_shift8",(unsigned char*)&s3_shift8,4);
+	uint32_t s0_shift8andFF = s0_shift8 & 0xff;
+	uint32_t s1_shift8andFF = s1_shift8 & 0xff;
+	uint32_t s2_shift8andFF = s2_shift8 & 0xff;
+	uint32_t s3_shift8andFF = s3_shift8 & 0xff;
+	hexdump("s0_shift8andFF",(unsigned char*)&s0_shift8andFF,4);
+	hexdump("s1_shift8andFF",(unsigned char*)&s1_shift8andFF,4);
+	hexdump("s2_shift8andFF",(unsigned char*)&s2_shift8andFF,4);
+	hexdump("s3_shift8andFF",(unsigned char*)&s3_shift8andFF,4);
+
+	//
+	// Segun implementacion OpenSSL la salida e es:
+	//  e0 = T0[a03] ^ T1[a12] ^ T2[a21] ^ T3[a30] ^ K0
+	//  e1 = T0[a13] ^ T1[a22] ^ T2[a31] ^ T3[a00] ^ K1
+	//  e2 = T0[a23] ^ T1[a32] ^ T2[a01] ^ T3[a10] ^ K2
+	//  e3 = T0[a33] ^ T1[a02] ^ T2[a11] ^ T3[a20] ^ K3
+	//
+	// Pero dado que OpenSSL opera con little endian, en realidad:
+	// (se cambian los numeros de columnas 0 por 3, 3 por 0, 2 por 1, y 1 por 2)
+	//  e0 = T0[a00] ^ T1[a11] ^ T2[a22] ^ T3[a33] ^ K0
+	//  e1 = T0[a10] ^ T1[a21] ^ T2[a32] ^ T3[a03] ^ K1
+	//  e2 = T0[a20] ^ T1[a31] ^ T2[a02] ^ T3[a13] ^ K2
+	//  e3 = T0[a30] ^ T1[a01] ^ T2[a12] ^ T3[a23] ^ K3
+	//
+
+	// Según Rijndael Amended (by Joan Daemen and Vincent Rijmen)
+	//
+    // la salida 'e' de la ronda:
+	//  ej  e0 (j=0)  e1 (j=1) e2 (j=2) e3 (j=3)
+	//      |         |        |        |
+	//      e1j
+	//      e0
+
+
+	return 0;
+}

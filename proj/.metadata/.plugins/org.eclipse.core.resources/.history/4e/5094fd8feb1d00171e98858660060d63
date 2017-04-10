@@ -1,0 +1,21 @@
+#include "endianess.h"
+
+int main()
+{
+	// From NIST 197 test vectors
+	// 
+	// Round input
+	// -----------
+	// 19 a0 9a e9
+	// 3d f4 c6 f8
+	// e3 e2 8d 48
+	// b3 2b 2a 08
+	//
+	unsigned char[4] i0 = {0x19,0xa0,0x9a,0xe9};
+
+	s0 = 
+	s1 =
+	s2 =
+	s3 =
+	return 0;
+}

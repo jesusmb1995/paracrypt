@@ -1,18 +1,11 @@
-23:22:07 **** Incremental Build of configuration Debug for project pcnsight ****
-make all 
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
-	 obj/tests.o \
-	 obj/cuda_test_kernels.cu.o \
-	 obj/AES_key_schedule.o \
-	 obj/endianess.o \
-	 obj/AES.o \
-	 obj/CudaAES.o \
-	 obj/CudaEcbAes16B.o \
-	 obj/CudaEcbAes16B.cu.o \
-	 obj/CUDACipherDevice.o \
-	 obj/logging.o \
-	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
-# make icc
+18:46:40 **** Clean-only build of configuration Debug for project pcnsight ****
+make clean 
+rm -f obj/*.o
+rm -f lib/*.a
+rm -f bin/*
+rm -f src/*~
+rm -f src/tests/*~
+rm -f src/openssl/*~
 
-23:22:07 Build Finished (took 465ms)
+18:46:40 Build Finished (took 60ms)
 

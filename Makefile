@@ -70,7 +70,19 @@ $(OBJ_DIR)/tests.o: $(TST_DIR)/tests.cpp
 #
 $(OBJ_DIR)/cuda_test_kernels.cu.o: $(TST_DIR)/cuda_test_kernels.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
+#
+$(OBJ_DIR)/cpu_AES_round_example.o: $(TST_DIR)/cpu_AES_round_example.c
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #	
+cpu_AES_round_example: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
+cpu_AES_round_example: \
+$(OBJ_DIR)/cpu_AES_round_example.o \
+$(OBJ_DIR)/logging.o
+	 $(CXX) $(CXX_FLAGS_) \
+	 $(OBJ_DIR)/cpu_AES_round_example.o \
+	 $(OBJ_DIR)/logging.o \
+	 -o $(BIN_DIR)/cpu_AES_round_example $(LIBS)
+#
 tests: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
 tests: NVCC_FLAGS_ += -g -DDEBUG -DDEVEL
 tests: \
