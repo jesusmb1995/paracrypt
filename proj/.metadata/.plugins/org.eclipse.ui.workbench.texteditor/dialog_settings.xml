@@ -2,12 +2,13 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="cudaMemcpyHostToDevice" key="selection"/>
+		<item value="" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="key_u32_w1"/>
 			<item value="cudaMemcpyHostToDevice"/>
 			<item value="mall"/>
 			<item value="GETU32"/>
@@ -15,15 +16,14 @@
 			<item value="0x39"/>
 			<item value="PUTU32"/>
 			<item value="dev"/>
-			<item value="addStre"/>
 		</list>
 		<list key="replacehistory">
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="309" key="DIALOG_WIDTH"/>
+		<item value="289" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="564" key="DIALOG_HEIGHT"/>
+		<item value="544" key="DIALOG_HEIGHT"/>
 		<item value="2930" key="DIALOG_X_ORIGIN"/>
 		<item value="350" key="DIALOG_Y_ORIGIN"/>
 	</section>

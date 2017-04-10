@@ -10,27 +10,12 @@
 		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
 	</section>
 	<section name="TextSearchPage">
-		<item value="4" key="HISTORY_SIZE"/>
+		<item value="5" key="HISTORY_SIZE"/>
 		<item value="false" key="CASE_SENSITIVE"/>
 		<item value="false" key="REG_EX_SEARCH"/>
 		<item value="false" key="WHOLE_WORD"/>
 		<item value="false" key="SEARCH_DERIVED"/>
-		<section name="EXTENSIONS">
-			<item value="*" key="0"/>
-		</section>
-		<section name="HISTORY2">
-			<item value="true" key="ignoreCase"/>
-			<item value="0" key="scope"/>
-			<item value="false" key="isWholeWord"/>
-			<item value="lock" key="textPattern"/>
-			<item value="false" key="isRegExSearch"/>
-			<list key="fileNamePatterns">
-				<item value="*"/>
-			</list>
-			<list key="workingSets">
-			</list>
-		</section>
-		<section name="HISTORY3">
+		<section name="HISTORY4">
 			<item value="true" key="ignoreCase"/>
 			<item value="0" key="scope"/>
 			<item value="false" key="isWholeWord"/>
@@ -42,11 +27,38 @@
 			<list key="workingSets">
 			</list>
 		</section>
+		<section name="EXTENSIONS">
+			<item value="*" key="0"/>
+		</section>
+		<section name="HISTORY2">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="lock(" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
+		<section name="HISTORY3">
+			<item value="true" key="ignoreCase"/>
+			<item value="0" key="scope"/>
+			<item value="false" key="isWholeWord"/>
+			<item value="lock" key="textPattern"/>
+			<item value="false" key="isRegExSearch"/>
+			<list key="fileNamePatterns">
+				<item value="*"/>
+			</list>
+			<list key="workingSets">
+			</list>
+		</section>
 		<section name="HISTORY0">
 			<item value="true" key="ignoreCase"/>
 			<item value="0" key="scope"/>
 			<item value="false" key="isWholeWord"/>
-			<item value="pthread_rwlock_unlock" key="textPattern"/>
+			<item value="key_u32_w1" key="textPattern"/>
 			<item value="false" key="isRegExSearch"/>
 			<list key="fileNamePatterns">
 				<item value="*"/>
@@ -58,7 +70,7 @@
 			<item value="true" key="ignoreCase"/>
 			<item value="0" key="scope"/>
 			<item value="false" key="isWholeWord"/>
-			<item value="lock(" key="textPattern"/>
+			<item value="pthread_rwlock_unlock" key="textPattern"/>
 			<item value="false" key="isRegExSearch"/>
 			<list key="fileNamePatterns">
 				<item value="*"/>

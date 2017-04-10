@@ -71,8 +71,8 @@ $(OBJ_DIR)/tests.o: $(TST_DIR)/tests.cpp
 $(OBJ_DIR)/cuda_test_kernels.cu.o: $(TST_DIR)/cuda_test_kernels.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
 #	
-tests: CXX_FLAGS_ += -g -DDEBUG
-tests: NVCC_FLAGS_ += -g -DDEBUG
+tests: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
+tests: NVCC_FLAGS_ += -g -DDEBUG -DDEVEL
 tests: \
 $(OBJ_DIR)/tests.o \
 $(OBJ_DIR)/cuda_test_kernels.cu.o \

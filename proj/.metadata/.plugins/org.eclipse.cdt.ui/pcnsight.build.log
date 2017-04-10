@@ -1,6 +1,6 @@
-22:49:49 **** Incremental Build of configuration Debug for project pcnsight ****
+23:22:07 **** Incremental Build of configuration Debug for project pcnsight ****
 make all 
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG \
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
 	 obj/tests.o \
 	 obj/cuda_test_kernels.cu.o \
 	 obj/AES_key_schedule.o \
@@ -14,5 +14,5 @@ g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG \
 	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
 # make icc
 
-22:49:49 Build Finished (took 474ms)
+23:22:07 Build Finished (took 465ms)
 
