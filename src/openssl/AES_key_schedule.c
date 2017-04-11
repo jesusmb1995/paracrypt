@@ -36,6 +36,18 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/*-
+Te0[x] = S [x].[02, 01, 01, 03];
+Te1[x] = S [x].[03, 02, 01, 01];
+Te2[x] = S [x].[01, 03, 02, 01];
+Te3[x] = S [x].[01, 01, 03, 02];
+
+Td0[x] = Si[x].[0e, 09, 0d, 0b];
+Td1[x] = Si[x].[0b, 0e, 09, 0d];
+Td2[x] = Si[x].[0d, 0b, 0e, 09];
+Td3[x] = Si[x].[09, 0d, 0b, 0e];
+*/
+
 static const u32 Te0[256] = {
     0xc66363a5U, 0xf87c7c84U, 0xee777799U, 0xf67b7b8dU,
     0xfff2f20dU, 0xd66b6bbdU, 0xde6f6fb1U, 0x91c5c554U,

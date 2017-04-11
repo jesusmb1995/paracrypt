@@ -1,11 +1,35 @@
-23:32:46 **** Clean-only build of configuration Debug for project pcnsight ****
-make clean 
-rm -f obj/*.o
-rm -f lib/*.a
-rm -f bin/*
-rm -f src/*~
-rm -f src/tests/*~
-rm -f src/openssl/*~
+19:16:08 **** Build of configuration Debug for project pcnsight ****
+make cpu_AES_round_example 
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/tests/cpu_AES_round_example.c -o obj/cpu_AES_round_example.o -I/usr/local/cuda/include
+src/tests/cpu_AES_round_example.c: In function ‘int main()’:
+src/tests/cpu_AES_round_example.c:1223:17: warning: unused variable ‘s0le_byte’ [-Wunused-variable]
+  unsigned char* s0le_byte = (unsigned char*)&s0le;
+                 ^
+src/tests/cpu_AES_round_example.c:1224:17: warning: unused variable ‘s1le_byte’ [-Wunused-variable]
+  unsigned char* s1le_byte = (unsigned char*)&s1le;
+                 ^
+src/tests/cpu_AES_round_example.c:1225:17: warning: unused variable ‘s2le_byte’ [-Wunused-variable]
+  unsigned char* s2le_byte = (unsigned char*)&s2le;
+                 ^
+src/tests/cpu_AES_round_example.c:1226:17: warning: unused variable ‘s3le_byte’ [-Wunused-variable]
+  unsigned char* s3le_byte = (unsigned char*)&s3le;
+                 ^
+src/tests/cpu_AES_round_example.c:1228:11: warning: unused variable ‘keyle_w1’ [-Wunused-variable]
+  uint32_t keyle_w1 = 0xa088232a;
+           ^
+src/tests/cpu_AES_round_example.c:1229:11: warning: unused variable ‘keyle_w2’ [-Wunused-variable]
+  uint32_t keyle_w2 = 0xfa54a36c;
+           ^
+src/tests/cpu_AES_round_example.c:1230:11: warning: unused variable ‘keyle_w3’ [-Wunused-variable]
+  uint32_t keyle_w3 = 0xfe2c3976;
+           ^
+src/tests/cpu_AES_round_example.c:1231:11: warning: unused variable ‘keyle_w4’ [-Wunused-variable]
+  uint32_t keyle_w4 = 0x17b13905;
+           ^
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
+	 obj/cpu_AES_round_example.o \
+	 obj/logging.o \
+	 -o bin/cpu_AES_round_example -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
 
-23:32:46 Build Finished (took 73ms)
+19:16:12 Build Finished (took 3s.981ms)
 

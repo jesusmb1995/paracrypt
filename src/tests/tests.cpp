@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include "../logging.hpp"
 #include "../openssl/AES_key_schedule.h"
-#include "../CUDACipherDevice.hpp"
-#include "../CudaEcbAes16B.hpp"
+#include "../device/CUDACipherDevice.hpp"
+#include "../AES/CudaEcbAes16B.hpp"
 #include "../endianess.h"
 #include "cuda_test_kernels.cuh"
 

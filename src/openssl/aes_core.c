@@ -919,9 +919,9 @@ void AES_encrypt(const unsigned char *in, unsigned char *out,
             Te3[(s2      ) & 0xff] ^
             rk[7];
 
-        LOG_TRACE(boost::format("round %d: t3 => 0x%x") % r % t0);
-        LOG_TRACE(boost::format("round %d: t3 => 0x%x") % r % t1);
-        LOG_TRACE(boost::format("round %d: t3 => 0x%x") % r % t2);
+        LOG_TRACE(boost::format("round %d: t0 => 0x%x") % r % t0);
+        LOG_TRACE(boost::format("round %d: t1 => 0x%x") % r % t1);
+        LOG_TRACE(boost::format("round %d: t2 => 0x%x") % r % t2);
     	LOG_TRACE(boost::format("round %d: t3 => 0x%x") % r % t3);
 
         rk += 8;
@@ -969,6 +969,9 @@ void AES_encrypt(const unsigned char *in, unsigned char *out,
      * apply last round and
      * map cipher state to byte array block:
      */
+    LOG_TRACE(boost::format("last: (t0 >> 24) => 0x%x") % (t0 >> 24));
+    LOG_TRACE(boost::format("last: Te2[(t0 >> 24)] => 0x%x") % Te2[(t0 >> 24)]);
+    LOG_TRACE(boost::format("last: Te2[(t0 >> 24)] & 0xff000000 => 0x%x") % (Te2[(t0 >> 24)]&0xff000000));
     s0 =
         (Te2[(t0 >> 24)       ] & 0xff000000) ^
         (Te3[(t1 >> 16) & 0xff] & 0x00ff0000) ^
@@ -1028,6 +1031,10 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
     s1 = GETU32(in +  4) ^ rk[1];
     s2 = GETU32(in +  8) ^ rk[2];
     s3 = GETU32(in + 12) ^ rk[3];
+    LOG_TRACE(boost::format("round %d: s0 => 0x%x") % r % s0);
+    LOG_TRACE(boost::format("round %d: s1 => 0x%x") % r % s1);
+    LOG_TRACE(boost::format("round %d: s2 => 0x%x") % r % s2);
+	LOG_TRACE(boost::format("round %d: s3 => 0x%x") % r % s3);
 #ifdef FULL_UNROLL
     /* round 1: */
     t0 = Td0[s0 >> 24] ^ Td1[(s3 >> 16) & 0xff] ^ Td2[(s2 >>  8) & 0xff] ^ Td3[s1 & 0xff] ^ rk[ 4];
@@ -1105,6 +1112,11 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
      */
     r = key->rounds >> 1;
     for (;;) {
+        LOG_TRACE(boost::format("round %d: k[0] => 0x%08x") % r % rk[4]);
+        LOG_TRACE(boost::format("round %d: k[1] => 0x%08x") % r % rk[5]);
+        LOG_TRACE(boost::format("round %d: k[2] => 0x%08x") % r % rk[6]);
+    	LOG_TRACE(boost::format("round %d: k[3] => 0x%08x") % r % rk[7]);
+
         t0 =
             Td0[(s0 >> 24)       ] ^
             Td1[(s3 >> 16) & 0xff] ^
@@ -1130,10 +1142,20 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
             Td3[(s0      ) & 0xff] ^
             rk[7];
 
+        LOG_TRACE(boost::format("round %d: t0 => 0x%x") % r % t0);
+        LOG_TRACE(boost::format("round %d: t1 => 0x%x") % r % t1);
+        LOG_TRACE(boost::format("round %d: t2 => 0x%x") % r % t2);
+    	LOG_TRACE(boost::format("round %d: t3 => 0x%x") % r % t3);
+
         rk += 8;
         if (--r == 0) {
             break;
         }
+
+        LOG_TRACE(boost::format("round %d: k[0] => 0x%08x") % r % rk[0]);
+        LOG_TRACE(boost::format("round %d: k[1] => 0x%08x") % r % rk[1]);
+        LOG_TRACE(boost::format("round %d: k[2] => 0x%08x") % r % rk[2]);
+    	LOG_TRACE(boost::format("round %d: k[3] => 0x%08x") % r % rk[3]);
 
         s0 =
             Td0[(t0 >> 24)       ] ^
@@ -1159,18 +1181,39 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
             Td2[(t1 >>  8) & 0xff] ^
             Td3[(t0      ) & 0xff] ^
             rk[3];
+
+        LOG_TRACE(boost::format("round %d: s0 => 0x%x") % r % s0);
+        LOG_TRACE(boost::format("round %d: s1 => 0x%x") % r % s1);
+        LOG_TRACE(boost::format("round %d: s2 => 0x%x") % r % s2);
+    	LOG_TRACE(boost::format("round %d: s3 => 0x%x") % r % s3);
     }
 #endif /* ?FULL_UNROLL */
+    LOG_TRACE(boost::format("last: k[0] => 0x%08x") % rk[0]);
+    LOG_TRACE(boost::format("last: k[1] => 0x%08x") % rk[1]);
+    LOG_TRACE(boost::format("last: k[2] => 0x%08x") % rk[2]);
+	LOG_TRACE(boost::format("last: k[3] => 0x%08x") % rk[3]);
     /*
      * apply last round and
      * map cipher state to byte array block:
      */
+    LOG_TRACE(boost::format("last_decrypt: (t0 >> 24)        => 0x%x") % ((t0 >> 24)       ));
+    LOG_TRACE(boost::format("last_decrypt: (t3 >> 16) & 0xff => 0x%x") % ((t3 >> 16) & 0xff));
+    LOG_TRACE(boost::format("last_decrypt: (t2 >>  8) & 0xff => 0x%x") % ((t2 >>  8) & 0xff));
+    LOG_TRACE(boost::format("last_decrypt: (t1      ) & 0xff => 0x%x") % ((t1      ) & 0xff));
+    LOG_TRACE(boost::format("last_decrypt: do0 = 0x%x ^ 0x%x ^ 0x%x ^ 0x%x ^ 0x%x")
+    % ((u32)Td4[(t0 >> 24)       ] << 24)
+    % ((u32)Td4[(t3 >> 16) & 0xff] << 16)
+    % ((u32)Td4[(t2 >>  8) & 0xff] <<  8)
+    % ((u32)Td4[(t1      ) & 0xff])
+    % rk[0]
+    );
     s0 =
         ((u32)Td4[(t0 >> 24)       ] << 24) ^
         ((u32)Td4[(t3 >> 16) & 0xff] << 16) ^
         ((u32)Td4[(t2 >>  8) & 0xff] <<  8) ^
         ((u32)Td4[(t1      ) & 0xff])       ^
         rk[0];
+    LOG_TRACE(boost::format("last: s0 => 0x%x") % s0);
     PUTU32(out     , s0);
     s1 =
         ((u32)Td4[(t1 >> 24)       ] << 24) ^
@@ -1178,6 +1221,7 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
         ((u32)Td4[(t3 >>  8) & 0xff] <<  8) ^
         ((u32)Td4[(t2      ) & 0xff])       ^
         rk[1];
+    LOG_TRACE(boost::format("last: s1 => 0x%x") % s1);
     PUTU32(out +  4, s1);
     s2 =
         ((u32)Td4[(t2 >> 24)       ] << 24) ^
@@ -1185,6 +1229,7 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
         ((u32)Td4[(t0 >>  8) & 0xff] <<  8) ^
         ((u32)Td4[(t3      ) & 0xff])       ^
         rk[2];
+    LOG_TRACE(boost::format("last: s2 => 0x%x") % s2);
     PUTU32(out +  8, s2);
     s3 =
         ((u32)Td4[(t3 >> 24)       ] << 24) ^
@@ -1192,6 +1237,7 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
         ((u32)Td4[(t1 >>  8) & 0xff] <<  8) ^
         ((u32)Td4[(t0      ) & 0xff])       ^
         rk[3];
+	LOG_TRACE(boost::format("last: s3 => 0x%x") % s3);
     PUTU32(out + 12, s3);
 }
 

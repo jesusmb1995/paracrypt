@@ -1,5 +1,5 @@
 #include "cuda_test_kernels.cuh"
-#include "../CudaEcbAes16B.cuh"
+#include "../AES/CudaEcbAes16B.cuh"
 #include "../cuda_logging.cuh"
 
 __global__ void aes_add_16B_round_key_kernel
