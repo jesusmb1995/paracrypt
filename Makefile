@@ -115,8 +115,8 @@ $(OBJ_DIR)/logging.o
 	 $(OBJ_DIR)/logging.o \
 	 -o $(BIN_DIR)/cpu_AES_round_example $(LIBS)
 #
-tests: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
-tests: NVCC_FLAGS_ += -g -DDEBUG -DDEVEL
+tests: CXX_FLAGS_ += -g -DDEBUG #-DDEVEL
+tests: NVCC_FLAGS_ += -g -DDEBUG #-DDEVEL
 tests: \
 $(OBJ_DIR)/tests.o \
 $(OBJ_DIR)/cuda_test_kernels.cu.o \

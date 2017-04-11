@@ -1,7 +1,0 @@
-[2017-04-07 21:40:26.484420] [0x00007f19c32fe780] [trace]
-#ifdef DEBUG
-#define LOG_TRACE(str) BOOST_LOG_TRIVIAL(trace) << (str)
-#define LOG_DEBUG(str) BOOST_LOG_TRIVIAL(debug) << (str)
-#else
-#define DEBUG_TEST
-#endif

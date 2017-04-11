@@ -1,7 +1,22 @@
-19:16:08 **** Build of configuration Debug for project pcnsight ****
+23:29:14 **** Build of configuration Debug for project pcnsight ****
 make cpu_AES_round_example 
 g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/tests/cpu_AES_round_example.c -o obj/cpu_AES_round_example.o -I/usr/local/cuda/include
 src/tests/cpu_AES_round_example.c: In function ‘int main()’:
+src/tests/cpu_AES_round_example.c:1594:42: error: ‘p’ was not declared in this scope
+  printf("p: (t0      ) & 0xff => 0x%04x",p,(j0be      ) & 0xff);
+                                          ^
+src/tests/cpu_AES_round_example.c:1598:48: error: ‘T0’ was not declared in this scope
+  printf("p: T0[(t0      ) & 0xff] => 0x%04x",p,T0[(j0be      ) & 0xff]);
+                                                ^
+src/tests/cpu_AES_round_example.c:1599:48: error: ‘T1’ was not declared in this scope
+  printf("p: T1[(t1 >>  8) & 0xff] => 0x%04x",p,T1[(j1be >>  8) & 0xff]);
+                                                ^
+src/tests/cpu_AES_round_example.c:1600:48: error: ‘T2’ was not declared in this scope
+  printf("p: T2[(t2 >> 16) & 0xff] => 0x%04x",p,T2[(j2be >> 16) & 0xff]);
+                                                ^
+src/tests/cpu_AES_round_example.c:1601:48: error: ‘T3’ was not declared in this scope
+  printf("p: T3[(t3 >> 24)       ] => 0x%04x",p,T3[(j3be >> 24)       ]);
+                                                ^
 src/tests/cpu_AES_round_example.c:1223:17: warning: unused variable ‘s0le_byte’ [-Wunused-variable]
   unsigned char* s0le_byte = (unsigned char*)&s0le;
                  ^
@@ -26,7 +41,288 @@ src/tests/cpu_AES_round_example.c:1230:11: warning: unused variable ‘keyle_w3�
 src/tests/cpu_AES_round_example.c:1231:11: warning: unused variable ‘keyle_w4’ [-Wunused-variable]
   uint32_t keyle_w4 = 0x17b13905;
            ^
+make: *** [obj/cpu_AES_round_example.o] Error 1
+23:30:33 **** Clean-only build of configuration Debug for project pcnsight ****
+make clean 
+rm -f obj/*.o
+rm -f lib/*.a
+rm -f bin/*
+rm -f src/*~
+rm -f src/tests/*~
+rm -f src/openssl/*~
+23:30:37 **** Build of configuration Debug for project pcnsight ****
+make all 
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+In file included from src/tests/tests.cpp:32:0:
+src/tests/cuda_aes_test.cpp: In member function ‘void cuda_aes::cuda_ecb_aes_16b::test_method()’:
+src/tests/cuda_aes_test.cpp:10:25: warning: unused variable ‘expected_output’ [-Wunused-variable]
+     const unsigned char expected_output[128] = {
+                         ^
+/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/tests/cuda_test_kernels.cu -o obj/cuda_test_kernels.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/endianess.c -o obj/endianess.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/logging.cpp -o obj/logging.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/AES.cpp -o obj/AES.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes.cpp -o obj/CudaEcbAes.o -I/usr/local/cuda/include
+src/AES/CudaEcbAes.cpp: In member function ‘virtual int paracrypt::CudaEcbAES::decrypt(const unsigned char*, const unsigned char*, int)’:
+src/AES/CudaEcbAes.cpp:42:9: warning: unused variable ‘gridSize’ [-Wunused-variable]
+     int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
+         ^
+src/AES/CudaEcbAes.cpp:43:9: warning: unused variable ‘threadsPerBlock’ [-Wunused-variable]
+     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+         ^
+src/AES/CudaEcbAes.cpp:45:15: warning: unused variable ‘key’ [-Wunused-variable]
+     uint32_t *key = this->getDeviceDKey();
+               ^
+src/AES/CudaEcbAes.cpp:46:9: warning: unused variable ‘rounds’ [-Wunused-variable]
+     int rounds = this->getDecryptionExpandedKey()->rounds;
+         ^
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/device/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
 g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
-	 obj/cpu_AES_round_example.o \
+	 obj/tests.o \
+	 obj/cuda_test_kernels.cu.o \
+	 obj/AES_key_schedule.o \
+	 obj/endianess.o \
+	 obj/AES.o \
+	 obj/CudaAES.o \
+	 obj/CudaEcbAes.o \
+	 obj/CudaEcbAes16B.o \
+	 obj/CudaEcbAes16B.cu.o \
+	 obj/CUDACipherDevice.o \
 	 obj/logging.o \
-	 -o bin/cpu_AES_round_example -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+# make icc
+23:39:48 **** Clean-only build of configuration Debug for project pcnsight ****
+make clean 
+rm -f obj/*.o
+rm -f lib/*.a
+rm -f bin/*
+rm -f src/*~
+rm -f src/tests/*~
+rm -f src/openssl/*~
+23:39:50 **** Build of configuration Debug for project pcnsight ****
+make all 
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/tests/cuda_test_kernels.cu -o obj/cuda_test_kernels.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/endianess.c -o obj/endianess.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/logging.cpp -o obj/logging.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/AES.cpp -o obj/AES.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes.cpp -o obj/CudaEcbAes.o -I/usr/local/cuda/include
+src/AES/CudaEcbAes.cpp: In member function ‘virtual int paracrypt::CudaEcbAES::decrypt(const unsigned char*, const unsigned char*, int)’:
+src/AES/CudaEcbAes.cpp:42:9: warning: unused variable ‘gridSize’ [-Wunused-variable]
+     int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
+         ^
+src/AES/CudaEcbAes.cpp:43:9: warning: unused variable ‘threadsPerBlock’ [-Wunused-variable]
+     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+         ^
+src/AES/CudaEcbAes.cpp:45:15: warning: unused variable ‘key’ [-Wunused-variable]
+     uint32_t *key = this->getDeviceDKey();
+               ^
+src/AES/CudaEcbAes.cpp:46:9: warning: unused variable ‘rounds’ [-Wunused-variable]
+     int rounds = this->getDecryptionExpandedKey()->rounds;
+         ^
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/device/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
+	 obj/tests.o \
+	 obj/cuda_test_kernels.cu.o \
+	 obj/AES_key_schedule.o \
+	 obj/endianess.o \
+	 obj/AES.o \
+	 obj/CudaAES.o \
+	 obj/CudaEcbAes.o \
+	 obj/CudaEcbAes16B.o \
+	 obj/CudaEcbAes16B.cu.o \
+	 obj/CUDACipherDevice.o \
+	 obj/logging.o \
+	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+# make icc
+23:44:21 **** Clean-only build of configuration Debug for project pcnsight ****
+make clean 
+rm -f obj/*.o
+rm -f lib/*.a
+rm -f bin/*
+rm -f src/*~
+rm -f src/tests/*~
+rm -f src/openssl/*~
+23:44:22 **** Build of configuration Debug for project pcnsight ****
+make all 
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/tests/cuda_test_kernels.cu -o obj/cuda_test_kernels.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/endianess.c -o obj/endianess.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/logging.cpp -o obj/logging.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/AES.cpp -o obj/AES.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes.cpp -o obj/CudaEcbAes.o -I/usr/local/cuda/include
+src/AES/CudaEcbAes.cpp: In member function ‘virtual int paracrypt::CudaEcbAES::decrypt(const unsigned char*, const unsigned char*, int)’:
+src/AES/CudaEcbAes.cpp:42:9: warning: unused variable ‘gridSize’ [-Wunused-variable]
+     int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
+         ^
+src/AES/CudaEcbAes.cpp:43:9: warning: unused variable ‘threadsPerBlock’ [-Wunused-variable]
+     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+         ^
+src/AES/CudaEcbAes.cpp:45:15: warning: unused variable ‘key’ [-Wunused-variable]
+     uint32_t *key = this->getDeviceDKey();
+               ^
+src/AES/CudaEcbAes.cpp:46:9: warning: unused variable ‘rounds’ [-Wunused-variable]
+     int rounds = this->getDecryptionExpandedKey()->rounds;
+         ^
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/device/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
+	 obj/tests.o \
+	 obj/cuda_test_kernels.cu.o \
+	 obj/AES_key_schedule.o \
+	 obj/endianess.o \
+	 obj/AES.o \
+	 obj/CudaAES.o \
+	 obj/CudaEcbAes.o \
+	 obj/CudaEcbAes16B.o \
+	 obj/CudaEcbAes16B.cu.o \
+	 obj/CUDACipherDevice.o \
+	 obj/logging.o \
+	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+# make icc
+23:58:57 **** Clean-only build of configuration Debug for project pcnsight ****
+make clean 
+rm -f obj/*.o
+rm -f lib/*.a
+rm -f bin/*
+rm -f src/*~
+rm -f src/tests/*~
+rm -f src/openssl/*~
+23:59:06 **** Build of configuration Debug for project pcnsight ****
+make all 
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/tests/cuda_test_kernels.cu -o obj/cuda_test_kernels.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/endianess.c -o obj/endianess.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/logging.cpp -o obj/logging.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/AES.cpp -o obj/AES.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes.cpp -o obj/CudaEcbAes.o -I/usr/local/cuda/include
+src/AES/CudaEcbAes.cpp: In member function ‘virtual int paracrypt::CudaEcbAES::decrypt(const unsigned char*, const unsigned char*, int)’:
+src/AES/CudaEcbAes.cpp:42:9: warning: unused variable ‘gridSize’ [-Wunused-variable]
+     int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
+         ^
+src/AES/CudaEcbAes.cpp:43:9: warning: unused variable ‘threadsPerBlock’ [-Wunused-variable]
+     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+         ^
+src/AES/CudaEcbAes.cpp:45:15: warning: unused variable ‘key’ [-Wunused-variable]
+     uint32_t *key = this->getDeviceDKey();
+               ^
+src/AES/CudaEcbAes.cpp:46:9: warning: unused variable ‘rounds’ [-Wunused-variable]
+     int rounds = this->getDecryptionExpandedKey()->rounds;
+         ^
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/AES/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/device/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
+	 obj/tests.o \
+	 obj/cuda_test_kernels.cu.o \
+	 obj/AES_key_schedule.o \
+	 obj/endianess.o \
+	 obj/AES.o \
+	 obj/CudaAES.o \
+	 obj/CudaEcbAes.o \
+	 obj/CudaEcbAes16B.o \
+	 obj/CudaEcbAes16B.cu.o \
+	 obj/CUDACipherDevice.o \
+	 obj/logging.o \
+	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+# make icc
+00:00:57 **** Clean-only build of configuration Debug for project pcnsight ****
+make clean 
+rm -f obj/*.o
+rm -f lib/*.a
+rm -f bin/*
+rm -f src/*~
+rm -f src/tests/*~
+rm -f src/openssl/*~
+00:00:59 **** Build of configuration Debug for project pcnsight ****
+make all 
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+In file included from src/tests/tests.cpp:32:0:
+src/tests/cuda_aes_test.cpp: In member function ‘void cuda_aes::cuda_ecb_aes_16b_1kblocks::test_method()’:
+src/tests/cuda_aes_test.cpp:48:24: error: too few arguments to function ‘void* memcpy(void*, const void*, size_t)’
+      memcpy(data+(i*16)),block,16);
+                        ^
+In file included from /usr/include/c++/4.8/cstring:42:0,
+                 from /usr/include/boost/type_index/type_index_facade.hpp:14,
+                 from /usr/include/boost/type_index/stl_type_index.hpp:22,
+                 from /usr/include/boost/type_index.hpp:29,
+                 from /usr/include/boost/function/function_base.hpp:21,
+                 from /usr/include/boost/function/detail/prologue.hpp:17,
+                 from /usr/include/boost/function/function_template.hpp:13,
+                 from /usr/include/boost/function/detail/maybe_include.hpp:13,
+                 from /usr/include/boost/function/function0.hpp:11,
+                 from /usr/include/boost/test/execution_monitor.hpp:28,
+                 from /usr/include/boost/test/impl/compiler_log_formatter.ipp:22,
+                 from /usr/include/boost/test/included/unit_test.hpp:17,
+                 from src/tests/tests.cpp:2:
+/usr/include/string.h:46:14: note: declared here
+ extern void *memcpy (void *__restrict __dest, const void *__restrict __src,
+              ^
+In file included from src/tests/tests.cpp:32:0:
+src/tests/cuda_aes_test.cpp:48:34: error: expected ‘;’ before ‘)’ token
+      memcpy(data+(i*16)),block,16);
+                                  ^
+make: *** [obj/tests.o] Error 1
+00:01:23 **** Incremental Build of configuration Debug for project pcnsight ****
+make all 
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/tests/cuda_test_kernels.cu -o obj/cuda_test_kernels.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/endianess.c -o obj/endianess.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/logging.cpp -o obj/logging.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/AES.cpp -o obj/AES.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes.cpp -o obj/CudaEcbAes.o -I/usr/local/cuda/include
+src/AES/CudaEcbAes.cpp: In member function ‘virtual int paracrypt::CudaEcbAES::decrypt(const unsigned char*, const unsigned char*, int)’:
+src/AES/CudaEcbAes.cpp:42:9: warning: unused variable ‘gridSize’ [-Wunused-variable]
+     int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
+         ^
+src/AES/CudaEcbAes.cpp:43:9: warning: unused variable ‘threadsPerBlock’ [-Wunused-variable]
+     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+         ^
+src/AES/CudaEcbAes.cpp:45:15: warning: unused variable ‘key’ [-Wunused-variable]
+     uint32_t *key = this->getDeviceDKey();
+               ^
+src/AES/CudaEcbAes.cpp:46:9: warning: unused variable ‘rounds’ [-Wunused-variable]
+     int rounds = this->getDecryptionExpandedKey()->rounds;
+         ^
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/AES/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/device/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
+	 obj/tests.o \
+	 obj/cuda_test_kernels.cu.o \
+	 obj/AES_key_schedule.o \
+	 obj/endianess.o \
+	 obj/AES.o \
+	 obj/CudaAES.o \
+	 obj/CudaEcbAes.o \
+	 obj/CudaEcbAes16B.o \
+	 obj/CudaEcbAes16B.cu.o \
+	 obj/CUDACipherDevice.o \
+	 obj/logging.o \
+	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
+# make icc

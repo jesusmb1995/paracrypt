@@ -3,13 +3,14 @@
 
 paracrypt::CudaAES::~CudaAES()
 {
-    if (this->deviceKey != NULL) {
-	this->getDevice()->free(this->deviceKey);
+    if (this->deviceEKey != NULL) {
+	this->getDevice()->free(this->deviceEKey);
     }
-    if (this->deviceKey != NULL) {
+    if (this->deviceDKey != NULL) {
+    	this->getDevice()->free(this->deviceDKey);
+    }
+    if (this->data != NULL) {
 	this->getDevice()->free(this->data);
-    }
-    if (this->deviceKey != NULL) {
 	this->getDevice()->delStream(this->stream);
     }
     if (this->deviceTe0 != NULL) {
@@ -44,51 +45,57 @@ paracrypt::CudaAES::~CudaAES()
 // must be called after setKey
 void paracrypt::CudaAES::setDevice(CUDACipherDevice * device)
 {
-    if (this->deviceKey != NULL) {
-	this->getDevice()->free(this->deviceKey);
+    if (this->deviceEKey != NULL) {
+	this->getDevice()->free(this->deviceEKey);
+	this->deviceEKey = NULL;
     }
-    if (this->deviceKey != NULL) {
+    if (this->deviceDKey != NULL) {
+    	this->getDevice()->free(this->deviceDKey);
+    	this->deviceDKey = NULL;
+    }
+    if (this->data != NULL) {
 	this->getDevice()->free(this->data);
-    }
-    if (this->deviceKey != NULL) {
+	this->data = NULL;
 	this->getDevice()->delStream(this->stream);
     }
     if (this->deviceTe0 != NULL) {
 	this->getDevice()->free(this->deviceTe0);
+	this->deviceTe0 = NULL;
     }
     if (this->deviceTe1 != NULL) {
 	this->getDevice()->free(this->deviceTe1);
+	this->deviceTe1 = NULL;
     }
     if (this->deviceTe2 != NULL) {
 	this->getDevice()->free(this->deviceTe2);
+	this->deviceTe2 = NULL;
     }
     if (this->deviceTe3 != NULL) {
 	this->getDevice()->free(this->deviceTe3);
+	this->deviceTe3 = NULL;
     }
     if (this->deviceTd0 != NULL) {
 	this->getDevice()->free(this->deviceTd0);
+	this->deviceTd0 = NULL;
     }
     if (this->deviceTd1 != NULL) {
 	this->getDevice()->free(this->deviceTd1);
+	this->deviceTd1 = NULL;
     }
     if (this->deviceTd2 != NULL) {
 	this->getDevice()->free(this->deviceTd2);
+	this->deviceTd2 = NULL;
     }
     if (this->deviceTd3 != NULL) {
 	this->getDevice()->free(this->deviceTd3);
+	this->deviceTd3 = NULL;
     }
     if (this->deviceTd4 != NULL) {
 	this->getDevice()->free(this->deviceTd4);
+	this->deviceTd4 = NULL;
     }
     this->device = device;
     this->stream = this->getDevice()->addStream();
-    // copy round keys to device
-    int keySize =
-	(4 * (this->getExpandedKey()->rounds + 1)) * sizeof(uint32_t);
-    this->getDevice()->malloc((void **) &(this->deviceKey), keySize);
-    this->getDevice()->malloc((void **) &(this->deviceKey), keySize);
-    this->getDevice()->memcpyTo(this->getExpandedKey()->rd_key,
-				this->deviceKey, keySize, this->stream);
 }
 
 paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
@@ -96,9 +103,30 @@ paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
     return this->device;
 }
 
-uint32_t* paracrypt::CudaAES::getDeviceKey()
+uint32_t* paracrypt::CudaAES::getDeviceEKey()
 {
-    return this->deviceKey;
+	if(this->deviceEKey == NULL) {
+		int keySize =
+		(4 * (this->getEncryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
+		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
+		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
+		this->getDevice()->memcpyTo(this->getEncryptionExpandedKey()->rd_key,
+					this->deviceEKey, keySize, this->stream);
+	}
+    return this->deviceEKey;
+}
+
+uint32_t* paracrypt::CudaAES::getDeviceDKey()
+{
+	if(this->deviceDKey == NULL) {
+		int keySize =
+		(4 * (this->getDecryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
+		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
+		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
+		this->getDevice()->memcpyTo(this->getDecryptionExpandedKey()->rd_key,
+					this->deviceEKey, keySize, this->stream);
+	}
+    return this->deviceDKey;
 }
 
 void paracrypt::CudaAES::malloc(int n_blocks)

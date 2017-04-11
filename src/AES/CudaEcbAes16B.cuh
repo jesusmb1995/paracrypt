@@ -4,7 +4,7 @@
 
 #define BLOCK_SIZE 128
 
-#ifdef DEBUG && DEVEL
+#if defined(DEBUG) && defined(DEVEL)
 #define aes_add_16B_round_key(\
 data_u32_w1, data_u32_w2, data_u32_w3, data_u32_w4, \
 key_u32_w1, key_u32_w2, key_u32_w3, key_u32_w4\
@@ -91,6 +91,7 @@ void cuda_ecb_aes_16b_decrypt(int gridSize, int threadsPerBlock,
 void cuda_ecb_aes128_16b_encrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,
 		  	  uint32_t* deviceTe0,

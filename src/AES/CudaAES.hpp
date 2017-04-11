@@ -8,7 +8,8 @@ namespace paracrypt {
     class CudaAES:public AES {
       private:
 	CUDACipherDevice * device;
-	uint32_t* deviceKey = NULL;
+	uint32_t* deviceEKey = NULL;
+	uint32_t* deviceDKey = NULL;
 	uint32_t* deviceTe0 = NULL;
 	uint32_t* deviceTe1 = NULL;
 	uint32_t* deviceTe2 = NULL;
@@ -20,7 +21,8 @@ namespace paracrypt {
 	uint8_t* deviceTd4 = NULL;
       protected:
 	unsigned char *data = NULL;
-	uint32_t* getDeviceKey();
+	uint32_t* getDeviceEKey();
+	uint32_t* getDeviceDKey();
 	uint32_t* getDeviceTe0();
 	uint32_t* getDeviceTe1();
 	uint32_t* getDeviceTe2();

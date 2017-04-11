@@ -1591,6 +1591,19 @@ int main()
     //LOG_TRACE(boost::format("last: (j0be) & 0xff => 0x%x") % ((j0be      ) & 0xff));
     //LOG_TRACE(boost::format("last: Te2[ (j0be) & 0xff] => 0x%x") % Te2[(t0 >> 24)]);
     //LOG_TRACE(boost::format("last: Te2[(t0 >> 24)] & 0xff000000 => 0x%x") % (Te2[(t0 >> 24)]&0xff000000));
+	printf("p: (t0      ) & 0xff => 0x%04x",(j0be      ) & 0xff);
+	printf("p: (t1 >>  8) & 0xff => 0x%04x",(j1be >>  8) & 0xff);
+	printf("p: (t2 >> 16) & 0xff => 0x%04x",(j2be >> 16) & 0xff);
+	printf("p: (t3 >> 24)        => 0x%04x",(j3be >> 24));
+	printf("p: T0[(t0      ) & 0xff] => 0x%04x",T0[(j0be      ) & 0xff]);
+	printf("p: T1[(t1 >>  8) & 0xff] => 0x%04x",T1[(j1be >>  8) & 0xff]);
+	printf("p: T2[(t2 >> 16) & 0xff] => 0x%04x",T2[(j2be >> 16) & 0xff]);
+	printf("p: T3[(t3 >> 24)       ] => 0x%04x",T3[(j3be >> 24)       ]);
+	printf("p: T0[(t0      ) & 0xff] & 0x000000ff => 0x%04x",T0[(j0be      ) & 0xff] & 0x000000ff);
+	printf("p: T1[(t1 >>  8) & 0xff] & 0x0000ff00  => 0x%04x",T1[(j1be >>  8) & 0xff] & 0x0000ff00);
+	printf("p: T2[(t2 >> 16) & 0xff] & 0x00ff0000  => 0x%04x",T2[(j2be >> 16) & 0xff] & 0x00ff0000);
+	printf("p: T3[(t3 >> 24)       ] & 0xff000000  => 0x%04x",T3[(j3be >> 24)       ] & 0xff000000);
+
     uint32_t out0 =
         (Te2_be[(j0be      ) & 0xff] & 0x000000ff) ^
         (Te3_be[(j1be >>  8) & 0xff] & 0x0000ff00) ^

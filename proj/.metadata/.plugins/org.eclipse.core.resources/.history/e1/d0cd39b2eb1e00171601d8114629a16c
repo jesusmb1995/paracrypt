@@ -1,0 +1,34 @@
+#pragma once
+
+#include "../BlockCipher.hpp"
+#include "../openssl/AES_key_schedule.h"
+
+namespace paracrypt {
+
+    class AES:public BlockCipher {
+#define AES_STATE_SIZE 128
+#define AES_BLOCK_SIZE AES_STATE_SIZE
+
+      private:
+    unsigned char* key;
+	AES_KEY * enRoundKeys;
+	AES_KEY * deRoundKeys;
+	bool keyPropietary;
+      public:
+	 AES();
+	~AES();
+	virtual int encrypt(const unsigned char in[],
+			    const unsigned char out[], int n_blocks)
+	    = 0;
+	virtual int decrypt(const unsigned char in[],
+			    const unsigned char out[], int n_blocks)
+	    = 0;
+	int setKey(const unsigned char key[], int bits);
+	int setEncryption(AES_KEY * expandedKey);
+	int setDecryption(AES_KEY * expandedKey);
+	AES_KEY *getEncryptionExpandedKey();
+	AES_KEY *getDecryptionExpandedKey();
+	int setBlockSize(int bits);
+    };
+
+}

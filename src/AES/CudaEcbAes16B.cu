@@ -82,6 +82,7 @@ void cuda_ecb_aes_16b_decrypt(int gridSize, int threadsPerBlock,
 }
 
 __global__ void __cuda_ecb_aes128_16b_encrypt__(
+		  int n,
 		  uint32_t* d,
 	  	  uint32_t* k,
 	  	  uint32_t* T0,
@@ -90,131 +91,172 @@ __global__ void __cuda_ecb_aes128_16b_encrypt__(
 	  	  uint32_t* T3
     )
 {
-	int p = ((blockIdx.x * blockDim.x) + threadIdx.x)*4;
-	uint32_t s0,s1,s2,s3,t0,t1,t2,t3;
+	int bi = ((blockIdx.x * blockDim.x) + threadIdx.x); // block index
+	if(bi < n) {
+		int p = bi*4;
+		uint32_t s0,s1,s2,s3,t0,t1,t2,t3;
 
-    /*
-     * map byte array block to cipher state
-     * and add initial round key:
-     */
-	s0 = d[p]   ^ k[0];
-	s1 = d[p+1] ^ k[1];
-	s2 = d[p+2] ^ k[2];
-	s3 = d[p+3] ^ k[3];
+		/*
+		 * map byte array block to cipher state
+		 * and add initial round key:
+		 */
+		__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
+		__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p+1]);
+		__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p+2]);
+		__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p+3]);
+		__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
+		__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
+		__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
+		__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
+		s0 = d[p]   ^ k[0];
+		s1 = d[p+1] ^ k[1];
+		s2 = d[p+2] ^ k[2];
+		s3 = d[p+3] ^ k[3];
+		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0);
+		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
+		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2);
+		__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3);
 
-	// 8 rounds - in each loop we do two rounds
-	#pragma unroll
-	for(int r2 = 0; r2 < 4; r2++) {
-	    t0 =
-	        T0[(s0      ) & 0xff] ^
-	        T1[(s1 >>  8) & 0xff] ^
-	        T2[(s2 >> 16) & 0xff] ^
-	        T3[(s3 >> 24)       ] ^
-	        k[(r2*8)  ];
-	    t1 =
-	        T0[(s1      ) & 0xff] ^
-	        T1[(s2 >>  8) & 0xff] ^
-	        T2[(s3 >> 16) & 0xff] ^
-	        T3[(s0 >> 24)       ] ^
-	        k[(r2*8)+1];
-	    t2 =
-	        T0[(s2      ) & 0xff] ^
-	        T1[(s3 >>  8) & 0xff] ^
-	        T2[(s0 >> 16) & 0xff] ^
-	        T3[(s1 >> 24)       ] ^
-	        k[(r2*8)+2];
-	    t3 =
-	        T0[(s3      ) & 0xff] ^
-	        T1[(s0 >>  8) & 0xff] ^
-	        T2[(s1 >> 16) & 0xff] ^
-	        T3[(s2 >> 24)       ] ^
-	        k[(r2*8)+3];
+		// 8 rounds - in each loop we do two rounds
+		#pragma unroll
+		for(int r2 = 1; r2 <= 4; r2++) {
+			__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0      ) & 0xff);
+			__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1 >>  8) & 0xff);
+			__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2 >> 16) & 0xff);
+			__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3 >> 24));
+			__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0      ) & 0xff]);
+			__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1 >>  8) & 0xff]);
+			__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2 >> 16) & 0xff]);
+			__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3 >> 24)       ]);
+			__LOG_TRACE__("p %d: k[%d] => 0x%04x",p,(r2*8)-4 , k[(r2*8)-4]);
+			t0 =
+				T0[(s0      ) & 0xff] ^
+				T1[(s1 >>  8) & 0xff] ^
+				T2[(s2 >> 16) & 0xff] ^
+				T3[(s3 >> 24)       ] ^
+				k[(r2*8)-4];
+			t1 =
+				T0[(s1      ) & 0xff] ^
+				T1[(s2 >>  8) & 0xff] ^
+				T2[(s3 >> 16) & 0xff] ^
+				T3[(s0 >> 24)       ] ^
+				k[(r2*8)-3];
+			t2 =
+				T0[(s2      ) & 0xff] ^
+				T1[(s3 >>  8) & 0xff] ^
+				T2[(s0 >> 16) & 0xff] ^
+				T3[(s1 >> 24)       ] ^
+				k[(r2*8)-2];
+			t3 =
+				T0[(s3      ) & 0xff] ^
+				T1[(s0 >>  8) & 0xff] ^
+				T2[(s1 >> 16) & 0xff] ^
+				T3[(s2 >> 24)       ] ^
+				k[(r2*8)-1];
+			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0);
+			__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1);
+			__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2);
+			__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3);
 
-	    s0 =
-	        T0[(t0      ) & 0xff] ^
-	        T1[(t1 >>  8) & 0xff] ^
-	        T2[(t2 >> 16) & 0xff] ^
-	        T3[(t3 >> 24)       ] ^
-	        k[(r2*8)+4];
-	    s1 =
-	        T0[(t1      ) & 0xff] ^
-	        T1[(t2 >>  8) & 0xff] ^
-	        T2[(t3 >> 16) & 0xff] ^
-	        T3[(t0 >> 24)       ] ^
-	        k[(r2*8)+5];
-	    s2 =
-	        T0[(t2      ) & 0xff] ^
-	        T1[(t3 >>  8) & 0xff] ^
-	        T2[(t0 >> 16) & 0xff] ^
-	        T3[(t1 >> 24)       ] ^
-	        k[(r2*8)+6];
-	    s3 =
-	        T0[(t3      ) & 0xff] ^
-	        T1[(t0 >>  8) & 0xff] ^
-	        T2[(t1 >> 16) & 0xff] ^
-	        T3[(t2 >> 24)       ] ^
-	        k[(r2*8)+7];
+			s0 =
+				T0[(t0      ) & 0xff] ^
+				T1[(t1 >>  8) & 0xff] ^
+				T2[(t2 >> 16) & 0xff] ^
+				T3[(t3 >> 24)       ] ^
+				k[(r2*8)  ];
+			s1 =
+				T0[(t1      ) & 0xff] ^
+				T1[(t2 >>  8) & 0xff] ^
+				T2[(t3 >> 16) & 0xff] ^
+				T3[(t0 >> 24)       ] ^
+				k[(r2*8)+1];
+			s2 =
+				T0[(t2      ) & 0xff] ^
+				T1[(t3 >>  8) & 0xff] ^
+				T2[(t0 >> 16) & 0xff] ^
+				T3[(t1 >> 24)       ] ^
+				k[(r2*8)+2];
+			s3 =
+				T0[(t3      ) & 0xff] ^
+				T1[(t0 >>  8) & 0xff] ^
+				T2[(t1 >> 16) & 0xff] ^
+				T3[(t2 >> 24)       ] ^
+				k[(r2*8)+3];
+			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0);
+			__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
+			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2);
+			__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3);
+		}
+
+		t0 =
+			T0[(s0      ) & 0xff] ^
+			T1[(s1 >>  8) & 0xff] ^
+			T2[(s2 >> 16) & 0xff] ^
+			T3[(s3 >> 24)       ] ^
+			k[36];
+		t1 =
+			T0[(s1      ) & 0xff] ^
+			T1[(s2 >>  8) & 0xff] ^
+			T2[(s3 >> 16) & 0xff] ^
+			T3[(s0 >> 24)       ] ^
+			k[37];
+		t2 =
+			T0[(s2      ) & 0xff] ^
+			T1[(s3 >>  8) & 0xff] ^
+			T2[(s0 >> 16) & 0xff] ^
+			T3[(s1 >> 24)       ] ^
+			k[38];
+		t3 =
+			T0[(s3      ) & 0xff] ^
+			T1[(s0 >>  8) & 0xff] ^
+			T2[(s1 >> 16) & 0xff] ^
+			T3[(s2 >> 24)       ] ^
+			k[39];
+		__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0);
+		__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1);
+		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2);
+		__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3);
+
+		// last round - save result
+		s0 =
+			(T2[(t0      ) & 0xff] & 0x000000ff) ^
+			(T3[(t1 >>  8) & 0xff] & 0x0000ff00) ^
+			(T0[(t2 >> 16) & 0xff] & 0x00ff0000) ^
+			(T1[(t3 >> 24)       ] & 0xff000000) ^
+			k[40];
+		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0);
+		d[p] = s0;
+		s1 =
+			(T2[(t1      ) & 0xff] & 0x000000ff) ^
+			(T3[(t2 >>  8) & 0xff] & 0x0000ff00) ^
+			(T0[(t3 >> 16) & 0xff] & 0x00ff0000) ^
+			(T1[(t0 >> 24)       ] & 0xff000000) ^
+			k[41];
+		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
+		d[p+1] = s1;
+		s2 =
+			(T2[(t2      ) & 0xff] & 0x000000ff) ^
+			(T3[(t3 >>  8) & 0xff] & 0x0000ff00) ^
+			(T0[(t0 >> 16) & 0xff] & 0x00ff0000) ^
+			(T1[(t1 >> 24)       ] & 0xff000000) ^
+			k[42];
+		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2);
+		d[p+2] = s2;
+		s3 =
+			(T2[(t3      ) & 0xff] & 0x000000ff) ^
+			(T3[(t0 >>  8) & 0xff] & 0x0000ff00) ^
+			(T0[(t1 >> 16) & 0xff] & 0x00ff0000) ^
+			(T2[(t2 >> 24)       ] & 0xff000000) ^
+			k[43];
+		__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3);
+		d[p+3] = s3;
 	}
-
-    t0 =
-        T0[(s0      ) & 0xff] ^
-        T1[(s1 >>  8) & 0xff] ^
-        T2[(s2 >> 16) & 0xff] ^
-        T3[(s3 >> 24)       ] ^
-        k[36];
-    t1 =
-        T0[(s1      ) & 0xff] ^
-        T1[(s2 >>  8) & 0xff] ^
-        T2[(s3 >> 16) & 0xff] ^
-        T3[(s0 >> 24)       ] ^
-        k[37];
-    t2 =
-        T0[(s2      ) & 0xff] ^
-        T1[(s3 >>  8) & 0xff] ^
-        T2[(s0 >> 16) & 0xff] ^
-        T3[(s1 >> 24)       ] ^
-        k[38];
-    t3 =
-        T0[(s3      ) & 0xff] ^
-        T1[(s0 >>  8) & 0xff] ^
-        T2[(s1 >> 16) & 0xff] ^
-        T3[(s2 >> 24)       ] ^
-        k[39];
-
-    // last round - save result
-    s0 =
-        (T0[(t0      ) & 0xff] & 0x000000ff) ^
-        (T1[(t1 >>  8) & 0xff] & 0x0000ff00) ^
-        (T2[(t2 >> 16) & 0xff] & 0x00ff0000) ^
-        (T3[(t3 >> 24)       ] & 0xff000000) ^
-        k[40];
-    d[p] = s0;
-    s1 =
-        (T0[(t1      ) & 0xff] & 0x000000ff) ^
-        (T1[(t2 >>  8) & 0xff] & 0x0000ff00) ^
-        (T2[(t3 >> 16) & 0xff] & 0x00ff0000) ^
-        (T3[(t0 >> 24)       ] & 0xff000000) ^
-        k[41];
-    d[p+1] = s1;
-    s2 =
-        (T0[(t2      ) & 0xff] & 0x000000ff) ^
-        (T1[(t3 >>  8) & 0xff] & 0x0000ff00) ^
-        (T2[(t0 >> 16) & 0xff] & 0x00ff0000) ^
-        (T3[(t1 >> 24)       ] & 0xff000000) ^
-        k[42];
-    d[p+2] = s2;
-    s3 =
-        (T0[(t3      ) & 0xff] & 0x000000ff) ^
-        (T1[(t0 >>  8) & 0xff] & 0x0000ff00) ^
-        (T2[(t1 >> 16) & 0xff] & 0x00ff0000) ^
-        (T3[(t2 >> 24)       ] & 0xff000000) ^
-        k[43];
-    d[p+3] = s3;
 }
 
 void cuda_ecb_aes128_16b_encrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,
 		  	  uint32_t* deviceTe0,
@@ -224,10 +266,9 @@ void cuda_ecb_aes128_16b_encrypt(
 	      )
 {
 	__cuda_ecb_aes128_16b_encrypt__<<<gridSize,threadsPerBlock>>>(
-			gridSize,
-			threadsPerBlock,
+			n_blocks,
 			(uint32_t*)data,
-			key,
+			expanded_key,
 	   		deviceTe0,
 	   		deviceTe1,
 	   		deviceTe2,

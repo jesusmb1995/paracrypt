@@ -35,6 +35,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_encrypt(
 			cuda_ecb_aes128_16b_encrypt(
 					gridSize,
 					threadsPerBlock,
+					n_blocks,
 					this->data,
 					key,
 			   		deviceTe0,
