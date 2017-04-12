@@ -8,6 +8,8 @@ namespace paracrypt {
     class AES:public BlockCipher {
 #define AES_STATE_SIZE 128
 #define AES_BLOCK_SIZE AES_STATE_SIZE
+#define AES_STATE_SIZE_B 16
+#define AES_BLOCK_SIZE_B AES_STATE_SIZE_B
 
       private:
     unsigned char* key;

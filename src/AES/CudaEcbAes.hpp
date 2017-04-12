@@ -17,12 +17,7 @@ namespace paracrypt {
   		uint32_t* deviceTe0,
   		uint32_t* deviceTe1,
   		uint32_t* deviceTe2,
-  		uint32_t* deviceTe3,
-  		uint32_t* deviceTd0,
-  		uint32_t* deviceTd1,
-  		uint32_t* deviceTd2,
-  		uint32_t* deviceTd3,
-  		uint8_t* deviceTd4
+  		uint32_t* deviceTe3
   		) = 0;
   virtual int cuda_ecb_aes_decrypt(
   		int gridSize,
@@ -32,10 +27,6 @@ namespace paracrypt {
   		uint32_t* key,
   		int rounds,
   		uint32_t* deviceKey,
-  		uint32_t* deviceTe0,
-  		uint32_t* deviceTe1,
-  		uint32_t* deviceTe2,
-  		uint32_t* deviceTe3,
   		uint32_t* deviceTd0,
   		uint32_t* deviceTd1,
   		uint32_t* deviceTd2,

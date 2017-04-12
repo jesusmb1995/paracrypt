@@ -6,7 +6,7 @@ int paracrypt::CudaEcbAES::encrypt(const unsigned char in[],
 {
     int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
-    int dataSize = n_blocks * AES_BLOCK_SIZE;
+    int dataSize = n_blocks * AES_BLOCK_SIZE_B;
     uint32_t *key = this->getDeviceEKey();
     int rounds = this->getEncryptionExpandedKey()->rounds;
 
@@ -23,12 +23,7 @@ int paracrypt::CudaEcbAES::encrypt(const unsigned char in[],
 					this->getDeviceTe0(),
 					this->getDeviceTe1(),
 					this->getDeviceTe2(),
-					this->getDeviceTe3(),
-					this->getDeviceTd0(),
-					this->getDeviceTd1(),
-					this->getDeviceTd2(),
-					this->getDeviceTd3(),
-					this->getDeviceTd4()
+					this->getDeviceTe3()
 			);
     this->getDevice()->memcpyFrom(this->data, (void *) out, dataSize,
 				  this->stream);
@@ -41,7 +36,7 @@ int paracrypt::CudaEcbAES::decrypt(const unsigned char in[],
 {
     int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
-    int dataSize = n_blocks * AES_BLOCK_SIZE;
+    int dataSize = n_blocks * AES_BLOCK_SIZE_B;
     uint32_t *key = this->getDeviceDKey();
     int rounds = this->getDecryptionExpandedKey()->rounds;
 
