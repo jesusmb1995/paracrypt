@@ -131,7 +131,7 @@ uint32_t* paracrypt::CudaAES::getDeviceDKey()
 
 void paracrypt::CudaAES::malloc(int n_blocks)
 {
-    int dataSize = AES_BLOCK_SIZE * n_blocks;
+    int dataSize = AES_BLOCK_SIZE_B * n_blocks;
     this->getDevice()->malloc((void **) &(this->data), dataSize);
 }
 

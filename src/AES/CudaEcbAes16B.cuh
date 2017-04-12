@@ -63,30 +63,30 @@ key_u32_w1, key_u32_w2, key_u32_w3, key_u32_w4\
 //	__LOG_TRACE__("0x%x = 0x%x ^ 0x%x",data3,data3_prev,key3);
 //	__LOG_TRACE__("0x%x = 0x%x ^ 0x%x",data4,data4_prev,key4);
 //}
-
-__device__ void cuda_ecb_aes_16b__add_round_key(unsigned char data[],
-						int n_blocks,
-						unsigned char expanded_key[]);
-__device__ void cuda_ecb_aes_16b__sub_bytes(unsigned char data[],
-						int n_blocks,
-						unsigned char expanded_key[]);
-__device__ void cuda_ecb_aes_16b__shift_rows(unsigned char data[],
-						int n_blocks,
-						unsigned char expanded_key[]);
-__global__ void cuda_ecb_aes_16b_encrypt_kernel(unsigned char data[],
-						int n_blocks,
-						unsigned char expanded_key[],
-						int rounds);
-__global__ void cuda_ecb_aes_16b_decrypt_kernel(unsigned char data[],
-						int n_blocks,
-						unsigned char expanded_key[],
-						int rounds);
-void cuda_ecb_aes_16b_encrypt(int gridSize, int threadsPerBlock,
-			      unsigned char data[], int n_blocks,
-			      unsigned char expanded_key[], int rounds);
-void cuda_ecb_aes_16b_decrypt(int gridSize, int threadsPerBlock,
-			      unsigned char data[], int n_blocks,
-			      unsigned char expanded_key[], int rounds);
+//
+//__device__ void cuda_ecb_aes_16b__add_round_key(unsigned char data[],
+//						int n_blocks,
+//						unsigned char expanded_key[]);
+//__device__ void cuda_ecb_aes_16b__sub_bytes(unsigned char data[],
+//						int n_blocks,
+//						unsigned char expanded_key[]);
+//__device__ void cuda_ecb_aes_16b__shift_rows(unsigned char data[],
+//						int n_blocks,
+//						unsigned char expanded_key[]);
+//__global__ void cuda_ecb_aes_16b_encrypt_kernel(unsigned char data[],
+//						int n_blocks,
+//						unsigned char expanded_key[],
+//						int rounds);
+//__global__ void cuda_ecb_aes_16b_decrypt_kernel(unsigned char data[],
+//						int n_blocks,
+//						unsigned char expanded_key[],
+//						int rounds);
+//void cuda_ecb_aes_16b_encrypt(int gridSize, int threadsPerBlock,
+//			      unsigned char data[], int n_blocks,
+//			      unsigned char expanded_key[], int rounds);
+//void cuda_ecb_aes_16b_decrypt(int gridSize, int threadsPerBlock,
+//			      unsigned char data[], int n_blocks,
+//			      unsigned char expanded_key[], int rounds);
 
 void cuda_ecb_aes128_16b_encrypt(
 		  	  int gridSize,
@@ -100,3 +100,14 @@ void cuda_ecb_aes128_16b_encrypt(
 		  	  uint32_t* deviceTe3
 	      );
 
+void cuda_ecb_aes192_16b_encrypt(
+		  	  int gridSize,
+		  	  int threadsPerBlock,
+		  	  int n_blocks,
+		  	  unsigned char data[],
+		  	  uint32_t* expanded_key,
+		  	  uint32_t* deviceTe0,
+		  	  uint32_t* deviceTe1,
+		  	  uint32_t* deviceTe2,
+		  	  uint32_t* deviceTe3
+	      );

@@ -1,0 +1,19 @@
+/*
+ * Timer.cpp
+ *
+ *  Created on: Apr 12, 2017
+ *      Author:  Jesús Martín Berlanga
+ */
+
+#include "Timer.hpp"
+
+void Timer::tic() {
+	this->begin = clock();
+}
+
+double Timer::toc() {
+	clock_t end = clock();
+	double elapsed_clocls
+	// TODO Auto-generated destructor stub
+}
+

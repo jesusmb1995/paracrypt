@@ -1,10 +1,11 @@
-16:35:45 **** Build of configuration Debug for project pcnsight ****
-make all 
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
-/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/tests/cuda_test_kernels.cu -o obj/cuda_test_kernels.cu.o
-nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/endianess.c -o obj/endianess.o
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/logging.cpp -o obj/logging.o
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/AES.cpp -o obj/AES.o
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+19:54:08 **** Clean-only build of configuration Debug for project pcnsight ****
+make clean 
+rm -f obj/*.o
+rm -f lib/*.a
+rm -f bin/*
+rm -f src/*~
+rm -f src/tests/*~
+rm -f src/openssl/*~
+
+19:54:08 Build Finished (took 65ms)
+

@@ -1,0 +1,19 @@
+/*
+ * Timer.cpp
+ *
+ *  Created on: Apr 12, 2017
+ *      Author:  Jesús Martín Berlanga
+ */
+
+#include "Timer.hpp"
+#include <ctime>
+
+Timer::Timer() {
+	// TODO Auto-generated constructor stub
+
+}
+
+Timer::~Timer() {
+	// TODO Auto-generated destructor stub
+}
+

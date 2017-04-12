@@ -4,3 +4,4 @@
 1491904646802	Move 10 resources to 'AES'
 1491908912695	Rename resource 'big_endian_ttable_generator'
 1491913908483	Rename resource 'big_endian_ttable_generator.c'
+1492011979609	Rename resource 'CudaEcbAes16B (copy).cpp'
