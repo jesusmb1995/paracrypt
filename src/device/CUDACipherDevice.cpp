@@ -27,18 +27,18 @@ paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
     int M = this->devProp.major;
     int m = this->devProp.minor;
     if (M <= 2) {
-	this->maxCudaBlocksPerSM = 8;
+	this->maxBlocksPerSM = 8;
     } else if (M <= 3 && m <= 7) {
-	this->maxCudaBlocksPerSM = 16;
+	this->maxBlocksPerSM = 16;
     } else {			// cuda capability 5.0
-	this->maxCudaBlocksPerSM = 32;
+	this->maxBlocksPerSM = 32;
     }
 
     this->nWarpsPerBlock =
 	this->devProp.maxThreadsPerBlock / this->devProp.warpSize;
     this->nThreadsPerThreadBlock =
 	this->devProp.warpSize * this->nWarpsPerBlock /
-	this->maxCudaBlocksPerSM;
+	this->maxBlocksPerSM;
 
     if (this->devProp.concurrentKernels) {
 	// From Table 13. Technical Specifications per Compute Capability
@@ -48,15 +48,15 @@ paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
 	} else if (M == 3 && m == 2) {
 	    this->nConcurrentKernels = 4;
 	} else if (M <= 5 && m <= 2) {
-	    this->maxCudaBlocksPerSM = 32;
+	    this->nConcurrentKernels = 32;
 	} else if (M == 5 && m == 3) {
-	    this->maxCudaBlocksPerSM = 16;
+	    this->nConcurrentKernels = 16;
 	} else if (M == 6 && m == 0) {
-	    this->maxCudaBlocksPerSM = 128;
+	    this->nConcurrentKernels = 128;
 	} else if (M == 6 && m == 1) {
-	    this->maxCudaBlocksPerSM = 32;
+	    this->nConcurrentKernels = 32;
 	} else {		//if (M == 6 && m == 2) {
-	    this->maxCudaBlocksPerSM = 16;
+	    this->nConcurrentKernels = 16;
 	}
     }
 
@@ -75,7 +75,7 @@ void paracrypt::CUDACipherDevice::printDeviceInfo()
 			"\t concurrent kernels: %d\n"
 		)
 		% this->device
-		% this->maxCudaBlocksPerSM
+		% this->maxBlocksPerSM
 		% this->devProp.warpSize
 		% this->nWarpsPerBlock
 		% this->devProp.maxThreadsPerBlock
@@ -84,29 +84,9 @@ void paracrypt::CUDACipherDevice::printDeviceInfo()
 	);
 }
 
-int paracrypt::CUDACipherDevice::getNWarpsPerBlock()
-{
-    return this->nWarpsPerBlock;
-}
-
-int paracrypt::CUDACipherDevice::getThreadsPerThreadBlock()
-{
-    return this->nThreadsPerThreadBlock;
-}
-
-int paracrypt::CUDACipherDevice::getMaxBlocksPerSM()
-{
-    return this->maxCudaBlocksPerSM;
-}
-
 const cudaDeviceProp *paracrypt::CUDACipherDevice::getDeviceProperties()
 {
     return &(this->devProp);
-}
-
-int paracrypt::CUDACipherDevice::getConcurrentKernels()
-{
-    return this->nConcurrentKernels;
 }
 
 void paracrypt::CUDACipherDevice::set()

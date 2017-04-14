@@ -1,8 +1,0 @@
-#include "aes_locl.h"
-
-#ifndef HEADER_ENDIANESS_H
-#define HEADER_ENDIANESS_H
-
- void big(uint32 little*, int n);
-
-#endif /* !HEADER_ENDIANESS_H */

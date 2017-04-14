@@ -15,6 +15,7 @@ private:
 public:
 	void tic();
 	double toc(); // CPU time in clocks
+	double toc_seconds();
 };
 
 #endif /* TIMER_HPP_ */

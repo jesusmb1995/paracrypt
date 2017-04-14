@@ -1,12 +1,21 @@
 #include "CudaAES.hpp"
 #include "../device/CUDACipherDevice.hpp"
+#include "CudaConstant.cuh"
+
+paracrypt::CudaAES::CudaAES()
+{
+	this->deviceEKeyConstant = false;
+	this->deviceDKeyConstant = false;
+	this->useConstantKey = false;
+	this->useConstantTables = false;
+}
 
 paracrypt::CudaAES::~CudaAES()
 {
-    if (this->deviceEKey != NULL) {
+    if (this->deviceEKey != NULL && !deviceEKeyConstant) {
 	this->getDevice()->free(this->deviceEKey);
     }
-    if (this->deviceDKey != NULL) {
+    if (this->deviceDKey != NULL && !deviceDKeyConstant) {
     	this->getDevice()->free(this->deviceDKey);
     }
     if (this->data != NULL) {
@@ -45,11 +54,11 @@ paracrypt::CudaAES::~CudaAES()
 // must be called after setKey
 void paracrypt::CudaAES::setDevice(CUDACipherDevice * device)
 {
-    if (this->deviceEKey != NULL) {
+    if (this->deviceEKey != NULL && !deviceEKeyConstant) {
 	this->getDevice()->free(this->deviceEKey);
 	this->deviceEKey = NULL;
     }
-    if (this->deviceDKey != NULL) {
+    if (this->deviceDKey != NULL && !deviceDKeyConstant) {
     	this->getDevice()->free(this->deviceDKey);
     	this->deviceDKey = NULL;
     }
@@ -106,12 +115,20 @@ paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
 uint32_t* paracrypt::CudaAES::getDeviceEKey()
 {
 	if(this->deviceEKey == NULL) {
+		if(this->constantKey()) {
+			int nKeyWords = (4 * (this->getEncryptionExpandedKey()->rounds + 1));
+			this->deviceEKey = __setAesKey__(this->getEncryptionExpandedKey()->rd_key,nKeyWords);
+			deviceEKeyConstant = true;
+		}
+		else {
 		int keySize =
-		(4 * (this->getEncryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
+			(4 * (this->getEncryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
 		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
 		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
 		this->getDevice()->memcpyTo(this->getEncryptionExpandedKey()->rd_key,
 					this->deviceEKey, keySize, this->stream);
+		deviceEKeyConstant = false;
+		}
 	}
     return this->deviceEKey;
 }
@@ -119,12 +136,20 @@ uint32_t* paracrypt::CudaAES::getDeviceEKey()
 uint32_t* paracrypt::CudaAES::getDeviceDKey()
 {
 	if(this->deviceDKey == NULL) {
+		if(this->constantKey()) {
+			int nKeyWords = (4 * (this->getDecryptionExpandedKey()->rounds + 1));
+			this->deviceDKey = __setAesKey__(this->getDecryptionExpandedKey()->rd_key,nKeyWords);
+			deviceDKeyConstant = true;
+		}
+		else {
 		int keySize =
 		(4 * (this->getDecryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
-		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
-		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
+		this->getDevice()->malloc((void **) &(this->deviceDKey), keySize);
+		this->getDevice()->malloc((void **) &(this->deviceDKey), keySize);
 		this->getDevice()->memcpyTo(this->getDecryptionExpandedKey()->rd_key,
-					this->deviceEKey, keySize, this->stream);
+					this->deviceDKey, keySize, this->stream);
+		deviceDKeyConstant = false;
+		}
 	}
     return this->deviceDKey;
 }
@@ -715,90 +740,148 @@ static const uint8_t Td4[256] = {
 
 uint32_t*  paracrypt::CudaAES::getDeviceTe0()
 {
-	if (this->deviceTe0 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTe0), TTABLE_SIZE); // 1024 = 256*4
-		this->getDevice()->memcpyTo((void*)Te0,this->deviceTe0, TTABLE_SIZE, this->stream);
+	if(this->constantTables()) {
+		return __Te0__();
 	}
-	return this->deviceTe0;
+	else {
+		if (this->deviceTe0 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTe0), TTABLE_SIZE); // 1024 = 256*4
+			this->getDevice()->memcpyTo((void*)Te0,this->deviceTe0, TTABLE_SIZE, this->stream);
+		}
+		return this->deviceTe0;
+	}
 }
 
 uint32_t*  paracrypt::CudaAES::getDeviceTe1()
 {
+	if(this->constantTables()) {
+		return __Te1__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTe1), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Te1,this->deviceTe1, TTABLE_SIZE, this->stream);
 	}
 	return this->deviceTe1;
+	}
 }
 
 uint32_t* paracrypt::CudaAES::getDeviceTe2()
 {
+	if(this->constantTables()) {
+		return __Te2__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTe2), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Te2,this->deviceTe2, TTABLE_SIZE, this->stream);
 	}
 	return this->deviceTe2;
+	}
 }
 
 uint32_t* paracrypt::CudaAES::getDeviceTe3()
 {
+	if(this->constantTables()) {
+		return __Te3__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTe3), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Te3,this->deviceTe3, TTABLE_SIZE, this->stream);
 	}
 	return this->deviceTe3;
+	}
 }
 
 uint32_t* paracrypt::CudaAES::getDeviceTd0()
 {
+	if(this->constantTables()) {
+		return __Td0__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd0), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td0,this->deviceTd0, TTABLE_SIZE, this->stream);
 	}
 	return this->deviceTd0;
+	}
 }
 
 uint32_t* paracrypt::CudaAES::getDeviceTd1()
 {
+	if(this->constantTables()) {
+		return __Td1__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd1), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td1,this->deviceTd1, TTABLE_SIZE, this->stream);
 	}
 	return this->deviceTd1;
+	}
 }
 
 uint32_t* paracrypt::CudaAES::getDeviceTd2()
 {
+	if(this->constantTables()) {
+		return __Td2__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd2), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td2,this->deviceTd2, TTABLE_SIZE, this->stream);
 	}
 	return this->deviceTd2;
+	}
 }
 
 uint32_t* paracrypt::CudaAES::getDeviceTd3()
 {
+	if(this->constantTables()) {
+		return __Td3__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd3), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td3,this->deviceTd3, TTABLE_SIZE, this->stream);
 	}
 	return this->deviceTd3;
+	}
 }
 
 uint8_t* paracrypt::CudaAES::getDeviceTd4()
 {
+	if(this->constantTables()) {
+		return __Td4__();
+	}
+	else {
 	if (this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd4), 256);
 		this->getDevice()->memcpyTo((void*)Td4,this->deviceTd4, 256, this->stream);
 	}
 	return this->deviceTd4;
+	}
+}
+
+void paracrypt::CudaAES::constantKey(bool val){
+	this->useConstantKey = val;
+}
+void paracrypt::CudaAES::constantTables(bool val){
+	this->useConstantTables = val;
+}
+bool paracrypt::CudaAES::constantKey() {
+	return this->useConstantKey;
+}
+bool paracrypt::CudaAES::constantTables(){
+	return this->useConstantTables;
 }

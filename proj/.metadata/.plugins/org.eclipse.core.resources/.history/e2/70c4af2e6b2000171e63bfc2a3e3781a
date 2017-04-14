@@ -1,0 +1,4 @@
+__host__ unint32t* getTe0();
+__host__ unint32t* getTe1();
+__host__ unint32t* getTe2();
+__host__ unint32t* getTe3();

@@ -21,19 +21,11 @@ namespace paracrypt {
     void printDeviceInfo();
 	int device;
 	cudaDeviceProp devProp;
-	int maxCudaBlocksPerSM;
-	int nWarpsPerBlock;
-	int nThreadsPerThreadBlock;
-	int nConcurrentKernels;
     boost::unordered_map<int,cudaEvent_t> cpyFromEvents;
     boost::unordered_map<int,cudaStreamCallback_t> cpyFromCallbacks;
       public:
 	// 0 <= device < cudaGetDeviceCount()
 	 CUDACipherDevice(int device);
-	int getNWarpsPerBlock();
-	int getThreadsPerThreadBlock();
-	int getMaxBlocksPerSM();
-	int getConcurrentKernels();
 	const cudaDeviceProp *getDeviceProperties();
 	void set();
 	void malloc(void **data, int size);

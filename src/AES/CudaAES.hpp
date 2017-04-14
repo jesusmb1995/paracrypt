@@ -9,7 +9,9 @@ namespace paracrypt {
       private:
 	CUDACipherDevice * device;
 	uint32_t* deviceEKey = NULL;
+	bool deviceEKeyConstant;
 	uint32_t* deviceDKey = NULL;
+	bool deviceDKeyConstant;
 	uint32_t* deviceTe0 = NULL;
 	uint32_t* deviceTe1 = NULL;
 	uint32_t* deviceTe2 = NULL;
@@ -19,6 +21,8 @@ namespace paracrypt {
 	uint32_t* deviceTd2 = NULL;
 	uint32_t* deviceTd3 = NULL;
 	uint8_t* deviceTd4 = NULL;
+	bool useConstantKey;
+	bool useConstantTables;
       protected:
 	unsigned char *data = NULL;
 	uint32_t* getDeviceEKey();
@@ -35,6 +39,7 @@ namespace paracrypt {
 
 	int stream;
       public:
+	CudaAES();
 	~CudaAES();
 	virtual int encrypt(const unsigned char in[],
 			    const unsigned char out[], int n_blocks) = 0;
@@ -44,6 +49,10 @@ namespace paracrypt {
 	void malloc(int n_blocks);	// Must be called to reserve enough space before encrypt/decrypt
 	// returns -1 if an error has occurred
 	CUDACipherDevice *getDevice();
+	void constantKey(bool val);
+	void constantTables(bool val);
+	bool constantKey();
+	bool constantTables();
     };
 
 }

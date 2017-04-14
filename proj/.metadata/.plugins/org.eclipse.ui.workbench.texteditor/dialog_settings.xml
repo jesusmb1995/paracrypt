@@ -2,20 +2,20 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="Td4" key="selection"/>
+		<item value="aes256" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value=" &gt;&gt; 16) ^"/>
-			<item value="Td4"/>
-			<item value="c66363a5"/>
-			<item value="test"/>
-			<item value="a56363c6"/>
-			<item value="bin_endian_ttable_generator.o"/>
-			<item value="bin_endian_ttable_generator"/>
-			<item value="rcon"/>
+			<item value="aes256"/>
+			<item value="aes192"/>
+			<item value="Ptr"/>
+			<item value="ptr"/>
+			<item value="assert"/>
+			<item value="decrypt"/>
+			<item value="needs"/>
+			<item value="aes"/>
 		</list>
 		<list key="replacehistory">
 		</list>

@@ -25,7 +25,6 @@ namespace paracrypt {
   		int n_blocks,
   		uint32_t* key,
   		int rounds,
-  		uint32_t* deviceKey,
   		uint32_t* deviceTd0,
   		uint32_t* deviceTd1,
   		uint32_t* deviceTd2,

@@ -1,4 +1,0 @@
-#include "aes_locl.h"
-
-#ifndef HEADER_AES_LOCL_H
-# define HEADER_AES_LOCL_H

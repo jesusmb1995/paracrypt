@@ -74,7 +74,7 @@ AES_KEY *paracrypt::AES::getDecryptionExpandedKey()
 	if(this->deRoundKeys == NULL) {
 		this->deRoundKeys = (AES_KEY *) malloc(sizeof(AES_KEY));
 		this->deKeyPropietary = true;
-		AES_set_encrypt_key(key, this->keyBits, this->deRoundKeys);
+		AES_set_decrypt_key(key, this->keyBits, this->deRoundKeys);
 		big(this->deRoundKeys->rd_key,this->deRoundKeys->rd_key,(this->deRoundKeys->rounds+1)*4);
 	}
 	return this->deRoundKeys;

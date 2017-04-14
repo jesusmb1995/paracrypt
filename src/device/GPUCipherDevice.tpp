@@ -3,6 +3,40 @@
 #include <math.h> 
 
 template < typename S, typename F >
+int paracrypt::GPUCipherDevice < S, F >::getNWarpsPerBlock()
+{
+    return this->nWarpsPerBlock;
+}
+
+template < typename S, typename F >
+int paracrypt::GPUCipherDevice < S, F >::getThreadsPerThreadBlock()
+{
+    return this->nThreadsPerThreadBlock;
+}
+
+template < typename S, typename F >
+int paracrypt::GPUCipherDevice < S, F >::setThreadsPerThreadBlock(int tptb)
+{
+	LOG_WARNING(
+			"Changing the number of threads per block will limit the maximum"
+			"device thread occupancy. This could have a negative impact in performance."
+			);
+    this->nThreadsPerThreadBlock = tptb;
+}
+
+template < typename S, typename F >
+int paracrypt::GPUCipherDevice < S, F >::getMaxBlocksPerSM()
+{
+    return this->maxBlocksPerSM;
+}
+
+template < typename S, typename F >
+int paracrypt::GPUCipherDevice < S, F >::getConcurrentKernels()
+{
+    return this->nConcurrentKernels;
+}
+
+template < typename S, typename F >
     paracrypt::GPUCipherDevice < S, F >::~GPUCipherDevice()
 {
     boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
@@ -19,9 +53,35 @@ template < typename S, typename F >
 							 int
 							 threadsPerCipherBlock)
 {
+	int tptb = this->getThreadsPerThreadBlock();
+	float cipherBlocksPerThreadBlock = tptb / threadsPerCipherBlock;
+	if(std::fmod(cipherBlocksPerThreadBlock,1) != 0) {
+		LOG_WARNING(
+				"Changing the number of threads per tread-block"
+				"to avoid heavy syncronization when having parts of cipher-blocks"
+				"in different thread-blocks. This shouldn't happen because the"
+				"maximum number of threads per block should be multiple of the warp size."
+				"Consider to use paralelism at block level"
+				"(only one thread processes a cipher block) instead."
+				);
+		int newTptb = threadsPerCipherBlock;
+		int newTptbAux = newTptb;
+		do {
+			newTptb = newTptbAux;
+			newTptbAux *= 2;
+		}while(newTptbAux < tptb)
+		this->setThreadsPerThreadBlock(newTptb);
+//		LOG_FATAL(boost::format("unsupported operation: %d/%d=%f does not constitute"
+//				" a fixed number of cipher-blocks per thread-block. "
+//				" ) 
+//			% tptb 
+//			% threadsPerCipherBlock
+//			% cipherBlocksPerThreadBlock);
+//		exit(-1);
+	}
     float fGridSize =
 	n_blocks * threadsPerCipherBlock /
-	(float) this->getThreadsPerThreadBlock();
+	(float) tptb;
     int gridSize = ceil(fGridSize);
     return gridSize;
 }

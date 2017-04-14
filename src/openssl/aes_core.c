@@ -1027,6 +1027,10 @@ void AES_decrypt(const unsigned char *in, unsigned char *out,
      * map byte array block to cipher state
      * and add initial round key:
      */
+    LOG_TRACE(boost::format("rk[0] => 0x%x") % rk[0]);
+    LOG_TRACE(boost::format("rk[1] => 0x%x") % rk[1]);
+    LOG_TRACE(boost::format("rk[2] => 0x%x") % rk[2]);
+    LOG_TRACE(boost::format("rk[3] => 0x%x") % rk[3]);
     s0 = GETU32(in     ) ^ rk[0];
     s1 = GETU32(in +  4) ^ rk[1];
     s2 = GETU32(in +  8) ^ rk[2];

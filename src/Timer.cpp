@@ -18,3 +18,6 @@ double Timer::toc() {
 	return elapsed_clocks;
 }
 
+double Timer::toc_seconds() {
+	return this->toc()/CLOCKS_PER_SEC;
+}

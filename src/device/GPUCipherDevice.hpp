@@ -12,12 +12,17 @@ namespace paracrypt {
 	virtual S newStream();
 	virtual void freeStream(S s);
 	S acessStream(int stream_id);
+	int maxBlocksPerSM;
+	int nWarpsPerBlock;
+	int nThreadsPerThreadBlock;
+	int nConcurrentKernels;
       public:
 	 virtual ~ GPUCipherDevice();
-	virtual int getThreadsPerThreadBlock() = 0;
-	virtual int getNWarpsPerBlock() = 0;
-	virtual int getMaxBlocksPerSM() = 0;
-	virtual int getConcurrentKernels() = 0;
+	int getThreadsPerThreadBlock();
+	int setThreadsPerThreadBlock(int tptb);
+	int getNWarpsPerBlock();
+	int getMaxBlocksPerSM();
+	int getConcurrentKernels();
 	int getGridSize(int n_blocks, int threadsPerCipherBlock);
 	virtual void set() = 0;	// must be called to set operations to this device
 	virtual void malloc(void **data, int size) = 0;

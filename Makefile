@@ -39,6 +39,9 @@ $(OBJ_DIR)/AES.o: $(SRC_DIR)/AES/AES.cpp
 $(OBJ_DIR)/CudaAES.o: $(SRC_DIR)/AES/CudaAES.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
+$(OBJ_DIR)/CudaAESConstant.cu.o: $(SRC_DIR)/AES/CudaConstant.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
+#
 $(OBJ_DIR)/CudaEcbAes.o: $(SRC_DIR)/AES/CudaEcbAes.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
@@ -76,7 +79,8 @@ $(OBJ_DIR)/Timer.o: $(SRC_DIR)/Timer.cpp
 # PTX #############################################################################
 ###################################################################################
 #
-# Generate PTX assembly code: Useful for code inspection and optimization
+# Generate PTX assembly code: Might be useful for fine 
+#  grain code inspection and optimization
 #
 $(OBJ_DIR)/CudaEcbAes16B.ptx: $(SRC_DIR)/AES/CudaEcbAes16B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
@@ -139,8 +143,8 @@ $(OBJ_DIR)/logging.o
 	 $(OBJ_DIR)/logging.o \
 	 -o $(BIN_DIR)/cpu_AES_round_example $(LIBS)
 #
-tests: CXX_FLAGS_ += -g -DDEBUG #-DDEVEL
-tests: NVCC_FLAGS_ += -g -DDEBUG #-DDEVEL
+tests: CXX_FLAGS_ += -g -DDEBUG # -DDEVEL
+tests: NVCC_FLAGS_ += -g -DDEBUG # -DDEVEL
 tests: \
 $(OBJ_DIR)/tests.o \
 $(OBJ_DIR)/cuda_test_kernels.cu.o \
@@ -150,6 +154,7 @@ $(OBJ_DIR)/logging.o \
 $(OBJ_DIR)/Timer.o \
 $(OBJ_DIR)/AES.o \
 $(OBJ_DIR)/CudaAES.o \
+$(OBJ_DIR)/CudaAESConstant.cu.o \
 $(OBJ_DIR)/CudaEcbAes.o \
 $(OBJ_DIR)/CudaEcbAes16B.o  \
 $(OBJ_DIR)/CudaEcbAes16B.cu.o \
@@ -162,6 +167,7 @@ $(OBJ_DIR)/CUDACipherDevice.o
 	 $(OBJ_DIR)/AES_key_schedule.o \
 	 $(OBJ_DIR)/endianess.o \
 	 $(OBJ_DIR)/AES.o \
+	 $(OBJ_DIR)/CudaAESConstant.cu.o \
 	 $(OBJ_DIR)/CudaAES.o \
 	 $(OBJ_DIR)/CudaEcbAes.o \
 	 $(OBJ_DIR)/CudaEcbAes16B.o \
@@ -172,6 +178,8 @@ $(OBJ_DIR)/CUDACipherDevice.o
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/Timer.o \
 	 -o $(BIN_DIR)/paracrypt_tests $(LIBS)
+
+# -DNDEBUG <-- elimina asserts
 
 #test: CXX_FLAGS_ += -g -DDEBUG
 #test: logging.o $(SRC_DIR)/test.cpp
@@ -189,6 +197,7 @@ $(OBJ_DIR)/CUDACipherDevice.o
 #
 clean: 
 	rm -f $(OBJ_DIR)/*.o
+	rm -f $(OBJ_DIR)/*.ptx
 	rm -f $(LIB_DIR)/*.a
 	rm -f $(BIN_DIR)/*
 	rm -f $(SRC_DIR)/*~
