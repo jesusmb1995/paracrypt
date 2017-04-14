@@ -15,9 +15,9 @@ int paracrypt::GPUCipherDevice < S, F >::getThreadsPerThreadBlock()
 }
 
 template < typename S, typename F >
-int paracrypt::GPUCipherDevice < S, F >::setThreadsPerThreadBlock(int tptb)
+void paracrypt::GPUCipherDevice < S, F >::setThreadsPerThreadBlock(int tptb)
 {
-	LOG_WARNING(
+	LOG_WAR(
 			"Changing the number of threads per block will limit the maximum"
 			"device thread occupancy. This could have a negative impact in performance."
 			);
@@ -56,7 +56,7 @@ template < typename S, typename F >
 	int tptb = this->getThreadsPerThreadBlock();
 	float cipherBlocksPerThreadBlock = tptb / threadsPerCipherBlock;
 	if(std::fmod(cipherBlocksPerThreadBlock,1) != 0) {
-		LOG_WARNING(
+		LOG_WAR(
 				"Changing the number of threads per tread-block"
 				"to avoid heavy syncronization when having parts of cipher-blocks"
 				"in different thread-blocks. This shouldn't happen because the"
@@ -69,7 +69,7 @@ template < typename S, typename F >
 		do {
 			newTptb = newTptbAux;
 			newTptbAux *= 2;
-		}while(newTptbAux < tptb)
+		}while(newTptbAux < tptb);
 		this->setThreadsPerThreadBlock(newTptb);
 //		LOG_FATAL(boost::format("unsupported operation: %d/%d=%f does not constitute"
 //				" a fixed number of cipher-blocks per thread-block. "

@@ -1,6 +1,8 @@
-16:46:17 **** Incremental Build of configuration Debug for project pcnsight ****
+23:13:04 **** Incremental Build of configuration Debug for project pcnsight ****
 make all 
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
+/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes8B.cu -o obj/CudaEcbAes8B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
 	 obj/tests.o \
 	 obj/cuda_test_kernels.cu.o \
 	 obj/AES_key_schedule.o \
@@ -13,11 +15,13 @@ g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
 	 obj/CudaEcbAes16B.cu.o \
 	 obj/CudaEcbAes16BPtr.o \
 	 obj/CudaEcbAes16BPtr.cu.o \
+	 obj/CudaEcbAes8B.o  \
+	 obj/CudaEcbAes8B.cu.o \
 	 obj/CUDACipherDevice.o \
 	 obj/logging.o \
 	 obj/Timer.o \
 	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
 # make icc
 
-16:46:18 Build Finished (took 512ms)
+23:13:06 Build Finished (took 2s.266ms)
 

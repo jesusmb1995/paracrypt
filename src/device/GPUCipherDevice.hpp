@@ -19,7 +19,7 @@ namespace paracrypt {
       public:
 	 virtual ~ GPUCipherDevice();
 	int getThreadsPerThreadBlock();
-	int setThreadsPerThreadBlock(int tptb);
+	void setThreadsPerThreadBlock(int tptb);
 	int getNWarpsPerBlock();
 	int getMaxBlocksPerSM();
 	int getConcurrentKernels();

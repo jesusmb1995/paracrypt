@@ -6,6 +6,7 @@
 #include "../device/CUDACipherDevice.hpp"
 #include "../AES/CudaEcbAes16B.hpp"
 #include "../AES/CudaEcbAes16BPtr.hpp"
+#include "../AES/CudaEcbAes8B.hpp"
 #include "../endianess.h"
 #include "../Timer.hpp"
 #include "cuda_test_kernels.cuh"
@@ -22,7 +23,7 @@ struct Setup {
 	#define TRD_MIN 1*1024*64
 	#define TRD_MAX 2*1024*64
 	#define TRD_DIF (TRD_MAX-TRD_MIN)
-		random_data_n_blocks = (rand() % 10 + 1);
+		random_data_n_blocks = (rand() % 10 + 1); // TRD_DIF + TRD_MIN);
 		random_data = (unsigned char*) malloc(random_data_n_blocks*16);
 		uint32_t* data_ptr = (uint32_t*)random_data;
 		for(int i=0; i < random_data_n_blocks*4; i++) {
@@ -104,12 +105,43 @@ void AES_RDN_TEST(std::string title, paracrypt::CudaAES* aes, int key_bits, bool
     free(result);
 }
 
+void AES_SB_TEST(std::string title, paracrypt::CudaAES* aes, int key_bits, bool constantKey, bool constantTables)
+{
+    unsigned char data[16] = {
+	0x32U, 0x43U, 0xf6U, 0xa8U,
+	0x88U, 0x5aU, 0x30U, 0x8dU,
+	0x31U, 0x31U, 0x98U, 0xa2U,
+	0xe0U, 0x37U, 0x07U, 0x34U
+    };
+    const unsigned char output[16] = {
+	0x39U, 0x25U, 0x84U, 0x1dU,
+	0x02U, 0xdcU, 0x09U, 0xfbU,
+	0xdcU, 0x11U, 0x85U, 0x97U,
+	0x19U, 0x6aU, 0x0bU, 0x32U
+    };
+
+    paracrypt::CUDACipherDevice * gpu = new paracrypt::CUDACipherDevice(0);
+    aes->setKey(k,128);
+    aes->setDevice(gpu);
+    aes->constantKey(constantKey);
+    aes->constantTables(constantTables);
+    aes->malloc(1);
+    aes->encrypt((unsigned char *) &data, (unsigned char *) &data, 1);
+
+    delete aes;
+    delete gpu;
+
+    hexdump("expected",output,16);
+    hexdump("data",data,16);
+    BOOST_CHECK_EQUAL_COLLECTIONS(data,data+16,output,output+16);
+}
+
 BOOST_AUTO_TEST_SUITE(CUDA_AES_16B)
 BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_random)
 {
     paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES16B();
-    AES_RDN_TEST(
-    		"AES128-ECB with constant key and t-table",
+    AES_SB_TEST(
+    		"AES128-ECB (16B parallelism) with constant key and t-table",
     		aes,
     		128,
     		true,
@@ -118,9 +150,30 @@ BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_random)
 }
 BOOST_AUTO_TEST_SUITE_END()
 
-//BOOST_AUTO_TEST_SUITE(aes_16B_ptr)
-//
-//BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE(CUDA_AES_8B)
+BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_single)
+{
+    paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+    AES_SB_TEST(
+    		"AES128-ECB test vector | 8B parallelism with constant key and t-table",
+    		aes,
+    		128,
+    		true,
+    		true
+    );
+}
+BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_random)
+{
+    paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+    AES_RDN_TEST(
+    		"AES128-ECB (8B parallelism) with constant key and t-table",
+    		aes,
+    		128,
+    		true,
+    		true
+    );
+}
+BOOST_AUTO_TEST_SUITE_END()
 
 //	BOOST_AUTO_TEST_SUITE(key_expansion)
 //#include "key_schedule_test.cpp"
