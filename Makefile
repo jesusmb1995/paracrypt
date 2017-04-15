@@ -63,6 +63,12 @@ $(OBJ_DIR)/CudaEcbAes8B.o: $(SRC_DIR)/AES/CudaEcbAes8B.cpp
 $(OBJ_DIR)/CudaEcbAes8B.cu.o: $(SRC_DIR)/AES/CudaEcbAes8B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
 #
+$(OBJ_DIR)/CudaEcbAes4B.o: $(SRC_DIR)/AES/CudaEcbAes4B.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaEcbAes4B.cu.o: $(SRC_DIR)/AES/CudaEcbAes4B.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
+#
 $(OBJ_DIR)/CUDACipherDevice.o: $(SRC_DIR)/device/CUDACipherDevice.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
@@ -149,8 +155,8 @@ $(OBJ_DIR)/logging.o
 	 $(OBJ_DIR)/logging.o \
 	 -o $(BIN_DIR)/cpu_AES_round_example $(LIBS)
 #
-tests: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
-tests: NVCC_FLAGS_ += -g -DDEBUG -DDEVEL
+tests: CXX_FLAGS_ += -g -DDEBUG #-DDEVEL
+tests: NVCC_FLAGS_ += -g -DDEBUG #-DDEVEL
 tests: \
 $(OBJ_DIR)/tests.o \
 $(OBJ_DIR)/cuda_test_kernels.cu.o \
@@ -168,6 +174,8 @@ $(OBJ_DIR)/CudaEcbAes16BPtr.o  \
 $(OBJ_DIR)/CudaEcbAes16BPtr.cu.o \
 $(OBJ_DIR)/CudaEcbAes8B.o  \
 $(OBJ_DIR)/CudaEcbAes8B.cu.o \
+$(OBJ_DIR)/CudaEcbAes4B.o  \
+$(OBJ_DIR)/CudaEcbAes4B.cu.o \
 $(OBJ_DIR)/CUDACipherDevice.o
 	 $(CXX) $(CXX_FLAGS_) \
 	 $(OBJ_DIR)/tests.o \
@@ -182,8 +190,10 @@ $(OBJ_DIR)/CUDACipherDevice.o
 	 $(OBJ_DIR)/CudaEcbAes16B.cu.o \
 	 $(OBJ_DIR)/CudaEcbAes16BPtr.o \
 	 $(OBJ_DIR)/CudaEcbAes16BPtr.cu.o \
-	 $(OBJ_DIR)/CudaEcbAes8B.o  \
+	 $(OBJ_DIR)/CudaEcbAes8B.o \
 	 $(OBJ_DIR)/CudaEcbAes8B.cu.o \
+	 $(OBJ_DIR)/CudaEcbAes4B.o \
+	 $(OBJ_DIR)/CudaEcbAes4B.cu.o \
 	 $(OBJ_DIR)/CUDACipherDevice.o \
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/Timer.o \

@@ -1,8 +1,31 @@
-23:13:04 **** Incremental Build of configuration Debug for project pcnsight ****
+18:47:33 **** Build of configuration Debug for project pcnsight ****
 make all 
-/usr/local/cuda/bin/nvcc   -g -DDEBUG -DDEVEL -c src/AES/CudaEcbAes8B.cu -o obj/CudaEcbAes8B.cu.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/tests/cuda_test_kernels.cu -o obj/cuda_test_kernels.cu.o
 nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/openssl/AES_key_schedule.c -o obj/AES_key_schedule.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/endianess.c -o obj/endianess.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/logging.cpp -o obj/logging.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/Timer.cpp -o obj/Timer.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/AES.cpp -o obj/AES.o
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaAES.cpp -o obj/CudaAES.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/AES/CudaConstant.cu -o obj/CudaAESConstant.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes.cpp -o obj/CudaEcbAes.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes16B.cpp -o obj/CudaEcbAes16B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/AES/CudaEcbAes16B.cu -o obj/CudaEcbAes16B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes16BPtr.cpp -o obj/CudaEcbAes16BPtr.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/AES/CudaEcbAes16BPtr.cu -o obj/CudaEcbAes16BPtr.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes8B.cpp -o obj/CudaEcbAes8B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/AES/CudaEcbAes8B.cu -o obj/CudaEcbAes8B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/AES/CudaEcbAes4B.cpp -o obj/CudaEcbAes4B.o -I/usr/local/cuda/include
+/usr/local/cuda/bin/nvcc   -g -DDEBUG  -c src/AES/CudaEcbAes4B.cu -o obj/CudaEcbAes4B.cu.o
+nvcc warning : The 'compute_20', 'sm_20', and 'sm_21' architectures are deprecated, and may be removed in a future release (Use -Wno-deprecated-gpu-targets to suppress warning).
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/device/CUDACipherDevice.cpp -o obj/CUDACipherDevice.o -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
 	 obj/tests.o \
 	 obj/cuda_test_kernels.cu.o \
 	 obj/AES_key_schedule.o \
@@ -15,13 +38,15 @@ g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
 	 obj/CudaEcbAes16B.cu.o \
 	 obj/CudaEcbAes16BPtr.o \
 	 obj/CudaEcbAes16BPtr.cu.o \
-	 obj/CudaEcbAes8B.o  \
+	 obj/CudaEcbAes8B.o \
 	 obj/CudaEcbAes8B.cu.o \
+	 obj/CudaEcbAes4B.o \
+	 obj/CudaEcbAes4B.cu.o \
 	 obj/CUDACipherDevice.o \
 	 obj/logging.o \
 	 obj/Timer.o \
 	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
 # make icc
 
-23:13:06 Build Finished (took 2s.266ms)
+18:48:28 Build Finished (took 54s.556ms)
 

@@ -1,4 +1,4 @@
-!SESSION 2017-04-13 20:22:07.864 -----------------------------------------------
+!SESSION 2017-04-15 10:39:34.583 -----------------------------------------------
 eclipse.buildId=unknown
 java.version=1.8.0_121
 java.vendor=Oracle Corporation
@@ -6,9 +6,9 @@ BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
 Command-line arguments:  -os linux -ws gtk -arch x86_64
 
 This is a continuation of log file /home/jesus/Dropbox/Estudios/octavo_semestre/TFG/repository/proj/.metadata/.bak_1.log
-Created Time: 2017-04-13 21:53:03.821
+Created Time: 2017-04-15 12:10:10.821
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:03.821
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:10.821
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -65,7 +65,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:11.700
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:13.694
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -122,7 +122,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:12.939
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:16.658
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -179,7 +179,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:19.231
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:17.938
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -236,7 +236,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:23.005
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:23.310
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -293,7 +293,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:27.268
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:26.049
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -350,7 +350,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:28.520
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:29.361
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -407,7 +407,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:34.802
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:32.180
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -464,7 +464,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:36.048
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:33.478
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -521,7 +521,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:55.818
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:42.713
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -578,7 +578,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:53:59.571
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:43.957
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -635,7 +635,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:07.289
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:10:58.887
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -692,7 +692,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:10.208
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:01.646
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -749,7 +749,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:13.613
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:03.367
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -806,7 +806,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:36.470
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:05.375
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -863,7 +863,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:37.720
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:11.697
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -920,7 +920,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:42.423
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:13.078
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -977,7 +977,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:44.846
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:15.361
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1034,7 +1034,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:54:46.102
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:24.610
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1091,7 +1091,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:55:01.412
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:26.371
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1148,7 +1148,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:06.653
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:29.123
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1205,7 +1205,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:13.588
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:30.752
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1262,7 +1262,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:14.873
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:11:32.521
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1319,7 +1319,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:16.597
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:12:05.273
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1376,7 +1376,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:37.835
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:12:07.031
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1433,7 +1433,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:40.067
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:12:21.863
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1490,7 +1490,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:43.296
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:12:52.629
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1547,7 +1547,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:48.653
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:12:58.024
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1604,7 +1604,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:55.781
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:00.302
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1661,7 +1661,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:56:56.994
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:01.585
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1718,7 +1718,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:04.429
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:07.941
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1775,7 +1775,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:05.638
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:11.718
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1832,7 +1832,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:10.373
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:13.456
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1889,7 +1889,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:12.601
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:14.744
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -1946,7 +1946,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:23.828
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:20.488
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2003,7 +2003,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:29.136
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:22.732
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2060,7 +2060,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:30.362
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:24.203
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2117,7 +2117,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:32.065
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:31.493
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2174,7 +2174,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:37.765
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:34.761
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2231,7 +2231,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:39.576
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:36.497
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2288,7 +2288,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:43.294
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:40.737
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2345,7 +2345,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:50.495
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:46.489
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2402,7 +2402,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:57:52.739
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:50.769
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2459,7 +2459,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:01.452
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:13:55.052
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2516,7 +2516,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:04.661
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:14:00.839
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2573,7 +2573,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:08.379
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:14:11.121
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2630,7 +2630,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:11.807
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:14:12.534
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2687,7 +2687,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:13.513
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:14:13.810
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2744,7 +2744,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:17.223
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:14:19.210
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2801,7 +2801,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:19.948
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:14:33.592
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2858,7 +2858,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:22.253
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:14:38.356
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2915,7 +2915,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:24.966
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:14.163
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -2972,7 +2972,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:29.689
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:18.519
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3029,7 +3029,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:31.406
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:27.263
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3086,7 +3086,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:35.128
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:30.063
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3143,7 +3143,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:36.835
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:31.337
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3200,7 +3200,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:58:40.579
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:36.638
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3257,7 +3257,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:59:02.415
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:41.392
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3314,7 +3314,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:59:29.762
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:42.644
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3371,7 +3371,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:59:50.612
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:45.570
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3428,7 +3428,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 21:59:51.917
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:46.799
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3485,7 +3485,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:00.135
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:15:55.592
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3542,7 +3542,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:03.337
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:02.116
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3599,7 +3599,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:28.131
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:03.917
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3656,7 +3656,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:29.844
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:06.703
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3713,7 +3713,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:42.050
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:09.096
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3770,7 +3770,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:43.281
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:15.948
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3827,7 +3827,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:46.006
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:17.291
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3884,7 +3884,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:49.237
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:22.659
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3941,7 +3941,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:50.967
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:25.674
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -3998,7 +3998,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:52.191
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:26.959
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4055,7 +4055,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:53.454
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:31.695
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4112,7 +4112,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:55.666
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:34.131
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4169,7 +4169,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:56.944
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:35.874
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4226,7 +4226,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:00:58.227
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:45.237
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4283,7 +4283,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:01:14.036
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:46.548
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4340,7 +4340,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:01:16.762
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:50.403
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4397,7 +4397,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:01:18.624
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:51.763
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4454,7 +4454,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:01:31.831
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:55.109
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4511,7 +4511,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:01:36.151
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:16:57.419
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4568,7 +4568,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:01:40.457
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:17:06.706
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4625,7 +4625,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:01:41.715
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:17:07.973
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4682,7 +4682,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:02:00.435
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:17:15.199
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4739,7 +4739,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:02:03.262
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:17:16.936
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4796,7 +4796,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:02:04.521
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:17:18.790
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4853,64 +4853,46 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:02:43.159
-!MESSAGE Error in CDT UI during reconcile
-!STACK 0
-java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeEvaluation(CPPCompositesFactory.java:423)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.TemplateInstanceUtil.convert(TemplateInstanceUtil.java:106)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.TemplateInstanceUtil.convert(TemplateInstanceUtil.java:86)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeBinding(CPPCompositesFactory.java:517)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeType(CPPCompositesFactory.java:150)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeBinding(CPPCompositesFactory.java:607)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeType(CPPCompositesFactory.java:150)
-	at org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory.getCompositeTypes(AbstractCompositeFactory.java:50)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeType(CPPCompositesFactory.java:157)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPFunction.getType(CompositeCPPFunction.java:71)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPFunctionTemplate.getType(CompositeCPPFunctionTemplate.java:1)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPMethodTemplate.getType(CompositeCPPMethodTemplate.java:1)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPConstructorTemplate.getType(CompositeCPPConstructorTemplate.java:1)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.createSpecialization(CPPTemplates.java:912)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPClassSpecialization.specializeMember(CompositeCPPClassSpecialization.java:123)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPClassSpecializationScope.specializeMembers(AbstractCPPClassSpecializationScope.java:217)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPClassSpecializationScope.getConstructors(AbstractCPPClassSpecializationScope.java:261)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPClassSpecializationScope.getConstructors(CompositeCPPClassSpecializationScope.java:116)
-	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPClassSpecialization.getConstructors(CompositeCPPClassSpecialization.java:164)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.getConstructors(ClassTypeHelper.java:251)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.copyInitializationOfClass(Conversions.java:640)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionCost.performUDC(FunctionCost.java:103)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.resolveFunction(CPPSemantics.java:2506)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.resolveAmbiguities(CPPSemantics.java:2137)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.resolveBinding(CPPSemantics.java:305)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor.createBinding(CPPVisitor.java:280)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName.createIntermediateBinding(CPPASTName.java:61)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase.resolveBinding(CPPASTNameBase.java:107)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName.resolveBinding(CPPASTQualifiedName.java:105)
-	at org.eclipse.cdt.internal.ui.editor.SemanticToken.getBinding(SemanticToken.java:47)
-	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightings$TemplateParameterHighlighting.consumes(SemanticHighlightings.java:895)
-	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler$PositionCollector.visitNode(SemanticHighlightingReconciler.java:185)
-	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler$PositionCollector.visit(SemanticHighlightingReconciler.java:162)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName.accept(CPPASTQualifiedName.java:248)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression.accept(CPPASTIdExpression.java:79)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression.accept(CPPASTFunctionCallExpression.java:188)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorInitializer.accept(CPPASTConstructorInitializer.java:86)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator.postAccept(CPPASTDeclarator.java:214)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator.accept(CPPASTDeclarator.java:204)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:105)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
-	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
-	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.reconcilePositions(SemanticHighlightingReconciler.java:397)
-	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.reconciled(SemanticHighlightingReconciler.java:352)
-	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
-	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
-	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.initialReconcile(CReconcilingStrategy.java:122)
-	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.initialReconcile(CompositeReconcilingStrategy.java:117)
-	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.initialReconcile(CCompositeReconcilingStrategy.java:108)
-	at org.eclipse.jface.text.reconciler.MonoReconciler.initialProcess(MonoReconciler.java:105)
-	at org.eclipse.cdt.internal.ui.text.CReconciler.initialProcess(CReconciler.java:347)
-	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:173)
+!ENTRY org.eclipse.jface 2 0 2017-04-15 12:17:55.647
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2017-04-15 12:17:55.647
+!MESSAGE A conflict occurred for ALT+ARROW_RIGHT:
+Binding(ALT+ARROW_RIGHT,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.hover.forwardMacroExpansion,Forward,
+		Step forward in macro expansions,
+		Category(org.eclipse.cdt.ui.category.source,C/C++ Source,C/C++ Source Actions,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@57bd9e1,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.macroExpansionHoverScope,,,system)
+Binding(ALT+ARROW_RIGHT,
+	ParameterizedCommand(Command(org.eclipse.ui.navigate.forwardHistory,Forward History,
+		Move forward in the editor navigation history,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@5415dad9,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
+!SUBENTRY 1 org.eclipse.jface 2 0 2017-04-15 12:17:55.647
+!MESSAGE A conflict occurred for ALT+ARROW_LEFT:
+Binding(ALT+ARROW_LEFT,
+	ParameterizedCommand(Command(org.eclipse.cdt.ui.hover.backwardMacroExpansion,Back,
+		Step backward in macro expansions,
+		Category(org.eclipse.cdt.ui.category.source,C/C++ Source,C/C++ Source Actions,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@61e88a1d,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.cdt.ui.macroExpansionHoverScope,,,system)
+Binding(ALT+ARROW_LEFT,
+	ParameterizedCommand(Command(org.eclipse.ui.navigate.backwardHistory,Backward History,
+		Move backward in the editor navigation history,
+		Category(org.eclipse.ui.category.navigate,Navigate,null,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@16b01c9f,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.contexts.window,,,system)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:02:46.276
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:12.225
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -4967,7 +4949,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:02:54.575
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:13.545
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5024,7 +5006,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:03:12.402
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:16.418
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5081,7 +5063,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:03:14.627
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:38.583
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5138,7 +5120,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:03:20.595
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:39.854
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5195,7 +5177,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:03:21.931
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:42.235
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5252,7 +5234,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:03:38.753
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:45.066
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5309,7 +5291,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:04:19.554
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:49.359
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5366,7 +5348,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:04:21.264
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:18:52.142
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5423,7 +5405,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:04:25.509
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:19:36.977
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5480,7 +5462,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:04:44.870
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:19:42.318
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5537,7 +5519,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:13.091
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:19:44.387
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5594,7 +5576,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:20.412
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:09.329
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5651,7 +5633,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:21.626
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:11.263
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5708,7 +5690,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:26.834
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:21.521
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5765,7 +5747,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:29.057
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:23.823
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5822,7 +5804,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:34.288
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:25.566
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5879,7 +5861,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:35.791
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:27.291
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5936,7 +5918,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:41.777
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:29.535
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -5993,7 +5975,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:43.602
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:31.387
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6050,7 +6032,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:46.340
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:20:59.182
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6107,7 +6089,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:51.101
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:21:02.445
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6164,7 +6146,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:05:59.582
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:21:04.738
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6221,7 +6203,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:06:03.474
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:21:05.980
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6278,7 +6260,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:06:39.725
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:21:55.142
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6335,7 +6317,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:06:42.924
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:21:58.648
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6392,7 +6374,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:06:47.156
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:21:59.976
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6449,7 +6431,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:06:49.106
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:22:07.284
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6506,7 +6488,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:07:07.403
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:22:08.714
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6563,7 +6545,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:07:25.154
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:22:12.004
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6620,10 +6602,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.dsf 4 0 2017-04-13 22:07:35.896
-!MESSAGE fTracker is not initilized
-
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:16.944
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:22:16.732
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6680,7 +6659,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:18.599
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:22:21.073
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6737,7 +6716,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:21.336
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:22:22.651
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6794,7 +6773,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:25.561
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:38.590
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6851,7 +6830,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:26.793
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:39.837
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6908,7 +6887,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:29.027
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:41.684
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -6964,10 +6943,295 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:43.580
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:45.437
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:47.793
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:49.099
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:35:56.567
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:02.382
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:04.146
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:10.430
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:11.818
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:15.074
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:16.832
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:24.093
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:27.440
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:31.231
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:32.469
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:33.697
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:37.575
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:37:39.344
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:38:49.349
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:38:52.754
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:38:55.104
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:40:31.643
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:40:41.411
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:40:42.720
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:40:56.461
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:40:57.744
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:41:05.569
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:41:08.996
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:41:18.282
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:41:31.548
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:41:32.797
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:41:35.265
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:41:36.535
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:45:24.818
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:45:46.807
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:45:48.990
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:45:52.917
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:45:55.281
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:45:58.036
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:45:59.805
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:46:36.087
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:46:39.441
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:46:44.291
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:46:50.405
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:46:52.121
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:46:57.855
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:47:03.620
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:47:04.950
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:48.255
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:47:28.688
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:47:31.418
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:47:41.839
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:47:43.151
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:47:48.980
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:48:11.716
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:48:13.701
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:48:18.735
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:48:20.476
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:49:09.297
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
 	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeEvaluation(CPPCompositesFactory.java:423)
 	at org.eclipse.cdt.internal.core.index.composite.cpp.TemplateInstanceUtil.convert(TemplateInstanceUtil.java:106)
@@ -7022,7 +7286,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:51.464
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:49:31.076
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7079,7 +7343,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:53.681
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:50:01.403
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7136,7 +7400,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:09:54.938
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:50:02.660
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7193,7 +7457,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:10:50.348
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:50:06.832
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7250,7 +7514,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:10:57.107
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:50:10.097
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7307,7 +7571,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:10:58.928
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:50:13.519
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7364,7 +7628,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:04.161
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:50:15.511
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7421,7 +7685,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:05.896
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:51:08.985
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7478,7 +7742,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:11.260
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:51:16.308
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7535,7 +7799,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:13.505
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:51:39.236
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7592,7 +7856,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:16.719
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:51:40.469
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7649,7 +7913,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:18.486
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:51:42.717
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7706,7 +7970,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:20.278
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:56:29.524
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7763,7 +8027,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:24.617
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:56:33.383
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7820,7 +8084,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:25.895
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:56:43.132
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7877,7 +8141,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:28.649
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:02.369
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7934,7 +8198,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:31.123
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:03.630
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -7991,7 +8255,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:34.908
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:04.879
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8048,7 +8312,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:40.134
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:21.656
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8105,7 +8369,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:42.882
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:26.920
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8162,7 +8426,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:46.210
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:31.168
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8219,7 +8483,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:11:53.943
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:35.964
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8276,7 +8540,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:07.859
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:45.549
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8333,7 +8597,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:09.607
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:57:49.978
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8390,7 +8654,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:11.844
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:58:35.769
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8435,9 +8699,6 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator.accept(CPPASTDeclarator.java:204)
 	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:105)
 	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarationStatement.accept(CPPASTDeclarationStatement.java:75)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompoundStatement.accept(CPPASTCompoundStatement.java:85)
-	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionDefinition.accept(CPPASTFunctionDefinition.java:202)
 	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
 	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.reconcilePositions(SemanticHighlightingReconciler.java:397)
 	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.reconciled(SemanticHighlightingReconciler.java:352)
@@ -8450,7 +8711,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:13.587
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:59:16.572
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8507,7 +8768,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:16.393
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:59:20.370
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8564,7 +8825,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:18.154
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:59:21.688
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8621,7 +8882,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:19.926
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:59:48.446
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8678,7 +8939,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:25.201
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:59:49.685
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8735,7 +8996,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:29.016
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:59:52.939
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8792,7 +9053,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:37.593
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 12:59:54.767
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8849,7 +9110,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:40.974
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 13:00:02.056
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8906,7 +9167,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:42.811
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 13:00:03.790
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -8962,8 +9223,29 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY org.eclipse.jface 2 0 2017-04-15 13:05:21.527
+!MESSAGE Keybinding conflicts occurred.  They may interfere with normal accelerator operation.
+!SUBENTRY 1 org.eclipse.jface 2 0 2017-04-15 13:05:21.527
+!MESSAGE A conflict occurred for CTRL+D:
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.debug.ui.commands.eof,EOF,
+		Send end of file,
+		Category(org.eclipse.debug.ui.category.run,Run/Debug,Run/Debug command category,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@6f4b1974,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.debug.ui.console,,,system)
+Binding(CTRL+D,
+	ParameterizedCommand(Command(org.eclipse.ui.edit.text.delete.line,Delete Line,
+		Delete a line of text,
+		Category(org.eclipse.ui.category.textEditor,Text Editing,Text Editing Commands,true),
+		org.eclipse.ui.internal.WorkbenchHandlerServiceHandler@46533f81,
+		,,true),null),
+	org.eclipse.ui.defaultAcceleratorConfiguration,
+	org.eclipse.ui.textEditorScope,,,system)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:45.059
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 13:05:25.975
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -9020,7 +9302,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:53.829
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 13:05:31.882
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -9077,7 +9359,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:12:57.079
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 13:05:52.671
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -9134,7 +9416,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:13:03.979
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 13:06:01.197
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
@@ -9191,7 +9473,7 @@ java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBi
 	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
 	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
 
-!ENTRY org.eclipse.cdt.ui 4 0 2017-04-13 22:13:08.783
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-15 13:06:12.793
 !MESSAGE Error in CDT UI during reconcile
 !STACK 0
 java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding

@@ -13,89 +13,46 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
    		uint32_t* deviceTe2,
    		uint32_t* deviceTe3
    		){
+	int key_bits = 0;
 	switch(rounds) {
 	case 10:
-		LOG_TRACE(boost::format("cuda_ecb_aes128_8b_encrypt("
-				"gridSize=%d"
-				", threadsPerBlock=%d"
-				", data=%x"
-				", n_blocks=%d"
-				", expanded_key=%x"
-				", rounds=%d)")
-			% gridSize
-			% threadsPerBlock
-			% (void*) (this->data)
-			% n_blocks
-			% key
-			% rounds);
-		cuda_ecb_aes128_8b_encrypt(
-				gridSize,
-				threadsPerBlock,
-				n_blocks,
-				this->data,
-				key,
-		   		deviceTe0,
-		   		deviceTe1,
-		   		deviceTe2,
-		   		deviceTe3
-		);
+		key_bits = 128;
 		break;
 	case 12:
-		LOG_TRACE(boost::format("cuda_ecb_aes192_8b_encrypt("
-				"gridSize=%d"
-				", threadsPerBlock=%d"
-				", data=%x"
-				", n_blocks=%d"
-				", expanded_key=%x"
-				", rounds=%d)")
-			% gridSize
-			% threadsPerBlock
-			% (void*) (this->data)
-			% n_blocks
-			% key
-			% rounds);
-		cuda_ecb_aes192_8b_encrypt(
-				gridSize,
-				threadsPerBlock,
-				n_blocks,
-				this->data,
-				key,
-		   		deviceTe0,
-		   		deviceTe1,
-		   		deviceTe2,
-		   		deviceTe3
-		);
+		key_bits = 192;
 		break;
 	case 14:
-		LOG_TRACE(boost::format("cuda_ecb_aes256_8b_encrypt("
-				"gridSize=%d"
-				", threadsPerBlock=%d"
-				", data=%x"
-				", n_blocks=%d"
-				", expanded_key=%x"
-				", rounds=%d)")
-			% gridSize
-			% threadsPerBlock
-			% (void*) (this->data)
-			% n_blocks
-			% key
-			% rounds);
-		cuda_ecb_aes256_8b_encrypt(
-				gridSize,
-				threadsPerBlock,
-				n_blocks,
-				this->data,
-				key,
-		   		deviceTe0,
-		   		deviceTe1,
-		   		deviceTe2,
-		   		deviceTe3
-		);
+		key_bits = 256;
 		break;
 	default:
 		return -1;
 	}
-	 return 0;
+	LOG_TRACE(boost::format("cuda_ecb_aes_8b_encrypt("
+			"gridSize=%d"
+			", threadsPerBlock=%d"
+			", data=%x"
+			", n_blocks=%d"
+			", expanded_key=%x"
+			", rounds=%d)")
+		% gridSize
+		% threadsPerBlock
+		% (void*) (this->data)
+		% n_blocks
+		% key
+		% rounds);
+	cuda_ecb_aes_8b_encrypt(
+			gridSize,
+			threadsPerBlock,
+			n_blocks,
+			this->data,
+			key,
+			key_bits,
+	   		deviceTe0,
+	   		deviceTe1,
+	   		deviceTe2,
+	   		deviceTe3
+	);
+	return 0;
 }
 
 int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
@@ -111,90 +68,45 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
    		uint32_t* deviceTd3,
    		uint8_t* deviceTd4
     	){
+	int key_bits = 0;
 	switch(rounds) {
 	case 10:
-		LOG_TRACE(boost::format("cuda_ecb_aes128_8b_decrypt("
-				"gridSize=%d"
-				", threadsPerBlock=%d"
-				", data=%x"
-				", n_blocks=%d"
-				", expanded_key=%x"
-				", rounds=%d)")
-			% gridSize
-			% threadsPerBlock
-			% (void*) (this->data)
-			% n_blocks
-			% key
-			% rounds);
-		cuda_ecb_aes128_8b_decrypt(
-				gridSize,
-				threadsPerBlock,
-				n_blocks,
-				this->data,
-				key,
-		   		deviceTd0,
-		   		deviceTd1,
-		   		deviceTd2,
-		   		deviceTd3,
-		   		deviceTd4
-		);
+		key_bits = 128;
 		break;
 	case 12:
-		LOG_TRACE(boost::format("cuda_ecb_aes192_8b_decrypt("
-				"gridSize=%d"
-				", threadsPerBlock=%d"
-				", data=%x"
-				", n_blocks=%d"
-				", expanded_key=%x"
-				", rounds=%d)")
-			% gridSize
-			% threadsPerBlock
-			% (void*) (this->data)
-			% n_blocks
-			% key
-			% rounds);
-		cuda_ecb_aes192_8b_decrypt(
-				gridSize,
-				threadsPerBlock,
-				n_blocks,
-				this->data,
-				key,
-		   		deviceTd0,
-		   		deviceTd1,
-		   		deviceTd2,
-		   		deviceTd3,
-		   		deviceTd4
-		);
+		key_bits = 192;
 		break;
 	case 14:
-		LOG_TRACE(boost::format("cuda_ecb_aes256_8b_decrypt("
-				"gridSize=%d"
-				", threadsPerBlock=%d"
-				", data=%x"
-				", n_blocks=%d"
-				", expanded_key=%x"
-				", rounds=%d)")
-			% gridSize
-			% threadsPerBlock
-			% (void*) (this->data)
-			% n_blocks
-			% key
-			% rounds);
-		cuda_ecb_aes256_8b_decrypt(
-				gridSize,
-				threadsPerBlock,
-				n_blocks,
-				this->data,
-				key,
-		   		deviceTd0,
-		   		deviceTd1,
-		   		deviceTd2,
-		   		deviceTd3,
-		   		deviceTd4
-		);
+		key_bits = 256;
 		break;
 	default:
 		return -1;
 	}
-	 return 0;
+	LOG_TRACE(boost::format("cuda_ecb_aes_8b_decrypt("
+			"gridSize=%d"
+			", threadsPerBlock=%d"
+			", data=%x"
+			", n_blocks=%d"
+			", expanded_key=%x"
+			", rounds=%d)")
+		% gridSize
+		% threadsPerBlock
+		% (void*) (this->data)
+		% n_blocks
+		% key
+		% rounds);
+	cuda_ecb_aes_8b_decrypt(
+			gridSize,
+			threadsPerBlock,
+			n_blocks,
+			this->data,
+			key,
+			key_bits,
+	   		deviceTd0,
+	   		deviceTd1,
+	   		deviceTd2,
+	   		deviceTd3,
+	   		deviceTd4
+	);
+	return 0;
 }
