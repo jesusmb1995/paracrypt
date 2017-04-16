@@ -18,6 +18,8 @@ namespace paracrypt {
 	AES_KEY * deRoundKeys;
 	bool enKeyPropietary;
 	bool deKeyPropietary;
+      protected:
+    virtual int getThreadsPerCipherBlock() = 0;
       public:
 	 AES();
 	~AES();

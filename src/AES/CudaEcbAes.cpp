@@ -5,7 +5,8 @@ int paracrypt::CudaEcbAES::encrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      int n_blocks)
 {
-    int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
+	int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
+    int gridSize = this->getDevice()->getGridSize(n_blocks, threadsPerCipherBlock);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
     int dataSize = n_blocks * AES_BLOCK_SIZE_B;
     uint32_t *key = this->getDeviceEKey();
@@ -36,7 +37,8 @@ int paracrypt::CudaEcbAES::decrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      int n_blocks)
 {
-    int gridSize = this->getDevice()->getGridSize(n_blocks, 1);
+	int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
+    int gridSize = this->getDevice()->getGridSize(n_blocks, threadsPerCipherBlock);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
     int dataSize = n_blocks * AES_BLOCK_SIZE_B;
     uint32_t *key = this->getDeviceDKey();

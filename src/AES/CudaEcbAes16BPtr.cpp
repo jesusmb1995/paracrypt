@@ -1,6 +1,10 @@
 #include "CudaEcbAes16BPtr.hpp"
 #include "CudaEcbAes16BPtr.cuh"
 
+int paracrypt::CudaEcbAES16BPtr::getThreadsPerCipherBlock() {
+	return 1;
+}
+
 int paracrypt::CudaEcbAES16BPtr::cuda_ecb_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,

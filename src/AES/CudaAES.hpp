@@ -24,6 +24,7 @@ namespace paracrypt {
 	bool useConstantKey;
 	bool useConstantTables;
       protected:
+    virtual int getThreadsPerCipherBlock() = 0;
 	unsigned char *data = NULL;
 	uint32_t* getDeviceEKey();
 	uint32_t* getDeviceDKey();

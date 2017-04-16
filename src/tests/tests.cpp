@@ -7,7 +7,10 @@
 #include "../AES/CudaEcbAes16B.hpp"
 #include "../AES/CudaEcbAes16BPtr.hpp"
 #include "../AES/CudaEcbAes8B.hpp"
+#include "../AES/CudaEcbAes8BPtr.hpp"
 #include "../AES/CudaEcbAes4B.hpp"
+#include "../AES/CudaEcbAes4BPtr.hpp"
+#include "../AES/CudaEcbAes1B.hpp"
 #include "../endianess.h"
 #include "../Timer.hpp"
 #include "cuda_test_kernels.cuh"
@@ -22,9 +25,9 @@ paracrypt::CUDACipherDevice* gpu;
 
 struct Setup {
 	Setup()   {
-		// 1Mib to 2Mib data
-	#define TRD_MIN 1*1024*64
-	#define TRD_MAX 2*1024*64
+		// 500KiB to 1Mib
+	#define TRD_MIN 512*64
+	#define TRD_MAX 1024*64
 	#define TRD_DIF (TRD_MAX-TRD_MIN)
 		srand (time(NULL));
 		random_data_n_blocks = (rand() % TRD_DIF + TRD_MIN); // TRD_DIF + TRD_MIN);
@@ -135,7 +138,7 @@ const tv aes_256_tv = {
 void AES_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, int key_bits, bool constantKey, bool constantTables)
 {
 	int data_length = random_data_n_blocks*16;
-    unsigned char *result = (unsigned char*) malloc(data_length); // 16 MiB file
+    unsigned char *result = (unsigned char*) malloc(data_length);
 
     aes->constantKey(constantKey);
     aes->constantTables(constantTables);
@@ -148,8 +151,9 @@ void AES_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, par
     aes->encrypt(random_data, result, random_data_n_blocks);
     double sec = t->toc_seconds();
     LOG_INF(boost::format("%s needs %f seconds to encrypt %d blocks\n") % title.c_str() % sec % random_data_n_blocks);
-    for(int i=0;i<random_data_n_blocks;i++) {
-    	BOOST_TEST(((uint32_t*)result)[i] != ((uint32_t*)random_data)[i]);
+    for(int i=0;i<random_data_n_blocks*4;i++) {
+    	//LOG_TRACE(boost::format("block %d") % i);
+    	BOOST_REQUIRE(((uint32_t*)result)[i] != ((uint32_t*)random_data)[i]);
     }
 
     t->tic();
@@ -158,6 +162,42 @@ void AES_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, par
     LOG_INF(boost::format("%s needs %f seconds to decrypt %d blocks\n") % title.c_str() % sec % random_data_n_blocks);
 
    	BOOST_CHECK_EQUAL_COLLECTIONS((uint32_t*)result,((uint32_t*)result)+random_data_n_blocks,((uint32_t*)random_data),((uint32_t*)random_data)+random_data_n_blocks);
+    free(result);
+}
+
+void AES_VECTOR_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, int key_bits, bool constantKey, bool constantTables)
+{
+	int data_length = random_data_n_blocks*16;
+	unsigned char *result = (unsigned char*) malloc(data_length);
+    for(int i=0; i < random_data_n_blocks; i++) {
+    	memcpy(result+(i*16),vector_key.input,16);
+    }
+
+    aes->constantKey(constantKey);
+    aes->constantTables(constantTables);
+    aes->setKey(vector_key.key,vector_key.key_bits);
+    aes->setDevice(dev);
+    aes->malloc(random_data_n_blocks);
+
+    Timer* t = new Timer();
+    t->tic();
+    aes->encrypt(result, result, random_data_n_blocks);
+    double sec = t->toc_seconds();
+    LOG_INF(boost::format("%s needs %f seconds to encrypt %d blocks\n") % title.c_str() % sec % random_data_n_blocks);
+    for(int i=0;i<random_data_n_blocks*4;i++) {
+    	//LOG_TRACE(boost::format("block %d") % i);
+    	BOOST_REQUIRE_EQUAL(((uint32_t*)result)[i], ((uint32_t*)vector_key.output)[i%4]);
+    }
+
+    t->tic();
+    aes->decrypt(result, result, random_data_n_blocks);
+    sec = t->toc_seconds();
+    LOG_INF(boost::format("%s needs %f seconds to decrypt %d blocks\n") % title.c_str() % sec % random_data_n_blocks);
+
+    for(int i=0;i<random_data_n_blocks*4;i++) {
+    	//LOG_TRACE(boost::format("block %d") % i);
+    	BOOST_REQUIRE_EQUAL(((uint32_t*)result)[i], ((uint32_t*)vector_key.input)[i%4]);
+    }
     free(result);
 }
 
@@ -182,6 +222,30 @@ void AES_SB_ENCRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
 
     for(int i=0; i < n_blocks; i++) {
     	BOOST_REQUIRE_EQUAL_COLLECTIONS(data+(i*16),data+(i*16)+16,vector.output,vector.output+16);
+    }
+}
+
+void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, bool constantKey, bool constantTables)
+{
+	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
+    unsigned char data[16*n_blocks];
+    for(int i=0; i < n_blocks; i++) {
+    	memcpy(data+(i*16),vector.output,16);
+    }
+
+    aes->setKey(vector.key,vector.key_bits);
+    aes->setDevice(dev);
+    aes->constantKey(constantKey);
+    aes->constantTables(constantTables);
+    aes->malloc(n_blocks);
+    aes->decrypt((unsigned char *) &data, (unsigned char *) &data, n_blocks);
+
+    // first block hexdump
+    hexdump("expected",vector.input,16);
+    hexdump("data",data,16);
+
+    for(int i=0; i < n_blocks; i++) {
+    	BOOST_REQUIRE_EQUAL_COLLECTIONS(data+(i*16),data+(i*16)+16,vector.input,vector.input+16);
     }
 }
 
@@ -236,6 +300,90 @@ BOOST_AUTO_TEST_SUITE(CUDA_AES_8B)
 		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
 		AES_SB_ENCRYPT_TEST("AES256-ECB example vector | 8B parallelism with constant key and t-table",
 				aes_example,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES128-ECB (8B parallelism) n blocks with and constant key and t-table",
+				aes_example,aes,gpu,128,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES128-ECB (8B parallelism) n blocks with and constant key",
+				aes_example,aes,gpu,128,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_tc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES128-ECB (8B parallelism) n blocks with and constant t-table",
+				aes_example,aes,gpu,128,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES128-ECB (8B parallelism) n blocks with and dynamic key and t-table",
+				aes_example,aes,gpu,128,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES192-ECB (8B parallelism) n blocks with and constant key and t-table",
+				aes_192_tv,aes,gpu,192,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES192-ECB (8B parallelism) n blocks with and constant key",
+				aes_192_tv,aes,gpu,192,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_tc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES192-ECB (8B parallelism) n blocks with and constant t-table",
+				aes_192_tv,aes,gpu,192,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES192-ECB (8B parallelism) n blocks with and dynamic key and t-table",
+				aes_192_tv,aes,gpu,192,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES256-ECB (8B parallelism) n blocks with and constant key and t-table",
+				aes_256_tv,aes,gpu,256,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES256-ECB (8B parallelism) n blocks with and constant key",
+				aes_256_tv,aes,gpu,256,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_tc_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES256-ECB (8B parallelism) n blocks with and constant t-table",
+				aes_256_tv,aes,gpu,256,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_nblocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_VECTOR_RDN_TEST("AES256-ECB (8B parallelism) n blocks with and dynamic key and t-table",
+				aes_256_tv,aes,gpu,256,false,false);
 		delete aes;
 	}
 	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_random)
@@ -319,6 +467,135 @@ BOOST_AUTO_TEST_SUITE(CUDA_AES_8B)
 	{
 		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
 		AES_RDN_TEST("AES256-ECB (8B parallelism) with random data and dynamic key and t-table",
+				aes_256_tv,aes,gpu,256,false,false);
+		delete aes;
+	}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(CUDA_AES_8B_PTR)
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_SB_ENCRYPT_TEST("AES128-ECB example vector | 8B (ptr) parallelism with constant key and t-table",
+				aes_example,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_SB_ENCRYPT_TEST("AES192-ECB example vector | 8B (ptr) parallelism with constant key and t-table",
+				aes_192_tv,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_SB_ENCRYPT_TEST("AES256-ECB example vector | 8B (ptr) parallelism with constant key and t-table",
+				aes_256_tv,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_SB_ENCRYPT_TEST("AES128-ECB example vector | 8B (ptr) parallelism with constant key and t-table",
+				aes_example,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_SB_ENCRYPT_TEST("AES192-ECB example vector | 8B (ptr) parallelism with constant key and t-table",
+				aes_192_tv,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_SB_ENCRYPT_TEST("AES256-ECB example vector | 8B (ptr) parallelism with constant key and t-table",
+				aes_example,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES128-ECB (8B (ptr) parallelism) with random data and constant key and t-table",
+				aes_example,aes,gpu,128,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES128-ECB (8B (ptr) parallelism) with random data and constant key",
+				aes_example,aes,gpu,128,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES128-ECB (8B (ptr) parallelism) with random data and constant t-table",
+				aes_example,aes,gpu,128,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES128-ECB (8B (ptr) parallelism) with random data and dynamic key and t-table",
+				aes_example,aes,gpu,128,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES192-ECB (8B (ptr) parallelism) with random data and constant key and t-table",
+				aes_192_tv,aes,gpu,192,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES192-ECB (8B (ptr) parallelism) with random data and constant key",
+				aes_192_tv,aes,gpu,192,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES192-ECB (8B (ptr) parallelism) with random data and constant t-table",
+				aes_192_tv,aes,gpu,192,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES192-ECB (8B (ptr) parallelism) with random data and dynamic key and t-table",
+				aes_192_tv,aes,gpu,192,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES256-ECB (8B (ptr) parallelism) with random data and constant key and t-table",
+				aes_256_tv,aes,gpu,256,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES256-ECB (8B (ptr) parallelism) with random data and constant key",
+				aes_256_tv,aes,gpu,256,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES256-ECB (8B (ptr) parallelism) with random data and constant t-table",
+				aes_256_tv,aes,gpu,256,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8BPtr();
+		AES_RDN_TEST("AES256-ECB (8B (ptr) parallelism) with random data and dynamic key and t-table",
 				aes_256_tv,aes,gpu,256,false,false);
 		delete aes;
 	}
@@ -448,6 +725,271 @@ BOOST_AUTO_TEST_SUITE(CUDA_AES_4B)
 	{
 		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4B();
 		AES_RDN_TEST("AES256-ECB (4B parallelism) with random data and dynamic key and t-table",
+				aes_256_tv,aes,gpu,256,false,false);
+		delete aes;
+	}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(CUDA_AES_4B_PTR)
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_SB_ENCRYPT_TEST("AES128-ECB (ptr) example vector | 4B parallelism with constant key and t-table",
+				aes_example,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_SB_ENCRYPT_TEST("AES192-ECB (ptr) example vector | 4B parallelism with constant key and t-table",
+				aes_192_tv,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_SB_ENCRYPT_TEST("AES256-ECB (ptr) example vector | 4B parallelism with constant key and t-table",
+				aes_256_tv,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_SB_ENCRYPT_TEST("AES128-ECB (ptr) example vector | 4B parallelism with constant key and t-table",
+				aes_example,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_SB_ENCRYPT_TEST("AES192-ECB (ptr) example vector | 4B parallelism with constant key and t-table",
+				aes_192_tv,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_SB_ENCRYPT_TEST("AES256-ECB (ptr) example vector | 4B parallelism with constant key and t-table",
+				aes_256_tv,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES128-ECB (ptr 4B parallelism) with random data and constant key and t-table",
+				aes_example,aes,gpu,128,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_RDN_TEST("AES128-ECB (ptr 4B parallelism) with random data and constant key",
+				aes_example,aes,gpu,128,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_RDN_TEST("AES128-ECB (ptr 4B parallelism) with random data and constant t-table",
+				aes_example,aes,gpu,128,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES8B();
+		AES_RDN_TEST("AES128-ECB (ptr 4B parallelism) with random data and dynamic key and t-table",
+				aes_example,aes,gpu,128,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES192-ECB (ptr 4B parallelism) with random data and constant key and t-table",
+				aes_192_tv,aes,gpu,192,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES192-ECB (ptr 4B parallelism) with random data and constant key",
+				aes_192_tv,aes,gpu,192,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES192-ECB (ptr 4B parallelism) with random data and constant t-table",
+				aes_192_tv,aes,gpu,192,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES192-ECB (ptr 4B parallelism) with random data and dynamic key and t-table",
+				aes_192_tv,aes,gpu,192,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES256-ECB (ptr 4B parallelism) with random data and constant key and t-table",
+				aes_256_tv,aes,gpu,256,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES256-ECB (ptr 4B parallelism) with random data and constant key",
+				aes_256_tv,aes,gpu,256,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES256-ECB (ptr 4B parallelism) with random data and constant t-table",
+				aes_256_tv,aes,gpu,256,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES4BPtr();
+		AES_RDN_TEST("AES256-ECB (ptr 4B parallelism) with random data and dynamic key and t-table",
+				aes_256_tv,aes,gpu,256,false,false);
+		delete aes;
+	}
+BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(CUDA_AES_1B)
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_SB_ENCRYPT_TEST("AES128-ECB example vector | 1B parallelism with constant key and t-table",
+				aes_example,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_single_decrypt)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_SB_DECRYPT_TEST("AES128-ECB example decrypt vector | 1B parallelism with constant key and t-table",
+				aes_example,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_SB_ENCRYPT_TEST("AES192-ECB example vector | 1B parallelism with constant key and t-table",
+				aes_192_tv,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_single)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_SB_ENCRYPT_TEST("AES256-ECB example vector | 1B parallelism with constant key and t-table",
+				aes_256_tv,1,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_SB_ENCRYPT_TEST("AES128-ECB example vector | 1B parallelism with constant key and t-table",
+				aes_example,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_SB_ENCRYPT_TEST("AES192-ECB example vector | 1B parallelism with constant key and t-table",
+				aes_192_tv,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_2blocks)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_SB_ENCRYPT_TEST("AES256-ECB example vector | 1B parallelism with constant key and t-table",
+				aes_256_tv,2,aes,gpu,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES128-ECB (1B parallelism) with random data and constant key and t-table",
+				aes_example,aes,gpu,128,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES128-ECB (1B parallelism) with random data and constant key",
+				aes_example,aes,gpu,128,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES128-ECB (1B parallelism) with random data and constant t-table",
+				aes_example,aes,gpu,128,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES128_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES128-ECB (1B parallelism) with random data and dynamic key and t-table",
+				aes_example,aes,gpu,128,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES192-ECB (1B parallelism) with random data and constant key and t-table",
+				aes_192_tv,aes,gpu,192,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES192-ECB (1B parallelism) with random data and constant key",
+				aes_192_tv,aes,gpu,192,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES192-ECB (1B parallelism) with random data and constant t-table",
+				aes_192_tv,aes,gpu,192,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES192_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES192-ECB (1B parallelism) with random data and dynamic key and t-table",
+				aes_192_tv,aes,gpu,192,false,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES256-ECB (1B parallelism) with random data and constant key and t-table",
+				aes_256_tv,aes,gpu,256,true,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_kc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES256-ECB (1B parallelism) with random data and constant key",
+				aes_256_tv,aes,gpu,256,true,false);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_tc_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES256-ECB (1B parallelism) with random data and constant t-table",
+				aes_256_tv,aes,gpu,256,false,true);
+		delete aes;
+	}
+	BOOST_AUTO_TEST_CASE(ECB_AES256_random)
+	{
+		paracrypt::CudaAES * aes = new paracrypt::CudaEcbAES1B();
+		AES_RDN_TEST("AES256-ECB (1B parallelism) with random data and dynamic key and t-table",
 				aes_256_tv,aes,gpu,256,false,false);
 		delete aes;
 	}

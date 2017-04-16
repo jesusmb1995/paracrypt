@@ -1,11 +1,11 @@
-#include "CudaEcbAes8B.hpp"
-#include "CudaEcbAes8B.cuh"
+#include "CudaEcbAes8BPtr.hpp"
+#include "CudaEcbAes8BPtr.cuh"
 
-int paracrypt::CudaEcbAES8B::getThreadsPerCipherBlock() {
+int paracrypt::CudaEcbAES8BPtr::getThreadsPerCipherBlock() {
 	return 2;
 }
 
-int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
+int paracrypt::CudaEcbAES8BPtr::cuda_ecb_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -31,7 +31,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
 	default:
 		return -1;
 	}
-	LOG_TRACE(boost::format("cuda_ecb_aes_8b_encrypt("
+	LOG_TRACE(boost::format("cuda_ecb_aes_8b_ptr_encrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -44,7 +44,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_8b_encrypt(
+	cuda_ecb_aes_8b_ptr_encrypt(
 			gridSize,
 			threadsPerBlock,
 			n_blocks,
@@ -59,7 +59,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
 	return 0;
 }
 
-int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
+int paracrypt::CudaEcbAES8BPtr::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -86,7 +86,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
 	default:
 		return -1;
 	}
-	LOG_TRACE(boost::format("cuda_ecb_aes_8b_decrypt("
+	LOG_TRACE(boost::format("cuda_ecb_aes_8b_ptr_decrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -99,7 +99,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_8b_decrypt(
+	cuda_ecb_aes_8b_ptr_decrypt(
 			gridSize,
 			threadsPerBlock,
 			n_blocks,
