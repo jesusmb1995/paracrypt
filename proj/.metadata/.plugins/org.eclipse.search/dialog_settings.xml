@@ -6,9 +6,6 @@
 	<section name="">
 		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
 	</section>
-	<section name="">
-		<item value="1000" key="org.eclipse.search.resultpage.limit"/>
-	</section>
 	<section name="TextSearchPage">
 		<item value="9" key="HISTORY_SIZE"/>
 		<item value="false" key="CASE_SENSITIVE"/>
@@ -158,7 +155,7 @@
 	<section name="DialogBounds_SearchDialog">
 		<item value="685" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="569" key="DIALOG_HEIGHT"/>
+		<item value="597" key="DIALOG_HEIGHT"/>
 		<item value="950" key="DIALOG_X_ORIGIN"/>
 		<item value="202" key="DIALOG_Y_ORIGIN"/>
 	</section>

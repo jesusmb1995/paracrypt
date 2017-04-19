@@ -63,10 +63,28 @@ $(OBJ_DIR)/CudaEcbAes8B.o: $(SRC_DIR)/AES/CudaEcbAes8B.cpp
 $(OBJ_DIR)/CudaEcbAes8B.cu.o: $(SRC_DIR)/AES/CudaEcbAes8B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
 #
+$(OBJ_DIR)/CudaEcbAes8BPtr.o: $(SRC_DIR)/AES/CudaEcbAes8BPtr.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaEcbAes8BPtr.cu.o: $(SRC_DIR)/AES/CudaEcbAes8BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
+#
 $(OBJ_DIR)/CudaEcbAes4B.o: $(SRC_DIR)/AES/CudaEcbAes4B.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
 $(OBJ_DIR)/CudaEcbAes4B.cu.o: $(SRC_DIR)/AES/CudaEcbAes4B.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
+#
+$(OBJ_DIR)/CudaEcbAes4BPtr.o: $(SRC_DIR)/AES/CudaEcbAes4BPtr.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaEcbAes4BPtr.cu.o: $(SRC_DIR)/AES/CudaEcbAes4BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
+#
+$(OBJ_DIR)/CudaEcbAes1B.o: $(SRC_DIR)/AES/CudaEcbAes1B.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaEcbAes1B.cu.o: $(SRC_DIR)/AES/CudaEcbAes1B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
 #
 $(OBJ_DIR)/CUDACipherDevice.o: $(SRC_DIR)/device/CUDACipherDevice.cpp
@@ -172,10 +190,16 @@ $(OBJ_DIR)/CudaEcbAes16B.o  \
 $(OBJ_DIR)/CudaEcbAes16B.cu.o \
 $(OBJ_DIR)/CudaEcbAes16BPtr.o  \
 $(OBJ_DIR)/CudaEcbAes16BPtr.cu.o \
-$(OBJ_DIR)/CudaEcbAes8B.o  \
+$(OBJ_DIR)/CudaEcbAes8B.o \
 $(OBJ_DIR)/CudaEcbAes8B.cu.o \
-$(OBJ_DIR)/CudaEcbAes4B.o  \
+$(OBJ_DIR)/CudaEcbAes8BPtr.o \
+$(OBJ_DIR)/CudaEcbAes8BPtr.cu.o \
+$(OBJ_DIR)/CudaEcbAes4B.o \
 $(OBJ_DIR)/CudaEcbAes4B.cu.o \
+$(OBJ_DIR)/CudaEcbAes4BPtr.o \
+$(OBJ_DIR)/CudaEcbAes4BPtr.cu.o \
+$(OBJ_DIR)/CudaEcbAes1B.o \
+$(OBJ_DIR)/CudaEcbAes1B.cu.o \
 $(OBJ_DIR)/CUDACipherDevice.o
 	 $(CXX) $(CXX_FLAGS_) \
 	 $(OBJ_DIR)/tests.o \
@@ -192,8 +216,14 @@ $(OBJ_DIR)/CUDACipherDevice.o
 	 $(OBJ_DIR)/CudaEcbAes16BPtr.cu.o \
 	 $(OBJ_DIR)/CudaEcbAes8B.o \
 	 $(OBJ_DIR)/CudaEcbAes8B.cu.o \
+	 $(OBJ_DIR)/CudaEcbAes8BPtr.o \
+	 $(OBJ_DIR)/CudaEcbAes8BPtr.cu.o \
 	 $(OBJ_DIR)/CudaEcbAes4B.o \
 	 $(OBJ_DIR)/CudaEcbAes4B.cu.o \
+	 $(OBJ_DIR)/CudaEcbAes4BPtr.o \
+	 $(OBJ_DIR)/CudaEcbAes4BPtr.cu.o \
+	 $(OBJ_DIR)/CudaEcbAes1B.o \
+	 $(OBJ_DIR)/CudaEcbAes1B.cu.o \
 	 $(OBJ_DIR)/CUDACipherDevice.o \
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/Timer.o \

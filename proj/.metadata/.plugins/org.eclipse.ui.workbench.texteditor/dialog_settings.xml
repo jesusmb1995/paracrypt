@@ -2,28 +2,36 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="d[" key="selection"/>
+		<item value="((uint32_t*)result)[i] != ((uint32_t*)vector_key.output)[i%4]" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="d["/>
-			<item value="aes192"/>
-			<item value="aes256"/>
-			<item value="d[2]"/>
-			<item value="d[1]"/>
-			<item value=" d[2]"/>
-			<item value="maxThreadsPerBlock"/>
-			<item value="accessStream"/>
+			<item value="((uint32_t*)result)[i] != ((uint32_t*)vector_key.output)[i%4]"/>
+			<item value="result"/>
+			<item value="valid_thread"/>
+			<item value="store_ptr"/>
+			<item value="state_pointer"/>
+			<item value="(t3[sti] &gt;&gt; 24)       "/>
+			<item value="(t2[sti] &gt;&gt; 24)       "/>
+			<item value="(t1[sti] &gt;&gt; 24)       "/>
 		</list>
 		<list key="replacehistory">
+			<item value="t3p[3]"/>
+			<item value="t2p[3]"/>
+			<item value="t1p[3]"/>
+			<item value="t0p[3]"/>
+			<item value="s0p[3]"/>
+			<item value="s1p[3]"/>
+			<item value="s2p[3]"/>
+			<item value="s3p[3]"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="289" key="DIALOG_WIDTH"/>
+		<item value="586" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="432" key="DIALOG_HEIGHT"/>
+		<item value="440" key="DIALOG_HEIGHT"/>
 		<item value="1136" key="DIALOG_X_ORIGIN"/>
 		<item value="254" key="DIALOG_Y_ORIGIN"/>
 	</section>
