@@ -1,20 +1,28 @@
+/*
+ *  Copyright (C) 2017 Jesus Martin Berlanga. All Rights Reserved.
+ *
+ *  This file is part of Paracrypt.
+ *
+ *  Paracrypt is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  Foobar is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
 #include "endianess.h"
-//#include "logging.hpp"
-//#include <stdio.h>
 
  void big(uint32_t* little, uint32_t* store, int n) {
 	int i;
 	for(i=0;i<n;i++) {
-
-	    //unsigned char *ptr = (unsigned char *)(little+i);
-	    //store[i] = (ptr[0] << 24) | (ptr[1] << 16) | (ptr[2] << 8) | ptr[3];
-		//store[i] = SWAP_ENDIAN(little+i);
-		//PUTU32(store+i,little[i]);
-
-		//LOG_DEBUG(boost::format("host: %x") % little[i]);
-		//printf("host: %x\n", little[i]);
 		store[i] = htobe32(little[i]);
-		//printf("big-endian: %x\n", store[i]);
-		//LOG_DEBUG(boost::format("big-endian: %x") % store[i]);
 	}
 }

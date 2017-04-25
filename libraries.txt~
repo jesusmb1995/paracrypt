@@ -14,3 +14,10 @@ install boost unit testing library:
 --with-log
 --with-thread
 --with-icl
+
+	sudo ./b2 --with-test --with-log --with-thread --with-container --prefix=$boost_installation_prefix install
+
+
+
+
+

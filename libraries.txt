@@ -8,16 +8,4 @@ install boost unit testing library:
         boost_installation_prefix=/usr
 	cd $boost_path
 	./bootstrap.sh
-	sudo ./b2 --with-test --prefix=$boost_installation_prefix install
-
---with-format 
---with-log
---with-thread
---with-icl
-
 	sudo ./b2 --with-test --with-log --with-thread --with-container --prefix=$boost_installation_prefix install
-
-
-
-
-

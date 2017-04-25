@@ -1,3 +1,24 @@
+ #
+ #  Copyright (C) 2017 Jesus Martin Berlanga. All Rights Reserved.
+ #
+ #  This file is part of Paracrypt.
+ #
+ #  Paracrypt is free software: you can redistribute it and/or modify
+ #  it under the terms of the GNU General Public License as published by
+ #  the Free Software Foundation, either version 3 of the License, or
+ #  (at your option) any later version.
+ #
+ #  Foobar is distributed in the hope that it will be useful,
+ #  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #  GNU General Public License for more details.
+ #
+ #  You should have received a copy of the GNU General Public License
+ #  along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+ #
+ #
+
+
 ###################################################################################
 # DEFINES #########################################################################
 ###################################################################################
@@ -104,6 +125,11 @@ $(OBJ_DIR)/endianess.o: $(SRC_DIR)/endianess.c
 #
 $(OBJ_DIR)/Timer.o: $(SRC_DIR)/Timer.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@
+#	
+$(OBJ_DIR)/bin_endian_ttable_generator.o: $(SRC_DIR)/AES/big_endian_ttable_generator.cpp
+	$(CXX) -c $< -o $@
+#
+
 
 ###################################################################################
 # PTX #############################################################################
@@ -118,9 +144,31 @@ $(OBJ_DIR)/CudaEcbAes16B.ptx: $(SRC_DIR)/AES/CudaEcbAes16B.cu
 $(OBJ_DIR)/CudaEcbAes16BPtr.ptx: $(SRC_DIR)/AES/CudaEcbAes16BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
+$(OBJ_DIR)/CudaEcbAes8B.ptx: $(SRC_DIR)/AES/CudaEcbAes8B.cu
+	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
+#
+$(OBJ_DIR)/CudaEcbAes8BPtr.ptx: $(SRC_DIR)/AES/CudaEcbAes8BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
+#
+$(OBJ_DIR)/CudaEcbAes4B.ptx: $(SRC_DIR)/AES/CudaEcbAes4B.cu
+	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
+#
+$(OBJ_DIR)/CudaEcbAes4BPtr.ptx: $(SRC_DIR)/AES/CudaEcbAes4BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
+#
+$(OBJ_DIR)/CudaEcbAes1B.ptx: $(SRC_DIR)/AES/CudaEcbAes1B.cu
+	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
+#
 ptx: \
 $(OBJ_DIR)/CudaEcbAes16B.ptx \
-$(OBJ_DIR)/CudaEcbAes16BPtr.ptx
+$(OBJ_DIR)/CudaEcbAes16BPtr.ptx \
+$(OBJ_DIR)/CudaEcbAes8B.ptx \
+$(OBJ_DIR)/CudaEcbAes8BPtr.ptx \
+$(OBJ_DIR)/CudaEcbAes4B.ptx \
+$(OBJ_DIR)/CudaEcbAes4BPtr.ptx \
+$(OBJ_DIR)/CudaEcbAes1B.ptx 
+#
+
 
 ###################################################################################
 # TESTS ###########################################################################
@@ -129,28 +177,11 @@ $(OBJ_DIR)/CudaEcbAes16BPtr.ptx
 $(OBJ_DIR)/tests.o: $(TST_DIR)/tests.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/cuda_test_kernels.cu.o: $(TST_DIR)/cuda_test_kernels.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@
-#
-$(OBJ_DIR)/cpu_AES_round_example.o: $(TST_DIR)/cpu_AES_round_example.c
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
-#
 $(OBJ_DIR)/openssl_aes.o: $(SRC_DIR)/openssl/aes_core.c
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
 $(OBJ_DIR)/openssl_aes_test.o: $(TST_DIR)/openssl_aes_test.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
-#	
-$(OBJ_DIR)/bin_endian_ttable_generator.o: $(SRC_DIR)/AES/big_endian_ttable_generator.cpp
-	$(CXX) -c $< -o $@
-#
-bin_endian_ttable_generator: \
-$(OBJ_DIR)/bin_endian_ttable_generator.o \
-$(OBJ_DIR)/endianess.o
-	$(CXX) \
-	$(OBJ_DIR)/endianess.o \
-	$(OBJ_DIR)/bin_endian_ttable_generator.o \
-	-o $(BIN_DIR)/bin_endian_ttable_generator
 #
 openssl_aes_test: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
 openssl_aes_test: \
@@ -163,21 +194,11 @@ $(OBJ_DIR)/openssl_aes_test.o
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/openssl_aes.o \
 	 -o $(BIN_DIR)/openssl_aes_test $(LIBS)
-#	
-cpu_AES_round_example: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
-cpu_AES_round_example: \
-$(OBJ_DIR)/cpu_AES_round_example.o \
-$(OBJ_DIR)/logging.o
-	 $(CXX) $(CXX_FLAGS_) \
-	 $(OBJ_DIR)/cpu_AES_round_example.o \
-	 $(OBJ_DIR)/logging.o \
-	 -o $(BIN_DIR)/cpu_AES_round_example $(LIBS)
 #
 tests: CXX_FLAGS_ += -g -DDEBUG #-DDEVEL
 tests: NVCC_FLAGS_ += -g -DDEBUG #-DDEVEL
 tests: \
 $(OBJ_DIR)/tests.o \
-$(OBJ_DIR)/cuda_test_kernels.cu.o \
 $(OBJ_DIR)/AES_key_schedule.o \
 $(OBJ_DIR)/endianess.o \
 $(OBJ_DIR)/logging.o \
@@ -203,7 +224,6 @@ $(OBJ_DIR)/CudaEcbAes1B.cu.o \
 $(OBJ_DIR)/CUDACipherDevice.o
 	 $(CXX) $(CXX_FLAGS_) \
 	 $(OBJ_DIR)/tests.o \
-	 $(OBJ_DIR)/cuda_test_kernels.cu.o \
 	 $(OBJ_DIR)/AES_key_schedule.o \
 	 $(OBJ_DIR)/endianess.o \
 	 $(OBJ_DIR)/AES.o \
@@ -228,17 +248,21 @@ $(OBJ_DIR)/CUDACipherDevice.o
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/Timer.o \
 	 -o $(BIN_DIR)/paracrypt_tests $(LIBS)
+#
 
-# -DNDEBUG <-- elimina asserts
-
-#test: CXX_FLAGS_ += -g -DDEBUG
-#test: logging.o $(SRC_DIR)/test.cpp
-#	$(CXX) $(CXX_FLAGS_) $(OBJ_DIR)/logging.o $(SRC_DIR)/test.cpp  -o $(BIN_DIR)/test $(LIBS)
 
 ###################################################################################
 # BUILDS ##########################################################################
 ###################################################################################
 #
+bin_endian_ttable_generator: \
+$(OBJ_DIR)/bin_endian_ttable_generator.o \
+$(OBJ_DIR)/endianess.o
+	$(CXX) \
+	$(OBJ_DIR)/endianess.o \
+	$(OBJ_DIR)/bin_endian_ttable_generator.o \
+	-o $(BIN_DIR)/bin_endian_ttable_generator
+# -DNDEBUG # todo elimina assert
 
 
 ###################################################################################
@@ -255,5 +279,5 @@ clean:
 	rm -f $(SRC_DIR)/openssl/*~
 #
 all: tests
-	
-	# make icc
+# make icc
+

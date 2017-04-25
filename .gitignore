@@ -1,4 +1,4 @@
-proj/.metadata
+proj/.metadata/.plugins/*
 bin/*
 obj/*
 lib/*

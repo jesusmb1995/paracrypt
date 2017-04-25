@@ -2,37 +2,37 @@
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="((uint32_t*)result)[i] != ((uint32_t*)vector_key.output)[i%4]" key="selection"/>
+		<item value="ECB 16B (ptr) parallelism" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
+			<item value="ECB 16B ptr parallelism"/>
+			<item value="AES128-ECB 16B ptr parallelism"/>
+			<item value="AES128-ECB 16B ptr parallelism n blocks with and constant key and t-table"/>
+			<item value="16B ptr parallelism"/>
+			<item value="cuda_test_kernels.cu.o"/>
+			<item value="cuda_test_kernels.cu"/>
+			<item value="__cuda_ecb_aes_16b_encrypt__"/>
 			<item value="((uint32_t*)result)[i] != ((uint32_t*)vector_key.output)[i%4]"/>
-			<item value="result"/>
-			<item value="valid_thread"/>
-			<item value="store_ptr"/>
-			<item value="state_pointer"/>
-			<item value="(t3[sti] &gt;&gt; 24)       "/>
-			<item value="(t2[sti] &gt;&gt; 24)       "/>
-			<item value="(t1[sti] &gt;&gt; 24)       "/>
 		</list>
 		<list key="replacehistory">
+			<item value="ECB 16B (ptr) parallelism"/>
+			<item value="AES128-ECB 16B (ptr) parallelism"/>
+			<item value="AES128-ECB 16B (ptr) parallelism n blocks with and constant key and t-table"/>
 			<item value="t3p[3]"/>
 			<item value="t2p[3]"/>
 			<item value="t1p[3]"/>
 			<item value="t0p[3]"/>
 			<item value="s0p[3]"/>
-			<item value="s1p[3]"/>
-			<item value="s2p[3]"/>
-			<item value="s3p[3]"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="586" key="DIALOG_WIDTH"/>
+		<item value="546" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="440" key="DIALOG_HEIGHT"/>
-		<item value="1136" key="DIALOG_X_ORIGIN"/>
-		<item value="254" key="DIALOG_Y_ORIGIN"/>
+		<item value="400" key="DIALOG_HEIGHT"/>
+		<item value="752" key="DIALOG_X_ORIGIN"/>
+		<item value="326" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>
