@@ -7107,3 +7107,684 @@ Binding(ALT+SHIFT+R,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.cdt.ui.cViewScope,,,system)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:35:15.894
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:35:15.899
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:35:15.899
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.merge(CudaScopesBackground.java:219)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.pop(CudaScopesBackground.java:228)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.leave(CudaScopesBackground.java:96)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:110)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:35:43.164
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:35:43.165
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:35:43.166
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.merge(CudaScopesBackground.java:219)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.pop(CudaScopesBackground.java:228)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.leave(CudaScopesBackground.java:96)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:110)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:47.842
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:47.843
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:47.843
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.merge(CudaScopesBackground.java:219)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.pop(CudaScopesBackground.java:228)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.leave(CudaScopesBackground.java:96)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:110)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:49.855
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:49.856
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:49.856
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.merge(CudaScopesBackground.java:219)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.pop(CudaScopesBackground.java:228)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.leave(CudaScopesBackground.java:96)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:110)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:52.364
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:52.365
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:45:52.365
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.merge(CudaScopesBackground.java:219)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.pop(CudaScopesBackground.java:228)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.leave(CudaScopesBackground.java:96)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:110)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:46:17.882
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:46:17.883
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:46:17.884
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.merge(CudaScopesBackground.java:219)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.pop(CudaScopesBackground.java:228)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.leave(CudaScopesBackground.java:96)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:110)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:46:19.397
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:46:19.397
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.visit(CudaScopesBackground.java:111)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:94)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier.accept(CPPASTCompositeTypeSpecifier.java:200)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:102)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY com.nvidia.cuda.ide.editor 4 0 2017-04-25 22:46:19.398
+!MESSAGE 
+!STACK 0
+org.eclipse.jface.text.BadLocationException
+	at org.eclipse.jface.text.ListLineTracker.getLineNumberOfOffset(ListLineTracker.java:140)
+	at org.eclipse.jface.text.AbstractLineTracker.getLineNumberOfOffset(AbstractLineTracker.java:161)
+	at org.eclipse.jface.text.AbstractDocument.getLineOfOffset(AbstractDocument.java:915)
+	at org.eclipse.core.internal.filebuffers.SynchronizableDocument.getLineOfOffset(SynchronizableDocument.java:397)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.alignToLineStart(CudaScopesBackground.java:179)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.add(CudaScopesBackground.java:156)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.merge(CudaScopesBackground.java:219)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$ScopeVisitor.pop(CudaScopesBackground.java:228)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground$DefinitionsVisitor.leave(CudaScopesBackground.java:96)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:110)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at com.nvidia.cuda.ide.editor.CudaScopesBackground.collectPositions(CudaScopesBackground.java:298)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.collectPositions(BackgroundHighlightingManager.java:135)
+	at org.eclipse.cdt.internal.ui.editor.BackgroundHighlightingManager.reconciled(BackgroundHighlightingManager.java:239)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:63)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.reconcile(CompositeReconcilingStrategy.java:87)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.reconcile(CCompositeReconcilingStrategy.java:90)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.process(MonoReconciler.java:77)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.process(CReconciler.java:358)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:206)
+
+!ENTRY org.eclipse.cdt.ui 4 0 2017-04-25 22:49:55.235
+!MESSAGE Error in CDT UI during reconcile
+!STACK 0
+java.lang.ClassCastException: org.eclipse.cdt.internal.core.dom.parser.ProblemBinding cannot be cast to org.eclipse.cdt.internal.core.index.IIndexFragmentBinding
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeEvaluation(CPPCompositesFactory.java:423)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.TemplateInstanceUtil.convert(TemplateInstanceUtil.java:106)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.TemplateInstanceUtil.convert(TemplateInstanceUtil.java:86)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeBinding(CPPCompositesFactory.java:517)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeType(CPPCompositesFactory.java:150)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeBinding(CPPCompositesFactory.java:607)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeType(CPPCompositesFactory.java:150)
+	at org.eclipse.cdt.internal.core.index.composite.AbstractCompositeFactory.getCompositeTypes(AbstractCompositeFactory.java:50)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CPPCompositesFactory.getCompositeType(CPPCompositesFactory.java:157)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPFunction.getType(CompositeCPPFunction.java:71)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPFunctionTemplate.getType(CompositeCPPFunctionTemplate.java:1)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPMethodTemplate.getType(CompositeCPPMethodTemplate.java:1)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPConstructorTemplate.getType(CompositeCPPConstructorTemplate.java:1)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPTemplates.createSpecialization(CPPTemplates.java:912)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPClassSpecialization.specializeMember(CompositeCPPClassSpecialization.java:123)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPClassSpecializationScope.specializeMembers(AbstractCPPClassSpecializationScope.java:217)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.AbstractCPPClassSpecializationScope.getConstructors(AbstractCPPClassSpecializationScope.java:261)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPClassSpecializationScope.getConstructors(CompositeCPPClassSpecializationScope.java:116)
+	at org.eclipse.cdt.internal.core.index.composite.cpp.CompositeCPPClassSpecialization.getConstructors(CompositeCPPClassSpecialization.java:164)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper.getConstructors(ClassTypeHelper.java:251)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.copyInitializationOfClass(Conversions.java:640)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionCost.performUDC(FunctionCost.java:103)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.resolveFunction(CPPSemantics.java:2506)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.resolveAmbiguities(CPPSemantics.java:2137)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics.resolveBinding(CPPSemantics.java:305)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor.createBinding(CPPVisitor.java:280)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName.createIntermediateBinding(CPPASTName.java:61)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase.resolveBinding(CPPASTNameBase.java:107)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName.resolveBinding(CPPASTQualifiedName.java:105)
+	at org.eclipse.cdt.internal.ui.editor.SemanticToken.getBinding(SemanticToken.java:47)
+	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightings$TemplateParameterHighlighting.consumes(SemanticHighlightings.java:895)
+	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler$PositionCollector.visitNode(SemanticHighlightingReconciler.java:185)
+	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler$PositionCollector.visit(SemanticHighlightingReconciler.java:162)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName.accept(CPPASTQualifiedName.java:248)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression.accept(CPPASTIdExpression.java:79)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTFunctionCallExpression.accept(CPPASTFunctionCallExpression.java:188)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTConstructorInitializer.accept(CPPASTConstructorInitializer.java:86)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator.postAccept(CPPASTDeclarator.java:214)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTDeclarator.accept(CPPASTDeclarator.java:204)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration.accept(CPPASTSimpleDeclaration.java:105)
+	at org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNamespaceDefinition.accept(CPPASTNamespaceDefinition.java:139)
+	at org.eclipse.cdt.internal.core.dom.parser.ASTTranslationUnit.accept(ASTTranslationUnit.java:265)
+	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.reconcilePositions(SemanticHighlightingReconciler.java:397)
+	at org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.reconciled(SemanticHighlightingReconciler.java:352)
+	at org.eclipse.cdt.internal.ui.editor.CEditor.reconciled(CEditor.java:3015)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.reconcile(CReconcilingStrategy.java:99)
+	at org.eclipse.cdt.internal.ui.text.CReconcilingStrategy.initialReconcile(CReconcilingStrategy.java:122)
+	at org.eclipse.cdt.internal.ui.text.CompositeReconcilingStrategy.initialReconcile(CompositeReconcilingStrategy.java:117)
+	at org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy.initialReconcile(CCompositeReconcilingStrategy.java:108)
+	at org.eclipse.jface.text.reconciler.MonoReconciler.initialProcess(MonoReconciler.java:105)
+	at org.eclipse.cdt.internal.ui.text.CReconciler.initialProcess(CReconciler.java:347)
+	at org.eclipse.jface.text.reconciler.AbstractReconciler$BackgroundThread.run(AbstractReconciler.java:173)
+!SESSION 2017-04-26 11:42:36.273 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.8.0_121
+java.vendor=Oracle Corporation
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.822
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/plugins/org.eclipse.sdk_3.8.1.dist.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.823
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.help.source_1.4.1.dist-8v7nFQYFCmSPZXHoT2597H.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.823
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.jdt.source_3.8.1.dist-8-8nFqrFFgQGJ.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.824
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.pde.source_3.8.1.dist-7c7vFiyFALX8A.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.824
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.rcp.source_3.8.1.dist-8LA2GODFTJUDJ21934.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.824
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.cvs.source_1.3.200.dist-7B79FJJ9exZ_.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.824
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.equinox.p2.user.ui.source_2.2.0.dist-62DG8ltBZLdOsDwFEi8m9FbLOK8.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.825
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.pde_3.8.1.dist-7c7vFiyFALX8A.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.825
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.platform.source_3.8.1.dist-A8F8_IVRG4VZSCmeloKVfCrtIFotGyJZcMPL9.
+
+!ENTRY org.eclipse.equinox.p2.publisher.eclipse 4 0 2017-04-26 11:42:37.825
+!MESSAGE Unable to acquire PluginConverter service during generation for: /usr/share/eclipse/dropins/sdk/features/org.eclipse.sdk_3.8.1.dist-7Q85DOBoMDDlUAIWaDFz-Q01HRDnJmlM-5LmBHbPXfOgk.
