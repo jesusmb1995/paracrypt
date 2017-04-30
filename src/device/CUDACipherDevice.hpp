@@ -26,13 +26,16 @@
 
 namespace paracrypt {
 
+    void HandlePrintError(cudaError_t err,const char *file, int line);
 	void HandleError(cudaError_t err,const char *file, int line);
 	#ifdef DEBUG
 	#define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
 	#define HANDLE_ERROR_NUMBER( err ) (HandleError( err, __FILE__, __LINE__ ))
+	#define HANDLE_PRINT_ERROR_NUMBER( err ) (HandleError( err, __FILE__, __LINE__ ))
 	#else
 	#define HANDLE_ERROR( err ) (err)
 	#define HANDLE_ERROR_NUMBER( err )
+	#define HANDLE_PRINT_ERROR_NUMBER( err )
 	#endif
 
     class CUDACipherDevice:public GPUCipherDevice < cudaStream_t,

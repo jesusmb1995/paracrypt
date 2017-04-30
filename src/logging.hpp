@@ -42,3 +42,5 @@
 #define LOG_FATAL(str) BOOST_LOG_TRIVIAL(fatal) << (str)
 
 void hexdump(std::string title, const unsigned char *s, int length);
+void fdump(std::string title, std::string filename);
+

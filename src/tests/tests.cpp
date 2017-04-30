@@ -36,6 +36,8 @@
 #include "assert.h"
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
+#include <stdio.h>
+#include <fstream>
 
 int random_data_n_blocks;
 unsigned char *random_data;
@@ -1427,5 +1429,113 @@ BOOST_AUTO_TEST_SUITE(CUDA_AES_1B)
 		AES_RDN_TEST("AES256-ECB (1B parallelism) with random data and dynamic key and t-table",
 				aes_256_tv,aes,gpu,256,false,false);
 		delete aes;
+	}
+BOOST_AUTO_TEST_SUITE_END()
+
+#include "../io/SharedIO.hpp"
+#include "../io/SimpleBlockingCudaIO.hpp"
+
+//
+// - Creates a input file where each (word) block value is its index except
+//   for the last block which can be half-empty. In this case each
+//   byte value of the last block is its byte index.
+//
+//   Block size is 128 bits
+//
+void GEN_128BPB_IO_FILES(
+		std::string *inFileName,
+		std::iofstream *inFile,
+		std::string *outFileName,
+		std::iofstream *outFile,
+		unsigned int blockSize,
+		unsigned long totalNBytes,
+		bool print=false
+){
+	{
+		char nameBuffer [L_tmpnam];
+		std::tmpnam (nameBuffer);
+		(*outFileName) = std::string(nameBuffer);
+		std::tmpnam (nameBuffer);
+		(*outFileName) = std::string(nameBuffer);
+	}
+
+	(*inFile) = std::iofstream(*inFileName);
+	(*outFile) = std::iofstream(*outFile);
+
+	uint32_t buffer[4];
+	unsigned int nBlocks = totalNBytes / blockSize;
+	unsigned int remainingBytes = totalNBytes % blockSize;
+	for(uint32_t i = 0; i < nBlocks; i++) {
+		buffer[0] = i;
+		buffer[1] = i;
+		buffer[2] = i;
+		buffer[3] = i;
+		inFile->write((unsigned char*) buffer,32*4);
+	}
+	for(uint8_t i = 0; i < remainingBytes; i++) {
+		inFile->write((unsigned char*) &i,1);
+	}
+	if(print)
+		fdump("input file",*inFileName);
+}
+void CLOSE_IO_FILES(std::iofstream* inFile, std::iofstream* outFile)
+{
+	inFile->close();
+	outFile->close();
+}
+//
+// - Reads the file using a SharedIO object and checks the read
+//    value is correct. Then multiplies the value by two and write
+//    it to the output file using the SharedIO object. The first byte
+//    of the last block is incremented by one.
+//
+// - Finally checks that the output file is correct.
+//
+unsigned int fileSize( std::iostream file ){
+	std::streampos save = file.tellg();
+
+	file.seekg( 0, std::ios::beg );
+	std::streampos beg = file.tellg();
+    file.seekg( 0, std::ios::end );
+    std::streampos end = file.tellg();
+    unsigned int fsize = end-beg;
+
+    file.seekg(save);
+    return fsize;
+}
+void FILE_128BPB_IO_TEST(std::iostream inFile, std::iostream outFile, paracrypt::SharedIO io)
+{
+	unsigned int blockSize = io.getBlockSize();
+	if(blockSize != 16) {
+		LOG_FATAL("FILE_128BPB_IO_TEST can only accept a SharedIO object with 128 bits (16B) block size.");
+	} else {
+		const int numberOfEntireBlocks = fileSize(inFile) / blockSize;
+
+		const unsigned int nBuffers = io.getNBuffers();
+		char* data;
+		unsigned int nBlocks;
+		unsigned int offset;
+		paracrypt::SharedIO::readStatus status = paracrypt::SharedIO::readStatus::OK;
+		while(status == paracrypt::SharedIO::readStatus::OK) {
+			for(int i = 0; status == paracrypt::SharedIO::readStatus::OK && i < nBuffers; i++) {
+				nBlocks = io.read(i,&data,&offset,&status);
+				for(int j = 0; j < nBlocks; j++) {
+
+				}
+			}
+		}
+	}
+}
+
+BOOST_AUTO_TEST_SUITE(blocking_CUDA_IO)
+	BOOST_AUTO_TEST_CASE(just_ten_blocks)
+	{
+		std::string inFileName, outFileName;
+		std::iostream inFile, outFile;
+		GEN_128BPB_IO_FILES(inFileName,outFileName);
+		paracrypt::SharedIO io = new paracrypt::SimpleBlockingCudaIO();
+
+
+		CLOSE_IO_FILES(inFile,outFile);
 	}
 BOOST_AUTO_TEST_SUITE_END()

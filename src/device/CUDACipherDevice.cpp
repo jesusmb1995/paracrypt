@@ -21,6 +21,15 @@
 #include "CUDACipherDevice.hpp"
 #include "../logging.hpp"
 
+void paracrypt::HandlePrintError(cudaError_t err,
+					      const char *file, int line)
+{
+    if (err != cudaSuccess) {
+	LOG_ERR(boost::format("%s in %s at line %d\n")
+		% cudaGetErrorString(err) % file % line);
+    }
+}
+
 void paracrypt::HandleError(cudaError_t err,
 					      const char *file, int line)
 {
