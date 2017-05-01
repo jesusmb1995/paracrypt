@@ -29,8 +29,7 @@ paracrypt::SharedIO::SharedIO(
 		std::string inFilename,
 		std::string outFilename,
 		unsigned int blockSize,
-		unsigned int nBuffers,
-		unsigned int buffersWeights[] = {1},
+		unsigned int chunkSize,
 		std::streampos buffersSizeLimit = AUTO_IO_BUFFERS_LIMIT,
 		std::streampos begin = 0,
 		std::streampos end = 0
@@ -41,6 +40,7 @@ paracrypt::SharedIO::SharedIO(
 	this->inFile.seekg(begin);
 	this->outFile.open(outFilename);
 	this->blockSize = blockSize;
+	this->chunkSize = chunkSize;
 	this->alreadyReadBlocks = 0;
 	if (end > begin) {
 		LOG_WARNING("Swapping begin-end random access positions.\n");
@@ -52,7 +52,7 @@ paracrypt::SharedIO::SharedIO(
 		int halfBlock = maxBytesRead % blockSize;
 		if(halfBlock != 0) {
 			this->maxBlocksRead++;
-			LOG_WARNING(boost::format(
+			LOG_WAR(boost::format(
 					"Aligning random access section to block size: "
 					" Using %d bytes instead of %d bytes.\n")
 				% this->maxBlocksRead * blockSize
@@ -61,8 +61,8 @@ paracrypt::SharedIO::SharedIO(
 		}
 	}
 
-	this->nBuffers = nBuffers;
-    this->bufferSizes = new unsigned int[nBuffers]();
+//	this->nBuffers = nBuffers;
+//    this->bufferSizes = new unsigned int[nBuffers]();
 
     // calculate amount of available memory for buffers
 #define BUFFERS_RAM_USAGE_FACTOR 0.67 // we do not want to use all ram only for IO buffers
@@ -72,49 +72,66 @@ paracrypt::SharedIO::SharedIO(
     		usableRAM :
     		min(usableRAM, buffersSizeLimit);
 
+    // bufferSize aligned to chunk size
+    std::streampos bytesPerChunk = this->getBlockSize()*this->getBufferSize();
+    this->bufferSize = buffersTotalSize/bytesPerChunk;
+
+    // allocate buffer chunks
+    bool allocSuccess = false;
+    std::streampos bufferSizeBytes;
+    do {
+        bufferSizeBytes = this->bufferSize*bytesPerChunk;
+    	allocSuccess = this->pinnedAlloc(&this->chunks,bufferSizeBytes);
+    	if(!allocSucess) {
+    		this->bufferSize--;
+    		if(this->bufferSize == 0) {
+    			// exit with error
+    			LOG_ERR("Couldn't allocate SharedIO internal buffer.\n");
+    		} else {
+    			LOG_WAR(boost::format("Coudn't allocate %llu bytes for SharedIO internal buffer."
+    					" Trying with a smaller buffer...\n") % bufferSizeBytes);
+    		}
+    	}
+    }
+    while(!allocSuccess);
+
     LOG_INF(boost::format(
-    		"A new SharedIO object will use a maximum of %llu bytes of"
-    		" pinned memory for its internal buffers."
-    		" Available RAM: %llu."
-    		" Limit set by user: %llu"
-    		"\n"
-    		)
-    % buffersTotalSize
+    		"A new SharedIO object uses %llu bytes"
+    		" (%u chunks of %u bytes blocks) "
+    		" of pinned memory for its internal buffers."
+    		" Available RAM: %llu bytes."
+    		" Limit set by user: %llu bytes."
+    		"\n")
+    % bufferSizeBytes
+    % this->getBufferSize()
+    % this->getBlockSize()
     % avaliableRam
     % buffersSizeLimit
     );
-
-	// calculate buffer sizes
-    unsigned int totalWeight;
-    for(int i = 0; i < nBuffers; i++) {
-    	totalWeight += buffersWeights[i];
-    }
-    for(int i = 0; i < nBuffers; i++) {
-    	float sizeFraction = buffersWeights[i]/totalWeight;
-    	// divide by the block size and discard decimals
-    	// to align buffer size with block size
-    	unsigned int nBlocks = (sizeFraction * buffersTotalSize)/blockSize;
-    	this->bufferSizes[i] = nBlocks;
-    }
 }
 
 paracrypt::SharedIO::~SharedIO() {
 	if(this->inFile.is_open())
 		this->inFile.close();
 	this->outFile.close();
-	delete[] this->bufferSizes;
+//	delete[] this->bufferSizes;
+	this->freePinnedAlloc(this->chunks);
 }
 
-const rlim_t paracrypt::SharedIO::getBufferSize(unsigned int bufferIndex) {
-	return this->bufferSizes[bufferIndex];
+const rlim_t paracrypt::SharedIO::getBufferSize() {
+	return this->bufferSize;
 }
 
-const unsigned int paracrypt::SharedIO::getNBuffers() {
-	return this->nBuffers;
-}
+//const unsigned int paracrypt::SharedIO::getNBuffers() {
+//	return this->nBuffers;
+//}
 
 const unsigned int paracrypt::SharedIO::getBlockSize() {
 	return this->blockSize;
+}
+
+const unsigned int paracrypt::SharedIO::getChunkSize() {
+	return this->chunkSize;
 }
 
 void paracrypt::SharedIO::setPadding(paddingScheme p) {
@@ -204,4 +221,74 @@ const rlim_t paracrypt::SharedIO::getAvaliablePinneableRAM()
 	rlim_t ram_limit = info.freeram;
 	rlim_t pinneable_limit = std::min(lock_limit, ram_limit);
 	return pinneable_limit;
+}
+
+// TODO versiones del planificador que accedan con buffer dividido
+// y sin dividir. hacer que se pueda registrar un lock para esperar
+// que se llama cuando el thread lector lee suficiente
+void paracrypt::SharedIO::divideBuffer(
+		unsigned int chunkSizedDivisions[],
+		unsigned int nWeightedDivisions,
+		unsigned int weights[],
+		unsigned int nFixedSizeDivisions = 0,
+		unsigned int fixedSizes[] = {}
+) {
+	unsigned int nDivisions = nWeightedDivisions + nFixedSizeDivisions;
+	rlim_t nChunks = this->getBufferSize();
+	int d = 0;
+	for(int i = 0; i < nFixedSizeDivisions; i++) {
+		chunkSizedDivisions[d] = fixedSizes[i];
+		nChunks -= fixedSizes[i];
+		d++;
+	}
+	unsigned int totalWeight;
+	for(int i = 0; i < nWeightedDivisions; i++) {
+		totalWeight += buffersWeights[i];
+	}
+//	unsigned int remainingWeightParts = 0;
+//	unsigned int remainingChunks = 0;
+	for(int i = 0; i < nWeightedDivisions; i++) {
+		unsigned int weightPart = totalWeight/weights[i];
+//		remainingWeightParts += totalWeight%weights[i];
+		unsigned int chunksPart = nChunks / weightPart;
+//		remainingChunks += nChunks % weightPart;
+		chunkSizedDivisions[d] = chunksPart;
+		d++;
+	}
+
+	// ensure the entire buffer is used
+	unsigned int alreadyDistributedChunks = 0;
+	for(int i = 0; i < nDivisions; i++) {
+		alreadyDistributedChunks += chunkSizedDivisions[i];
+	}
+	unsigned int remainingChunks = this->getBufferSize() - alreadyDistributedChunks;
+	d = 0;
+	while(remainingChunks > 0) {
+		chunkSizedDivisions[d]++;
+		remainingChunks--;
+		d = d+1 % nDivisions;
+	}
+
+	// if assert is enabled ensure the entire buffer is used
+#if !defined(NDEBUG)
+	unsigned int assertTotalDistributedChunks = 0;
+	for(int i = 0; i < nDivisions; i++) {
+		assertTotalDistributedChunks += chunkSizedDivisions[i];
+	}
+	assert(assertTotalDistributedChunks == this->getBufferSize());
+#endif
+
+//	// calculate buffer sizes
+//    unsigned int totalWeight;
+//    for(int i = 0; i < nBuffers; i++) {
+//    	totalWeight += buffersWeights[i];
+//    }
+//    for(int i = 0; i < nBuffers; i++) {
+//    	float sizeFraction = buffersWeights[i]/totalWeight;
+//    	// divide by the block size and discard decimals
+//    	// to align buffer size with block size
+//    	unsigned int nBlocks = (sizeFraction * buffersTotalSize)/blockSize;
+//    	this->bufferSizes[i] = nBlocks;
+//    }
+
 }
