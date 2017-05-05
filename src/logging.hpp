@@ -41,6 +41,10 @@
 #define LOG_ERR(str) BOOST_LOG_TRIVIAL(error) << (str)
 #define LOG_FATAL(str) BOOST_LOG_TRIVIAL(fatal) << (str)
 
+#define ERR(str) LOG_ERR(str); exit(-1)
+#define FATAL(str) LOG_FATAL(str); exit(-1)
+
+
 void hexdump(std::string title, const unsigned char *s, int length);
 void fdump(std::string title, std::string filename);
 

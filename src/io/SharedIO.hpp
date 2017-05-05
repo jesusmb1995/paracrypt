@@ -20,6 +20,11 @@
 
 #include <fstream>
 #include <string>
+#include <boost/thread/thread.hpp>
+#include <boost/thread/shared_mutex.hpp>
+#include "BlockIO.hpp"
+#include "LimitedQueue.hpp"
+#include "Pinned.hpp"
 
 #ifndef IO_H_
 #define IO_H_
@@ -27,91 +32,70 @@
 namespace paracrypt {
 
 /*
- * Shared file IO - multiple buffers permit to multiple readers/writers
- *  to share input/output block operations.
+ * IO operations are done in background with two threads: one to
+ *  read and another to write. This means write operations can be performed
+ *  asynchronously and reads are performed in O(1) time if the read thread
+ *  has already stored some chunks of data in the input queue.
+ *
+ *  Warning: Do not call inherited IO methods because those are not
+ *  thread-safe. Use read() and dump() instead.
  */
-class SharedIO {
+class SharedIO: public BlockIO {
 public:
-	typedef enum {
-		OK = 0,
-		EMPTY = 1, // ASYNC implementations: We have to wait until the buffer is filled with enough chunks
-		END = 2,
-	} readStatus;
 	typedef struct chunk {
-		rlim_t chunkId;
-		unsigned int nBlocks; //number of blocks
+//		const rlim_t chunkId;
+		std::streamsize nBlocks; //number of blocks
 		std::streampos blockOffset;
 		unsigned char* data;
-	};
-private:
-	// TODO chunk status con Id y en que cola esta para verificar que la op. es correcta
+		readStatus status;
+	} chunk;
 
-	const std::ifstream inFile;
-	readStatus inFileReadStatus;
-	const std::ofstream outFile;
-	const unsigned int blockSize;
-	const unsigned int chunkSize;
-	const chunk chunks[];
-	const std::streampos maxBlocksRead;
-	std::streampos alreadyReadBlocks;
-	static const rlim_t getAvaliablePinneableRAM();
-	const unsigned int bufferSize; // nChunks
-//    const rlim_t bufferSizes[];
-//    const unsigned int nBuffers;
-    void applyPadding(unsigned char* data, rlim_t dataSize, rlim_t desiredSize);
-
-protected:
-    // can be implemented with cudaHostAlloc or malloc and mlock
-    virtual bool pinnedAlloc(void** ptr, std::streampos size);
-    virtual void freePinnedAlloc(void* ptr);
-
-    chunk getChunk(rlim_t chunkId);
-	// return number of blocks read, blockOffset and Status
-    unsigned int inFileRead(unsigned char* store, std::streampos nBlocks, readStatus *status, std::streampos* blockOffset);
-	void outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset);
-
-public:
-	typedef enum {
-		APPEND_ZEROS = 0,
-		PKCS7 = 1,
-	} paddingScheme;
-	paddingScheme paddingType;
 	// Initialize size(bufferWeights) buffers
 	 // Reads the whole file
 	SharedIO(
 			std::string inFilename,
 			std::string outFilename,
 			unsigned int blockSize,
-			unsigned int chunkSize, //number of blocks in each chunk
-			//unsigned int nBuffers,
-			//unsigned int buffersWeights[] = {1}, //TODO another array for constant size buffers...
-			#define AUTO_IO_BUFFERS_LIMIT 0
-			std::streampos buffersSizeLimit = AUTO_IO_BUFFERS_LIMIT,
-			std::streampos begin = 0, // file begin byte
-			std::streampos end = 0    // file end byte
+			std::streampos begin = NO_RANDOM_ACCESS, // file begin byte
+			std::streampos end = NO_RANDOM_ACCESS    // file end byte
 	);
-
-
-
-
 	virtual ~SharedIO();
-	void setPadding(paddingScheme p);
-	const rlim_t getBufferSize(); // get total number of chunks in the buffer
-//	const unsigned int getNBuffers();
-	const unsigned int getBlockSize();
-	const unsigned int getChunkSize(); // returns nBlocks per chunk
-	void divideBuffer( // Divides the buffer in chunks
-			// unsigned int nDivisions == nWeightedDivisiones + nFixedSizeDivisions
-			unsigned int chunkSizedDivisions[], // result stored here
-			unsigned int nWeightedDivisions,
-			unsigned int weights[],
-			unsigned int nFixedSizeDivisions = 0, // divisions with fixed number of chunks
-			unsigned int fixedSizess[] = {}
-	);
+	const std::streamsize getBufferSize(); // get total number of chunks in the buffer
+	const std::streamsize getChunkSize(); // returns nBlocks per chunk
 
-	// return number of blocks read, blockOffset and Status
-	virtual chunk read(unsigned int nChunks, chunk chunks[], readStatus *status) = 0;
-	virtual void dump(unsigned int nChunks, chunk chunks[]) = 0;
+	// read a chunk, return the number of blocks read, the offset, and the status
+	chunk read(readStatus *status); // thread safe
+	void dump(chunk c); // thread safe
+
+protected:
+    virtual Pinned* getPinned() = 0;
+
+    // cannot directly use virtual
+    //  methods in the constructor/destructor
+	#define AUTO_IO_BUFFER_LIMIT 0
+    void construct(unsigned int nChunks, // number of chunks in which the buffer is divided
+            // TODO support chunks of different size?
+    		rlim_t bufferSizeLimit = AUTO_IO_BUFFER_LIMIT);
+    void destruct();
+
+private:
+	chunk *chunks;
+	unsigned char* chunksData;
+	rlim_t chunkSize;
+	std::streamsize bufferSize; // nChunks
+	static const rlim_t getAvaliablePinneableRAM();
+	LimitedQueue<chunk> *emptyChunks;
+	LimitedQueue<chunk> *readyToReadChunks; // chunks with new data read by the reader thread
+	LimitedQueue<chunk> *outputChunks; // chunks waiting to be written by the writer thread
+	                                   //  before being empty and being added to emptyChunks
+	boost::mutex chunk_access;
+	boost::condition_variable thereAreEmptyChunks;
+	boost::condition_variable thereAreChunksToRead;
+	boost::condition_variable thereAreChunksToWrite;
+	boost::thread *reader, *writer;
+	bool *finishThreading;
+	void reading();
+	void writing();
 };
 
 } /* namespace paracrypt */

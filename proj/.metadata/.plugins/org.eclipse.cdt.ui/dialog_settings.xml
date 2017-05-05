@@ -17,8 +17,8 @@
 		<item value="219" key="DIALOG_Y_ORIGIN"/>
 	</section>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration.internal">
-		<item value="273" key="size.height"/>
-		<item value="1213" key="size.width"/>
+		<item value="267" key="size.height"/>
+		<item value="1207" key="size.width"/>
 	</section>
 	<section name="org.eclipse.cdt.ui.text.hover.CMacroExpansionExploration">
 	</section>
@@ -26,6 +26,7 @@
 		<item value="false" key="caseSensitive"/>
 		<item value="227191" key="searchFlags"/>
 		<list key="previousPatterns">
+			<item value="LOG_FATAL"/>
 			<item value="**CopyrightC2017JesusMartinBerlangaAllRightsReserved**ThisfileispartofParacrypt**Paracryptisfreesoftware:youcanredistributeitandormodify*itunderthetermsoftheGNUGeneralPublicLicenseaspublishedby*theFreeSoftwareFoundationeitherversion3oftheLicenseor*atyouroptionanylaterversion**Foobarisdistributedinthehopethatitwillbeuseful*butWITHOUTANYWARRANTYwithouteventheimpliedwarrantyof*MERCHANTABILITYorFITNESSFORAPARTICULARPURPOSESeethe*GNUGeneralPublicLicenseformoredetails**YoushouldhavereceivedacopyoftheGNUGeneralPublicLicense*alongwithFoobarIfnotseehttp:wwwgnuorglicenses**"/>
 			<item value="lock"/>
 			<item value="opensslAES_key_scheduleh"/>

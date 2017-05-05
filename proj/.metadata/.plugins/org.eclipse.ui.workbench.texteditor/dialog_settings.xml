@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.GotoLineAction$GotoLineDialog_dialogBounds">
+		<item value="1016" key="DIALOG_X_ORIGIN"/>
+		<item value="410" key="DIALOG_Y_ORIGIN"/>
+	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="getBufferSize" key="selection"/>
+		<item value="fail" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="getBufferSize"/>
-			<item value="nBlock"/>
-			<item value="inFileRead"/>
-			<item value="SharedIO"/>
-			<item value="bufferIndex"/>
-			<item value="idBlock"/>
-			<item value="GetBuffer"/>
-			<item value="cudaHostAlloc"/>
+			<item value="fail"/>
+			<item value="data"/>
+			<item value="0 == data[byteIndex]"/>
+			<item value="nBlocks"/>
+			<item value="inFile"/>
+			<item value="checkPtr"/>
+			<item value="this-&gt;begin"/>
+			<item value="remainingBytes"/>
 		</list>
 		<list key="replacehistory">
 			<item value=""/>
@@ -29,10 +33,10 @@
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="546" key="DIALOG_WIDTH"/>
+		<item value="386" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="484" key="DIALOG_HEIGHT"/>
-		<item value="1169" key="DIALOG_X_ORIGIN"/>
-		<item value="572" key="DIALOG_Y_ORIGIN"/>
+		<item value="408" key="DIALOG_HEIGHT"/>
+		<item value="1369" key="DIALOG_X_ORIGIN"/>
+		<item value="224" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

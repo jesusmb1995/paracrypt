@@ -38,6 +38,9 @@
 #include <time.h>       /* time */
 #include <stdio.h>
 #include <fstream>
+#include "../io/SharedIO.hpp"
+#include "../io/SimpleCudaIO.hpp"
+#include "../io/BlockIO.hpp"
 
 int random_data_n_blocks;
 unsigned char *random_data;
@@ -1432,9 +1435,6 @@ BOOST_AUTO_TEST_SUITE(CUDA_AES_1B)
 	}
 BOOST_AUTO_TEST_SUITE_END()
 
-#include "../io/SharedIO.hpp"
-#include "../io/SimpleBlockingCudaIO.hpp"
-
 //
 // - Creates a input file where each (word) block value is its index except
 //   for the last block which can be half-empty. In this case each
@@ -1444,98 +1444,280 @@ BOOST_AUTO_TEST_SUITE_END()
 //
 void GEN_128BPB_IO_FILES(
 		std::string *inFileName,
-		std::iofstream *inFile,
+		std::fstream **inFile,
 		std::string *outFileName,
-		std::iofstream *outFile,
+		std::fstream **outFile,
 		unsigned int blockSize,
-		unsigned long totalNBytes,
+		std::streampos totalNBytes,
 		bool print=false
 ){
 	{
 		char nameBuffer [L_tmpnam];
 		std::tmpnam (nameBuffer);
-		(*outFileName) = std::string(nameBuffer);
+		(*inFileName) = std::string(nameBuffer);
 		std::tmpnam (nameBuffer);
 		(*outFileName) = std::string(nameBuffer);
 	}
 
-	(*inFile) = std::iofstream(*inFileName);
-	(*outFile) = std::iofstream(*outFile);
+	(*inFile) = new std::fstream(inFileName->c_str(),std::fstream::out | std::fstream::binary);
+	if(!(*inFile)) {
+		FATAL(boost::format("Error creating test input file: %s\n") % strerror(errno));
+	}
+	(*outFile) = new std::fstream(outFileName->c_str(),std::fstream::out | std::fstream::binary);
+	if(!(*outFile)) {
+		FATAL(boost::format("Error creating test input file: %s\n") % strerror(errno));
+	}
 
 	uint32_t buffer[4];
-	unsigned int nBlocks = totalNBytes / blockSize;
+	std::streampos nBlocks = totalNBytes / blockSize;
 	unsigned int remainingBytes = totalNBytes % blockSize;
 	for(uint32_t i = 0; i < nBlocks; i++) {
 		buffer[0] = i;
 		buffer[1] = i;
 		buffer[2] = i;
 		buffer[3] = i;
-		inFile->write((unsigned char*) buffer,32*4);
+		(*inFile)->write((const char*) buffer,4*4);
 	}
 	for(uint8_t i = 0; i < remainingBytes; i++) {
-		inFile->write((unsigned char*) &i,1);
+		(*inFile)->write((const char*) &i,1);
 	}
+	(*inFile)->flush();
 	if(print)
 		fdump("input file",*inFileName);
 }
-void CLOSE_IO_FILES(std::iofstream* inFile, std::iofstream* outFile)
+void CLOSE_IO_FILES(std::fstream** inFile, std::fstream** outFile)
 {
-	inFile->close();
-	outFile->close();
+	(*inFile)->close();
+	(*outFile)->close();
+	delete (*inFile);
+	delete (*outFile);
 }
 //
 // - Reads the file using a SharedIO object and checks the read
 //    value is correct. Then multiplies the value by two and write
 //    it to the output file using the SharedIO object. The first byte
-//    of the last block is incremented by one.
+//    of the padding block is incremented by one.
 //
 // - Finally checks that the output file is correct.
 //
-unsigned int fileSize( std::iostream file ){
-	std::streampos save = file.tellg();
+const std::streampos fileSize( std::fstream *file ){
+	std::streampos save = file->tellg();
 
-	file.seekg( 0, std::ios::beg );
-	std::streampos beg = file.tellg();
-    file.seekg( 0, std::ios::end );
-    std::streampos end = file.tellg();
-    unsigned int fsize = end-beg;
+    file->seekg( 0, std::ios::end );
+    const std::streampos fsize = file->tellg();
 
-    file.seekg(save);
+    file->seekg(save);
     return fsize;
 }
-void FILE_128BPB_IO_TEST(std::iostream inFile, std::iostream outFile, paracrypt::SharedIO io)
+void OUT_FILE_128BPB_CORRECTNESS_TEST(
+		std::string outFilename,
+		std::streampos begin,
+		std::streampos end,
+		std::streamsize maxBlockRead,
+		bool reachPadding,
+		const unsigned int remainingBytes,
+		uint8_t paddingSize,
+		paracrypt::BlockIO::paddingScheme p
+)
 {
-	unsigned int blockSize = io.getBlockSize();
-	if(blockSize != 16) {
-		LOG_FATAL("FILE_128BPB_IO_TEST can only accept a SharedIO object with 128 bits (16B) block size.");
-	} else {
-		const int numberOfEntireBlocks = fileSize(inFile) / blockSize;
+	char nameBuffer [L_tmpnam];
+	std::tmpnam (nameBuffer); // dummy file
+	paracrypt::SimpleIO *io = new paracrypt::SimpleCudaIO(outFilename,nameBuffer,16,AUTO_IO_BUFFER_LIMIT,begin,end);
+	unsigned char* data = (unsigned char*) io->getBufferPtr();
+	std::streamsize nBlocks;
+	std::streampos offset;
+	uint32_t check[4];
+	unsigned char* checkPtr = (unsigned char*) check;
+	paracrypt::BlockIO::readStatus status = paracrypt::BlockIO::OK;
 
-		const unsigned int nBuffers = io.getNBuffers();
-		char* data;
-		unsigned int nBlocks;
-		unsigned int offset;
-		paracrypt::SharedIO::readStatus status = paracrypt::SharedIO::readStatus::OK;
-		while(status == paracrypt::SharedIO::readStatus::OK) {
-			for(int i = 0; status == paracrypt::SharedIO::readStatus::OK && i < nBuffers; i++) {
-				nBlocks = io.read(i,&data,&offset,&status);
-				for(int j = 0; j < nBlocks; j++) {
-
+	// check read correctness and use write interface
+	while(status == paracrypt::SharedIO::OK) {
+		nBlocks = io->read(&status,&offset);
+		uint32_t entireBlocks = remainingBytes > 0 ? nBlocks-1 : nBlocks;
+		// verify n-1 blocks
+		for(uint32_t i = 0; i < entireBlocks; i++) {
+			uint32_t blockIndex = ((uint32_t) offset) + i;
+			check[0] = check[1] = check[2] = check[3] = blockIndex*2;
+			BOOST_REQUIRE_EQUAL_COLLECTIONS(
+					checkPtr, checkPtr+16,
+					data+i*16, data+i*16+16
+			);
+		}
+		if(status == paracrypt::SharedIO::END && reachPadding && remainingBytes > 0) {
+			std::streampos byteIndex;
+			for(uint8_t i = 0; i < remainingBytes; i++) {
+				byteIndex = (nBlocks-1)*16 + i;
+				if(i == 0) {
+					BOOST_REQUIRE_EQUAL(i+1,data[byteIndex]);
+				}
+				else
+					BOOST_REQUIRE_EQUAL(i,data[byteIndex]);
+			}
+			// verify padding correctness
+			for(uint8_t i = remainingBytes; i < 16; i++) {
+				byteIndex = (nBlocks-1)*16 + i;
+				if(p == paracrypt::BlockIO::APPEND_ZEROS) {
+					BOOST_REQUIRE_EQUAL(0,data[byteIndex]);
+				} else if(p == paracrypt::BlockIO::PKCS7)  {
+					BOOST_REQUIRE_EQUAL(paddingSize,data[byteIndex]);
 				}
 			}
 		}
 	}
+
+	delete io;
+}
+void FILE_128BPB_SIMPLEIO_TEST(std::fstream *inFile, std::fstream *outFile, paracrypt::SimpleIO* io, bool print=false)
+{
+	unsigned int blockSize = io->getBlockSize();
+	std::streamsize maxBlockRead = io->getMaxBlocksRead();
+	std::streampos begin = io->getBegin();
+	std::streampos end = io->getEnd();
+	paracrypt::BlockIO::paddingScheme p = io->getPadding();
+	const std::streampos inFSize = fileSize(inFile);
+	const unsigned int remainingBytes = inFSize % blockSize; // last block bytes
+	uint8_t paddingSize = 16-remainingBytes;
+	// end must be at the last remaining Bytes
+	bool reachPadding = remainingBytes > 0 && (end == NO_RANDOM_ACCESS || end >= inFSize-((std::streampos)paddingSize));
+
+	if(blockSize != 16) {
+		FATAL("FILE_128BPB_SIMPLEIO_TEST can only accept a SimpleIO object with 128 bits (16B) block size.");
+	} else {
+		unsigned char* data = (unsigned char*) io->getBufferPtr();
+		std::streamsize nBlocks;
+		std::streampos offset;
+		uint32_t check[4];
+		unsigned char* checkPtr = (unsigned char*) check;
+		paracrypt::BlockIO::readStatus status = paracrypt::BlockIO::OK;
+
+		// check read correctness and use write interface
+		while(status == paracrypt::SharedIO::OK) {
+			nBlocks = io->read(&status,&offset);
+			uint32_t entireBlocks = reachPadding && status == paracrypt::SharedIO::END ? nBlocks-1 : nBlocks;
+			// verify n-1 blocks
+			for(uint32_t i = 0; i < entireBlocks; i++) {
+				uint32_t blockIndex = ((uint32_t) offset) + i;
+				check[0] = check[1] = check[2] = check[3] = blockIndex;
+				BOOST_REQUIRE_EQUAL_COLLECTIONS(
+						checkPtr, checkPtr+16,
+						data+i*16, data+i*16+16
+				);
+				// multiply by 2 each read word
+				*((uint32_t*)(data+i*16+0 )) *= 2;
+				*((uint32_t*)(data+i*16+4 )) *= 2;
+				*((uint32_t*)(data+i*16+8 )) *= 2;
+				*((uint32_t*)(data+i*16+12)) *= 2;
+				io->dump(offset);
+			}
+			if(status == paracrypt::SharedIO::END && reachPadding) {
+				std::streampos byteIndex;
+				for(uint8_t i = 0; i < remainingBytes; i++) {
+					byteIndex = (nBlocks-1)*16 + i;
+					BOOST_REQUIRE_EQUAL(i,data[byteIndex]);
+				}
+				// verify padding correctness
+				for(uint8_t i = remainingBytes; i < 16; i++) {
+					byteIndex = (nBlocks-1)*16 + i;
+					if(p == paracrypt::BlockIO::APPEND_ZEROS) {
+						BOOST_REQUIRE_EQUAL(0,data[byteIndex]);
+					} else if(p == paracrypt::BlockIO::PKCS7)  {
+						BOOST_REQUIRE_EQUAL(paddingSize,data[byteIndex]);
+					}
+				}
+				// increment by one first byte of the padding block
+				data[(nBlocks-1)*16]++;
+				io->dump(offset);
+			}
+		}
+
+		std::string outFilename = io->getOutFileName();
+		delete io; // data flushed when IO object is destructed
+
+		// Check write correctness reading the file
+		//  with a SimpleIO object.
+		if(print)
+			fdump("output file",outFilename);
+		OUT_FILE_128BPB_CORRECTNESS_TEST(
+				outFilename,
+				begin,end,
+				maxBlockRead,
+				reachPadding,
+				remainingBytes,
+				paddingSize, p
+		);
+	}
+}
+void FILE_128BPB_SIMPLEIO_TEST(
+		std::streampos totalNBytes,
+		paracrypt::BlockIO::paddingScheme p = paracrypt::BlockIO::APPEND_ZEROS,
+		std::streampos begin = NO_RANDOM_ACCESS,
+		std::streampos end = NO_RANDOM_ACCESS,
+		rlim_t bufferSizeLimit = AUTO_IO_BUFFER_LIMIT
+){
+	std::string inFileName, outFileName;
+	std::fstream *inFile, *outFile;
+	bool genPrintFiles = true;
+	if(totalNBytes > 16*3) {
+		genPrintFiles = false;
+	}
+	GEN_128BPB_IO_FILES(&inFileName,&inFile,&outFileName,&outFile,16,totalNBytes,genPrintFiles);
+	paracrypt::SimpleIO *io = new paracrypt::SimpleCudaIO(inFileName,outFileName,16,bufferSizeLimit,begin,end);
+	io->setPadding(p);
+	FILE_128BPB_SIMPLEIO_TEST(inFile,outFile,io,genPrintFiles); // destructs io
+	CLOSE_IO_FILES(&inFile,&outFile);
 }
 
-BOOST_AUTO_TEST_SUITE(blocking_CUDA_IO)
-	BOOST_AUTO_TEST_CASE(just_ten_blocks)
-	{
-		std::string inFileName, outFileName;
-		std::iostream inFile, outFile;
-		GEN_128BPB_IO_FILES(inFileName,outFileName);
-		paracrypt::SharedIO io = new paracrypt::SimpleBlockingCudaIO();
+//void FILE_128BPB_SIMPLEIO_TEST(std::iostream inFile, std::iostream outFile, paracrypt::SimpleIO io)
+//{
+//	unsigned int blockSize = io.getBlockSize();
+//	if(blockSize != 16) {
+//		LOG_FATAL("FILE_128BPB_SIMPLEIO_TEST can only accept a SimpleIO object with 128 bits (16B) block size.");
+//	} else {
+//		const std::streampos inFSize = fileSize(inFile);
+//		const std::streampos numberOfEntireBlocks = inFSize / blockSize;
+//
+//		const unsigned int nBuffers = io.getNBuffers();
+//		char* data;
+//		unsigned int nBlocks;
+//		unsigned int offset;
+//		paracrypt::SharedIO::readStatus status = paracrypt::SharedIO::readStatus::OK;
+//		while(status == paracrypt::SharedIO::readStatus::OK) {
+//			for(int i = 0; status == paracrypt::SharedIO::readStatus::OK && i < nBuffers; i++) {
+//				nBlocks = io.read(i,&data,&offset,&status);
+//				for(int j = 0; j < nBlocks; j++) {
+//
+//				}
+//			}
+//		}
+//	}
+//}
 
-
-		CLOSE_IO_FILES(inFile,outFile);
-	}
+BOOST_AUTO_TEST_SUITE(simple_CUDA_IO)
+	BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_unlimited)
+		BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3); }
+		BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS); }
+		BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7); }
+		BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7); }
+		BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0); }
+		BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,16,32); }
+		BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS,16,19); }
+		BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19); }
+		BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32); }
+	BOOST_AUTO_TEST_SUITE_END()
+	BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_1block_buffer)
+		BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,
+				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+		BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS,
+				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+		BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7,
+				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+		BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7,
+				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+		BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0,paracrypt::BlockIO::APPEND_ZEROS,
+				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+		BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,16,32,16); }
+		BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS,16,19,16); }
+		BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19.16); }
+		BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32,16); }
+	BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

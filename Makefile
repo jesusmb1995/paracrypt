@@ -129,6 +129,27 @@ $(OBJ_DIR)/Timer.o: $(SRC_DIR)/Timer.cpp
 $(OBJ_DIR)/bin_endian_ttable_generator.o: $(SRC_DIR)/AES/big_endian_ttable_generator.cpp
 	$(CXX) -c $< -o $@
 #
+$(OBJ_DIR)/BlockIO.o: $(SRC_DIR)/io/BlockIO.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/SimpleIO.o: $(SRC_DIR)/io/SimpleIO.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/SimpleCudaIO.o: $(SRC_DIR)/io/SimpleCudaIO.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/SharedIO.o: $(SRC_DIR)/io/SharedIO.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaSharedIO.o: $(SRC_DIR)/io/CudaSharedIO.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/Pinned.o: $(SRC_DIR)/io/Pinned.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaPinned.o: $(SRC_DIR)/io/CudaPinned.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
 
 
 ###################################################################################
@@ -221,7 +242,14 @@ $(OBJ_DIR)/CudaEcbAes4BPtr.o \
 $(OBJ_DIR)/CudaEcbAes4BPtr.cu.o \
 $(OBJ_DIR)/CudaEcbAes1B.o \
 $(OBJ_DIR)/CudaEcbAes1B.cu.o \
-$(OBJ_DIR)/CUDACipherDevice.o
+$(OBJ_DIR)/CUDACipherDevice.o \
+$(OBJ_DIR)/BlockIO.o \
+$(OBJ_DIR)/SimpleIO.o \
+$(OBJ_DIR)/SimpleCudaIO.o \
+$(OBJ_DIR)/SharedIO.o \
+$(OBJ_DIR)/CudaSharedIO.o \
+$(OBJ_DIR)/Pinned.o \
+$(OBJ_DIR)/CudaPinned.o
 	 $(CXX) $(CXX_FLAGS_) \
 	 $(OBJ_DIR)/tests.o \
 	 $(OBJ_DIR)/AES_key_schedule.o \
@@ -247,6 +275,13 @@ $(OBJ_DIR)/CUDACipherDevice.o
 	 $(OBJ_DIR)/CUDACipherDevice.o \
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/Timer.o \
+	 $(OBJ_DIR)/BlockIO.o \
+	 $(OBJ_DIR)/SimpleIO.o \
+	 $(OBJ_DIR)/SimpleCudaIO.o \
+	 $(OBJ_DIR)/SharedIO.o \
+	 $(OBJ_DIR)/CudaSharedIO.o \
+	 $(OBJ_DIR)/Pinned.o \
+	 $(OBJ_DIR)/CudaPinned.o \
 	 -o $(BIN_DIR)/paracrypt_tests $(LIBS)
 #
 

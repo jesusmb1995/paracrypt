@@ -19,6 +19,7 @@
  */
 
 #include "logging.hpp"
+#include <fstream>
 
 void hexdump(std::string title, const unsigned char *s, int length)
 {
@@ -34,29 +35,33 @@ void hexdump(std::string title, const unsigned char *s, int length)
 
 void fdump(std::string title, std::string filename)
 {
-	std::ifstream f(filename);
+	std::ifstream f(filename.c_str(),std::ifstream::binary);
 	if(f.is_open()) {
 		std::stringstream stream;
-		n = 0;
+		std::streampos n = 0;
+		std::streampos nInc = 1;
 		while(!f.fail() || !f.eof()) {
 			char buff[16];
 			f.read(buff,16);
 			unsigned int readed = 16;
-			if(f.fail() && f.eof) {
+			if(f.fail() && f.eof()) {
 				readed = f.gcount();
 			}
 			else if(f.fail()) {
-				LOG_WARNING(std::format("fdump couldn't correctly read %s") % filename);
+				LOG_WAR(boost::format("fdump couldn't correctly read %s") % filename);
 			}
 			stream << boost::format("\n%s  %04x") % title % (int)n;
-			for(int i = 0; i < readed; i++) {
+			for(unsigned int i = 0; i < readed; i++) {
 				stream << boost::format(" %02x") % (int)buff[i];
-				n++;
+				n = n + nInc;
 			}
 		}
 		stream << "\n";
 		LOG_DEBUG(stream.str());
 	} else {
-		LOG_WARNING(std::format("fdump cannot open %s") % filename);
+		if(!f) {
+			ERR(boost::format("fdump cannot open %s: %s") % filename % strerror(errno));
+		}
+		LOG_WAR(boost::format("fdump cannot open %s") % filename);
 	}
 }
