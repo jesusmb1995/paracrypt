@@ -41,6 +41,7 @@
 #include "../io/SharedIO.hpp"
 #include "../io/SimpleCudaIO.hpp"
 #include "../io/BlockIO.hpp"
+#include "../io/CudaSharedIO.hpp"
 
 int random_data_n_blocks;
 unsigned char *random_data;
@@ -1523,43 +1524,41 @@ void OUT_FILE_128BPB_CORRECTNESS_TEST(
 	char nameBuffer [L_tmpnam];
 	std::tmpnam (nameBuffer); // dummy file
 	paracrypt::SimpleIO *io = new paracrypt::SimpleCudaIO(outFilename,nameBuffer,16,AUTO_IO_BUFFER_LIMIT,begin,end);
-	unsigned char* data = (unsigned char*) io->getBufferPtr();
-	std::streamsize nBlocks;
-	std::streampos offset;
+	paracrypt::BlockIO::chunk c;
+	c.status = paracrypt::BlockIO::OK;
 	uint32_t check[4];
 	unsigned char* checkPtr = (unsigned char*) check;
-	paracrypt::BlockIO::readStatus status = paracrypt::BlockIO::OK;
 
 	// check read correctness and use write interface
-	while(status == paracrypt::SharedIO::OK) {
-		nBlocks = io->read(&status,&offset);
-		uint32_t entireBlocks = remainingBytes > 0 ? nBlocks-1 : nBlocks;
+	while(c.status == paracrypt::SharedIO::OK) {
+		c = io->read();
+		uint32_t entireBlocks = remainingBytes > 0 ? c.nBlocks-1 : c.nBlocks;
 		// verify n-1 blocks
 		for(uint32_t i = 0; i < entireBlocks; i++) {
-			uint32_t blockIndex = ((uint32_t) offset) + i;
+			uint32_t blockIndex = ((uint32_t) c.blockOffset) + i;
 			check[0] = check[1] = check[2] = check[3] = blockIndex*2;
 			BOOST_REQUIRE_EQUAL_COLLECTIONS(
 					checkPtr, checkPtr+16,
-					data+i*16, data+i*16+16
+					c.data+i*16, c.data+i*16+16
 			);
 		}
-		if(status == paracrypt::SharedIO::END && reachPadding && remainingBytes > 0) {
+		if(c.status == paracrypt::SharedIO::END && reachPadding && remainingBytes > 0) {
 			std::streampos byteIndex;
 			for(uint8_t i = 0; i < remainingBytes; i++) {
-				byteIndex = (nBlocks-1)*16 + i;
+				byteIndex = (c.nBlocks-1)*16 + i;
 				if(i == 0) {
-					BOOST_REQUIRE_EQUAL(i+1,data[byteIndex]);
+					BOOST_REQUIRE_EQUAL(i+1,c.data[byteIndex]);
 				}
 				else
-					BOOST_REQUIRE_EQUAL(i,data[byteIndex]);
+					BOOST_REQUIRE_EQUAL(i,c.data[byteIndex]);
 			}
 			// verify padding correctness
 			for(uint8_t i = remainingBytes; i < 16; i++) {
-				byteIndex = (nBlocks-1)*16 + i;
+				byteIndex = (c.nBlocks-1)*16 + i;
 				if(p == paracrypt::BlockIO::APPEND_ZEROS) {
-					BOOST_REQUIRE_EQUAL(0,data[byteIndex]);
+					BOOST_REQUIRE_EQUAL(0,c.data[byteIndex]);
 				} else if(p == paracrypt::BlockIO::PKCS7)  {
-					BOOST_REQUIRE_EQUAL(paddingSize,data[byteIndex]);
+					BOOST_REQUIRE_EQUAL(paddingSize,c.data[byteIndex]);
 				}
 			}
 		}
@@ -1567,66 +1566,68 @@ void OUT_FILE_128BPB_CORRECTNESS_TEST(
 
 	delete io;
 }
-void FILE_128BPB_SIMPLEIO_TEST(std::fstream *inFile, std::fstream *outFile, paracrypt::SimpleIO* io, bool print=false)
+void FILE_128BPB_IO_TEST(std::fstream *inFile, std::fstream *outFile, paracrypt::BlockIO* io, bool print=false)
 {
 	unsigned int blockSize = io->getBlockSize();
 	std::streamsize maxBlockRead = io->getMaxBlocksRead();
 	std::streampos begin = io->getBegin();
 	std::streampos end = io->getEnd();
 	paracrypt::BlockIO::paddingScheme p = io->getPadding();
-	const std::streampos inFSize = fileSize(inFile);
+	const std::streamsize inFSize = fileSize(inFile);
 	const unsigned int remainingBytes = inFSize % blockSize; // last block bytes
 	uint8_t paddingSize = 16-remainingBytes;
 	// end must be at the last remaining Bytes
 	bool reachPadding = remainingBytes > 0 && (end == NO_RANDOM_ACCESS || end >= inFSize-((std::streampos)paddingSize));
+	std::streamsize totalBlocksRead = 0;
 
 	if(blockSize != 16) {
 		FATAL("FILE_128BPB_SIMPLEIO_TEST can only accept a SimpleIO object with 128 bits (16B) block size.");
 	} else {
-		unsigned char* data = (unsigned char*) io->getBufferPtr();
-		std::streamsize nBlocks;
-		std::streampos offset;
+		paracrypt::BlockIO::chunk c;
+		c.status = paracrypt::BlockIO::OK;
 		uint32_t check[4];
 		unsigned char* checkPtr = (unsigned char*) check;
-		paracrypt::BlockIO::readStatus status = paracrypt::BlockIO::OK;
 
 		// check read correctness and use write interface
-		while(status == paracrypt::SharedIO::OK) {
-			nBlocks = io->read(&status,&offset);
-			uint32_t entireBlocks = reachPadding && status == paracrypt::SharedIO::END ? nBlocks-1 : nBlocks;
+		while(c.status == paracrypt::SharedIO::OK) {
+			c = io->read();
+			uint32_t entireBlocks = reachPadding && c.status == paracrypt::SharedIO::END ? c.nBlocks-1 : c.nBlocks;
 			// verify n-1 blocks
 			for(uint32_t i = 0; i < entireBlocks; i++) {
-				uint32_t blockIndex = ((uint32_t) offset) + i;
+				totalBlocksRead++;
+				uint32_t blockIndex = ((uint32_t) c.blockOffset) + i;
 				check[0] = check[1] = check[2] = check[3] = blockIndex;
 				BOOST_REQUIRE_EQUAL_COLLECTIONS(
 						checkPtr, checkPtr+16,
-						data+i*16, data+i*16+16
+						c.data+i*16, c.data+i*16+16
 				);
 				// multiply by 2 each read word
-				*((uint32_t*)(data+i*16+0 )) *= 2;
-				*((uint32_t*)(data+i*16+4 )) *= 2;
-				*((uint32_t*)(data+i*16+8 )) *= 2;
-				*((uint32_t*)(data+i*16+12)) *= 2;
-				io->dump(offset);
+				*((uint32_t*)(c.data+i*16+0 )) *= 2;
+				*((uint32_t*)(c.data+i*16+4 )) *= 2;
+				*((uint32_t*)(c.data+i*16+8 )) *= 2;
+				*((uint32_t*)(c.data+i*16+12)) *= 2;
 			}
-			if(status == paracrypt::SharedIO::END && reachPadding) {
+			if(c.status == paracrypt::SharedIO::END && reachPadding) {
+				totalBlocksRead++;
 				std::streampos byteIndex;
 				for(uint8_t i = 0; i < remainingBytes; i++) {
-					byteIndex = (nBlocks-1)*16 + i;
-					BOOST_REQUIRE_EQUAL(i,data[byteIndex]);
+					byteIndex = (c.nBlocks-1)*16 + i;
+					BOOST_REQUIRE_EQUAL(i,c.data[byteIndex]);
 				}
 				// verify padding correctness
 				for(uint8_t i = remainingBytes; i < 16; i++) {
-					byteIndex = (nBlocks-1)*16 + i;
+					byteIndex = (c.nBlocks-1)*16 + i;
 					if(p == paracrypt::BlockIO::APPEND_ZEROS) {
-						BOOST_REQUIRE_EQUAL(0,data[byteIndex]);
+						BOOST_REQUIRE_EQUAL(0,c.data[byteIndex]);
 					} else if(p == paracrypt::BlockIO::PKCS7)  {
-						BOOST_REQUIRE_EQUAL(paddingSize,data[byteIndex]);
+						BOOST_REQUIRE_EQUAL(paddingSize,c.data[byteIndex]);
 					}
 				}
 				// increment by one first byte of the padding block
-				data[(nBlocks-1)*16]++;
-				io->dump(offset);
+				c.data[(c.nBlocks-1)*16]++;
+			}
+			if(totalBlocksRead > 0) {
+				io->dump(c);
 			}
 		}
 
@@ -1637,6 +1638,13 @@ void FILE_128BPB_SIMPLEIO_TEST(std::fstream *inFile, std::fstream *outFile, para
 		//  with a SimpleIO object.
 		if(print)
 			fdump("output file",outFilename);
+		const std::streamsize outFSize = fileSize(outFile);
+		std::streamsize expectedSize = 0;
+		if(totalBlocksRead != 0) {
+			expectedSize = begin != NO_RANDOM_ACCESS ? ((std::streamsize)begin)+totalBlocksRead*16 : totalBlocksRead*16;
+		}
+		BOOST_REQUIRE_EQUAL(expectedSize,outFSize);
+
 		OUT_FILE_128BPB_CORRECTNESS_TEST(
 				outFilename,
 				begin,end,
@@ -1652,8 +1660,14 @@ void FILE_128BPB_SIMPLEIO_TEST(
 		paracrypt::BlockIO::paddingScheme p = paracrypt::BlockIO::APPEND_ZEROS,
 		std::streampos begin = NO_RANDOM_ACCESS,
 		std::streampos end = NO_RANDOM_ACCESS,
-		rlim_t bufferSizeLimit = AUTO_IO_BUFFER_LIMIT
+		rlim_t bufferSizeLimit = AUTO_IO_BUFFER_LIMIT,
+		bool time = false
 ){
+	Timer* t = NULL;
+	if(time) {
+		t = new Timer();
+		t->tic();
+	}
 	std::string inFileName, outFileName;
 	std::fstream *inFile, *outFile;
 	bool genPrintFiles = true;
@@ -1663,8 +1677,42 @@ void FILE_128BPB_SIMPLEIO_TEST(
 	GEN_128BPB_IO_FILES(&inFileName,&inFile,&outFileName,&outFile,16,totalNBytes,genPrintFiles);
 	paracrypt::SimpleIO *io = new paracrypt::SimpleCudaIO(inFileName,outFileName,16,bufferSizeLimit,begin,end);
 	io->setPadding(p);
-	FILE_128BPB_SIMPLEIO_TEST(inFile,outFile,io,genPrintFiles); // destructs io
+	FILE_128BPB_IO_TEST(inFile,outFile,io,genPrintFiles); // destructs io
 	CLOSE_IO_FILES(&inFile,&outFile);
+	if(time) {
+		double cpuSec = t->toc_seconds();
+		LOG_INF(boost::format("Test completed in %f CPU seconds\n") % cpuSec);
+	}
+}
+void FILE_128BPB_SHAREDIO_TEST(
+		std::streampos totalNBytes,
+		unsigned int nChunks,
+		paracrypt::BlockIO::paddingScheme p = paracrypt::BlockIO::APPEND_ZEROS,
+		std::streampos begin = NO_RANDOM_ACCESS,
+		std::streampos end = NO_RANDOM_ACCESS,
+		rlim_t bufferSizeLimit = AUTO_IO_BUFFER_LIMIT,
+		bool time = false
+){
+	Timer* t = NULL;
+	if(time) {
+		t = new Timer();
+		t->tic();
+	}
+	std::string inFileName, outFileName;
+	std::fstream *inFile, *outFile;
+	bool genPrintFiles = true;
+	if(totalNBytes > 16*3) {
+		genPrintFiles = false;
+	}
+	GEN_128BPB_IO_FILES(&inFileName,&inFile,&outFileName,&outFile,16,totalNBytes,genPrintFiles);
+	paracrypt::CudaSharedIO *io = new paracrypt::CudaSharedIO(inFileName,outFileName,16,nChunks,bufferSizeLimit,begin,end);
+	io->setPadding(p);
+	FILE_128BPB_IO_TEST(inFile,outFile,io,genPrintFiles); // destructs io
+	CLOSE_IO_FILES(&inFile,&outFile);
+	if(time) {
+		double cpuSec = t->toc_seconds();
+		LOG_INF(boost::format("Test completed in %f CPU seconds\n") % cpuSec);
+	}
 }
 
 //void FILE_128BPB_SIMPLEIO_TEST(std::iostream inFile, std::iostream outFile, paracrypt::SimpleIO io)
@@ -1692,32 +1740,88 @@ void FILE_128BPB_SIMPLEIO_TEST(
 //	}
 //}
 
-BOOST_AUTO_TEST_SUITE(simple_CUDA_IO)
-	BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_unlimited)
-		BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3); }
-		BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS); }
-		BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7); }
-		BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7); }
-		BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0); }
-		BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,16,32); }
-		BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS,16,19); }
-		BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19); }
-		BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32); }
+BOOST_AUTO_TEST_SUITE(IO)
+	BOOST_AUTO_TEST_SUITE(simple_CUDA_IO)
+		BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_unlimited)
+			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7); }
+			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7); }
+			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,16,32); }
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS,16,19); }
+			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19); }
+			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32); }
+			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
+				FILE_128BPB_SIMPLEIO_TEST(50*1000*1000,paracrypt::BlockIO::PKCS7,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,AUTO_IO_BUFFER_LIMIT,true);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+		BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_1block_buffer)
+			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0,paracrypt::BlockIO::APPEND_ZEROS,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,16,32,16); }
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS,16,19,16); }
+			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19.16); }
+			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32,16); }
+			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
+				FILE_128BPB_SIMPLEIO_TEST(50*1000*1000,paracrypt::BlockIO::PKCS7,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16,true);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+		BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_10block_buffer)
+			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
+				FILE_128BPB_SIMPLEIO_TEST(50*1000*1000,paracrypt::BlockIO::PKCS7,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,160,true);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+		BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_100block_buffer)
+			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
+				FILE_128BPB_SIMPLEIO_TEST(50*1000*1000,paracrypt::BlockIO::PKCS7,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,1600,true);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
 	BOOST_AUTO_TEST_SUITE_END()
-	BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_1block_buffer)
-		BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,
-				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-		BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS,
-				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-		BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7,
-				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-		BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7,
-				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-		BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0,paracrypt::BlockIO::APPEND_ZEROS,
-				NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-		BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS,16,32,16); }
-		BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS,16,19,16); }
-		BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19.16); }
-		BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32,16); }
+
+	BOOST_AUTO_TEST_SUITE(shared_CUDA_IO)
+		BOOST_AUTO_TEST_SUITE(shared_CUDA_IO_unlimited)
+			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SHAREDIO_TEST(16*3,4); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::APPEND_ZEROS); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::PKCS7); }
+			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(1,4,paracrypt::BlockIO::PKCS7); }
+			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SHAREDIO_TEST(0,4); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::APPEND_ZEROS,16,32); }
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::APPEND_ZEROS,16,19); }
+			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::PKCS7,16,19); }
+			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SHAREDIO_TEST(16,4,paracrypt::BlockIO::PKCS7,16,32); }
+			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
+				FILE_128BPB_SHAREDIO_TEST(50*1000*1000,4,paracrypt::BlockIO::PKCS7,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,AUTO_IO_BUFFER_LIMIT,true);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
+		BOOST_AUTO_TEST_SUITE(shared_CUDA_IO_4block_buffer)
+			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::APPEND_ZEROS,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::APPEND_ZEROS,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::PKCS7,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
+			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(1,4,paracrypt::BlockIO::PKCS7,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
+			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SHAREDIO_TEST(0,4,paracrypt::BlockIO::APPEND_ZEROS,
+					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::APPEND_ZEROS,16,32,16*4); }
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::APPEND_ZEROS,16,19,16*4); }
+			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::PKCS7,16,19.16*4); }
+			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SHAREDIO_TEST(16,4,paracrypt::BlockIO::PKCS7,16,32,16*4); }
+		BOOST_AUTO_TEST_SUITE_END()
+		BOOST_AUTO_TEST_SUITE(shared_CUDA_IO_80block_buffer)
+			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
+				FILE_128BPB_SHAREDIO_TEST(50*1000*1000,4,paracrypt::BlockIO::PKCS7,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*80,true);
+			}
+		BOOST_AUTO_TEST_SUITE_END()
 	BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()

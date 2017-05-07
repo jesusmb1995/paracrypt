@@ -49,7 +49,7 @@ void paracrypt::SimpleIO::construct(rlim_t bufferSizeLimit) {
 		}
     	// bufferSize aligned to chunk size
         bufferSizeBytes = this->getBufferSize()*this->getBlockSize();
-    	allocSuccess = this->getPinned()->alloc((void**) &this->buffer,bufferSizeBytes);
+    	allocSuccess = this->getPinned()->alloc((void**) &buffer.data,bufferSizeBytes);
     	if(!allocSuccess) {
     		if(this->bufferSize != 0) {
     			LOG_WAR(boost::format("Coudn't allocate %llu bytes for SharedIO internal buffer."
@@ -71,24 +71,22 @@ void paracrypt::SimpleIO::construct(rlim_t bufferSizeLimit) {
     );
 }
 void paracrypt::SimpleIO::destruct() {
-	this->getPinned()->free((void*)this->buffer);
+	this->getPinned()->free((void*)this->buffer.data);
 }
 
 const std::streamsize paracrypt::SimpleIO::getBufferSize() {
 	return this->bufferSize;
 }
 
-const unsigned char* paracrypt::SimpleIO::getBufferPtr() {
+paracrypt::BlockIO::chunk paracrypt::SimpleIO::read()
+{
+	this->buffer.nBlocks = this->inFileRead(this->buffer.data,this->getBufferSize(),&this->buffer.status,&this->buffer.blockOffset);
 	return this->buffer;
 }
-
-std::streamsize paracrypt::SimpleIO::read(readStatus *status, std::streampos* blockOffset)
+void paracrypt::SimpleIO::dump(chunk c)
 {
-	this->nLastRead = this->inFileRead((unsigned char*)this->getBufferPtr(),this->getBufferSize(),status,blockOffset);
-	return this->nLastRead;
-}
-
-void paracrypt::SimpleIO::dump(std::streampos blockOffset)
-{
-	this->outFileWrite((unsigned char*)this->getBufferPtr(),this->nLastRead,blockOffset);
+	this->outFileWrite(
+			c.data,
+			c.nBlocks,
+			c.blockOffset);
 }

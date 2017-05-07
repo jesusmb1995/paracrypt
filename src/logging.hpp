@@ -29,6 +29,14 @@
 #include <boost/log/expressions.hpp>
 #include <boost/format.hpp>
 
+#if defined(DEBUG) && defined(DEVEL)
+#define DEV_TRACE(str) BOOST_LOG_TRIVIAL(trace) << (str)
+#define DEV_DEBUG(str) BOOST_LOG_TRIVIAL(debug) << (str)
+#else
+#define DEV_TRACE(str)
+#define DEV_DEBUG(str)
+#endif
+
 #ifdef DEBUG
 #define LOG_TRACE(str) BOOST_LOG_TRIVIAL(trace) << (str)
 #define LOG_DEBUG(str) BOOST_LOG_TRIVIAL(debug) << (str)

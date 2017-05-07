@@ -127,7 +127,7 @@ std::streamsize paracrypt::BlockIO::inFileRead(unsigned char* store, std::stream
 				nread = blocksToRead;
 			}
 			(*blockOffset) = this->beginBlock + this->alreadyReadBlocks;
-			this->alreadyReadBlocks += 1;
+			this->alreadyReadBlocks += nread;
 			if(this->maxBlocksRead != NO_RANDOM_ACCESS && this->alreadyReadBlocks >= this->maxBlocksRead) {
 				this->inFile.close();
 				this->inFileReadStatus = END;

@@ -42,14 +42,6 @@ namespace paracrypt {
  */
 class SharedIO: public BlockIO {
 public:
-	typedef struct chunk {
-//		const rlim_t chunkId;
-		std::streamsize nBlocks; //number of blocks
-		std::streampos blockOffset;
-		unsigned char* data;
-		readStatus status;
-	} chunk;
-
 	// Initialize size(bufferWeights) buffers
 	 // Reads the whole file
 	SharedIO(
@@ -62,10 +54,8 @@ public:
 	virtual ~SharedIO();
 	const std::streamsize getBufferSize(); // get total number of chunks in the buffer
 	const std::streamsize getChunkSize(); // returns nBlocks per chunk
-
-	// read a chunk, return the number of blocks read, the offset, and the status
-	chunk read(readStatus *status); // thread safe
-	void dump(chunk c); // thread safe
+	chunk read();
+	void dump(chunk c);
 
 protected:
     virtual Pinned* getPinned() = 0;

@@ -18,20 +18,22 @@
  *
  */
 
-#include "Timer.hpp"
+#ifndef LAUNCHER_HPP_
+#define LAUNCHER_HPP_
 
-void Timer::tic() {
-	this->begin = clock();
-}
+#include "../device/GPUCipherDevice.hpp"
+#include "../BlockCipher.hpp"
 
-double Timer::toc() {
-	clock_t end = clock();
-	double elapsed_clocks = double(end-begin);
-	// double seconds = elapsed_clocks / CLOCKS_PER_SEC;
-	return elapsed_clocks;
-}
+namespace paracrypt {
 
-// CPU time
-double Timer::toc_seconds() {
-	return this->toc()/CLOCKS_PER_SEC;
-}
+class launcher {
+public:
+	virtual launcher(std::string inFilename, std::string outFilename, BlockCipher cipher, GPUCipherDevice devices[]);
+	virtual ~launcher();
+	virtual int encrypt(const unsigned char in[], const unsigned char out[], int n_blocks) = 0;
+	virtual int decrypt(const unsigned char in[], const unsigned char out[], int n_blocks) = 0;
+};
+
+} /* namespace paracrypt */
+
+#endif /* LAUNCHER_HPP_ */

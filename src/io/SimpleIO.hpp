@@ -40,11 +40,8 @@ public:
 	);
 	virtual ~SimpleIO();
 	const std::streamsize getBufferSize(); // get number of blocks
-
-	// read a chunk, return the number of blocks read, the offset, and the status
-	std::streamsize read(readStatus *status, std::streampos* blockOffset);
-    void dump(std::streampos blockOffset); // writes buffer contents
-    const unsigned char* getBufferPtr();
+	chunk read();
+	void dump(chunk c);
 
 protected:
     virtual Pinned* getPinned() = 0;
@@ -56,9 +53,9 @@ protected:
     void destruct();
 
 private:
-    std::streamsize nLastRead;
-    const unsigned char* buffer;
-    std::streampos blockOffset;
+    chunk buffer;
+//    std::streamsize nLastRead;
+//    const unsigned char* buffer;
     std::streamsize bufferSize; // nBlocks
 };
 

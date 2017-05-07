@@ -33,6 +33,15 @@ public:
 		OK = 0,
 		END = 1,
 	} readStatus;
+	typedef struct chunk {
+		std::streamsize nBlocks; //number of blocks
+		std::streampos blockOffset;
+		unsigned char* data;
+		readStatus status;
+	} chunk;
+	virtual chunk read() = 0;
+	virtual void dump(chunk c) = 0;
+
 	typedef enum {
 		APPEND_ZEROS = 0,
 		PKCS7 = 1,
@@ -46,6 +55,7 @@ public:
 			std::streampos end = NO_RANDOM_ACCESS
 	);
 	virtual ~BlockIO();
+
 	std::streamsize inFileRead(unsigned char* store, std::streamsize nBlocks, readStatus *status, std::streampos* blockOffset);
 	void outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset);
 	void outFileWriteBytes(unsigned char* data, std::streampos nBytes, std::streampos byteOffset);

@@ -29,44 +29,58 @@ void paracrypt::SharedIO::reading() {
 	while(c.status != END && !(*finishThreading)) {
 		boost::unique_lock<boost::mutex> lock(chunk_access);
 			if(this->emptyChunks->size() <= 0) {
-				LOG_TRACE("SharedIO reader: Waiting for a chunk of"
-						" free memory to read from the input file.");
+				DEV_TRACE("SharedIO reader: Not enough free memory for"
+						" buffering. Waiting for a chunk of"
+						" free memory before attempting to read from the input file.");
 				this->thereAreEmptyChunks.wait(lock);
 				if(*finishThreading)
 					break;
-				LOG_TRACE("SharedIO reader: Waking up... now there is"
-						" a chunk free memory and I can read from the"
+				DEV_TRACE("SharedIO reader: Waking up... now there is"
+						" a chunk of free memory and I can read from the"
 						" input file.");
 			}
-			chunk c = this->emptyChunks->dequeue();
+			c = this->emptyChunks->dequeue();
 		lock.unlock();
 
-		c.nBlocks = this->inFileRead((unsigned char*)c.data,this->getChunkSize(),&c.status,&c.blockOffset);
+		c.nBlocks = this->inFileRead(c.data,this->getChunkSize(),&c.status,&c.blockOffset);
 
 		lock.lock();
 			readyToReadChunks->enqueue(c);
+			DEV_TRACE(boost::format("SharedIO reader: %llu block chunk beginning at block "
+					"%llu has been enqueued (read queue size: %llu)- its ready to be read by the user.")
+			% c.nBlocks
+			% c.blockOffset
+			% readyToReadChunks->size());
 			if(this->readyToReadChunks->size() == 1) {
+				DEV_TRACE("SharedIO reader: Notifying the user.");
 				this->thereAreChunksToRead.notify_one();
 			}
 		lock.unlock();
 	}
+	DEV_TRACE("SharedIO reader exits.");
 }
 
 // Main thread
-paracrypt::SharedIO::chunk paracrypt::SharedIO::read(readStatus *status)
+paracrypt::BlockIO::chunk paracrypt::SharedIO::read()
 {
 	boost::unique_lock<boost::mutex> lock(chunk_access);
 		if(this->readyToReadChunks->size() <= 0) {
 			this->thereAreChunksToRead.wait(lock);
 		}
-		chunk c = this->emptyChunks->dequeue();
+		chunk c = this->readyToReadChunks->dequeue();
 		return c;
 }
 void paracrypt::SharedIO::dump(chunk c)
 {
 	boost::unique_lock<boost::mutex> lock(chunk_access);
 		outputChunks->enqueue(c);
+		DEV_TRACE(boost::format("SharedIO user: %llu block chunk beginning at block "
+				"%llu has been placed in the output queue (size: %llu).")
+			% c.nBlocks
+			% c.blockOffset
+			% outputChunks->size());
 		if(this->outputChunks->size() == 1) {
+			DEV_TRACE("SharedIO user: Notifying the writer.");
 			this->thereAreChunksToWrite.notify_one();
 		}
 }
@@ -75,28 +89,43 @@ void paracrypt::SharedIO::dump(chunk c)
 void paracrypt::SharedIO::writing() {
 	chunk c;
 	c.status = OK;
-	while(c.status != END && !(*finishThreading)) {
+	while(c.status != END) {
 		boost::unique_lock<boost::mutex> lock(chunk_access);
 			if(this->outputChunks->size() <= 0) {
-				LOG_TRACE("SharedIO writer: Waiting for a chunk in the output queue.");
-				this->thereAreChunksToWrite.wait(lock);
-				if(*finishThreading)
+				if(*finishThreading) {
+					// only exit if there are no more chunks to
+					//  dump and the finish order has been received
+					DEV_TRACE("SharedIO writer: I received a order to stop and there are"
+							" no more chunks in the output queue so I can finish now"
+							" knowing that I do not leave any write order behind.");
 					break;
-				LOG_TRACE("SharedIO writer: waking up... now I have a chunk in the output"
+				}
+				DEV_TRACE("SharedIO writer: Waiting for a chunk in the output queue.");
+				this->thereAreChunksToWrite.wait(lock);
+				if(this->outputChunks->size() == 0 && *finishThreading) {
+					DEV_TRACE("SharedIO writer: I received a order to stop.");
+					break;
+				}
+				DEV_TRACE("SharedIO writer: waking up... now I have a chunk in the output"
 						" queue that I can dump in the output file.");
 			}
-			chunk c = this->outputChunks->dequeue();
+			c = this->outputChunks->dequeue();
 		lock.unlock();
 
-		this->outFileWrite((unsigned char*)c.data,this->getChunkSize(),c.blockOffset);
+		this->outFileWrite(c.data,c.nBlocks,c.blockOffset);
+		DEV_TRACE(boost::format("SharedIO writer: %llu block chunk beginning at block"
+				" %llu has been written to the output file.") % c.nBlocks % c.blockOffset);
 
 		lock.lock();
 			emptyChunks->enqueue(c);
-			if(this->readyToReadChunks->size() == 1) {
+			DEV_TRACE(boost::format("SharedIO writer: %llu free chunks.")%emptyChunks->size());
+			if(this->emptyChunks->size() == 1) {
+				DEV_TRACE("SharedIO writer: Notifying the reader.");
 				this->thereAreEmptyChunks.notify_one();
 			}
 		lock.unlock();
 	}
+	DEV_TRACE("SharedIO writer exits.");
 }
 
 paracrypt::SharedIO::SharedIO(
@@ -120,17 +149,18 @@ void paracrypt::SharedIO::construct(unsigned int nChunks, rlim_t bufferSizeLimit
     bool allocSuccess = false;
     std::streamsize bufferSizeBytes;
     do {
+		if(buffersTotalSize < this->getBlockSize()*nChunks) {
+			// exit with error
+			ERR("Couldn't allocate SharedIO internal buffer.\n");
+		}
     	this->chunkSize = (buffersTotalSize / this->getBlockSize() / nChunks);
     	// bufferSize aligned to chunk size
         bufferSizeBytes = this->getBufferSize()*this->getChunkSize()*this->getBlockSize();
     	allocSuccess = this->getPinned()->alloc((void**)&this->chunksData,bufferSizeBytes);
     	if(!allocSuccess) {
-    		buffersTotalSize -= this->getChunkSize();
+    		buffersTotalSize -= this->chunkSize;
     		// minimum 1 block per chunk
-    		if(buffersTotalSize <= this->getBlockSize()*nChunks) {
-    			// exit with error
-    			ERR("Couldn't allocate SharedIO internal buffer.\n");
-    		} else {
+    		if(buffersTotalSize >= this->getBlockSize()*nChunks) {
     			LOG_WAR(boost::format("Coudn't allocate %llu bytes for SharedIO internal buffer."
     					" Trying with a smaller buffer...\n") % bufferSizeBytes);
     		}
@@ -142,7 +172,7 @@ void paracrypt::SharedIO::construct(unsigned int nChunks, rlim_t bufferSizeLimit
     this->chunks = new chunk[nChunks];
     this->emptyChunks = new LimitedQueue<chunk>(this->getBufferSize());
     for(unsigned int i = 0; i < nChunks; i++) {
-    	unsigned char* chunkData = this->chunksData + this->getChunkSize()*i;
+    	unsigned char* chunkData = this->chunksData + this->getChunkSize()*this->getBlockSize()*i;
     	this->chunks[i].data = chunkData;
     	this->emptyChunks->enqueue(this->chunks[i]);
     }
