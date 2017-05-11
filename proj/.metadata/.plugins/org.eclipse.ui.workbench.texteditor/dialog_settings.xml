@@ -6,22 +6,23 @@
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="false" key="isRegEx"/>
-		<item value="fail" key="selection"/>
+		<item value="outFile" key="selection"/>
 		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="true" key="wrap"/>
 		<item value="false" key="wholeword"/>
 		<list key="findhistory">
-			<item value="fail"/>
-			<item value="data"/>
-			<item value="0 == data[byteIndex]"/>
-			<item value="nBlocks"/>
+			<item value="outFile"/>
+			<item value="launchSharedIOCudaAES"/>
+			<item value="ciphers"/>
+			<item value="file size"/>
+			<item value="nConcurrentKernels"/>
+			<item value="setMemCpyFromCallback"/>
+			<item value="dev"/>
 			<item value="inFile"/>
-			<item value="checkPtr"/>
-			<item value="this-&gt;begin"/>
-			<item value="remainingBytes"/>
 		</list>
 		<list key="replacehistory">
+			<item value="$(SRC_DIR)/cipher/AES"/>
 			<item value=""/>
 			<item value="ECB 16B (ptr) parallelism"/>
 			<item value="AES128-ECB 16B (ptr) parallelism"/>
@@ -29,14 +30,13 @@
 			<item value="t3p[3]"/>
 			<item value="t2p[3]"/>
 			<item value="t1p[3]"/>
-			<item value="t0p[3]"/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item value="386" key="DIALOG_WIDTH"/>
+		<item value="306" key="DIALOG_WIDTH"/>
 		<item value="1|Ubuntu|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
-		<item value="408" key="DIALOG_HEIGHT"/>
-		<item value="1369" key="DIALOG_X_ORIGIN"/>
-		<item value="224" key="DIALOG_Y_ORIGIN"/>
+		<item value="496" key="DIALOG_HEIGHT"/>
+		<item value="1549" key="DIALOG_X_ORIGIN"/>
+		<item value="470" key="DIALOG_Y_ORIGIN"/>
 	</section>
 </section>

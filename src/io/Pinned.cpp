@@ -21,7 +21,7 @@
 #include "Pinned.hpp"
 #include <sys/sysinfo.h>
 #include <algorithm>
-#include "../logging.hpp"
+#include "logging.hpp"
 
 const rlim_t paracrypt::Pinned::getAvaliablePinneableRAM()
 {

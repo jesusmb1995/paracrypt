@@ -19,7 +19,7 @@
  */
 
 #include "CudaPinned.hpp"
-#include "../device/CUDACipherDevice.hpp"
+#include "device/CUDACipherDevice.hpp"
 
 namespace paracrypt {
 

@@ -1,7 +1,7 @@
-19:19:11 **** Incremental Build of configuration Debug for project pcnsight ****
+17:39:29 **** Incremental Build of configuration Debug for project pcnsight ****
 make all 
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  -c src/tests/tests.cpp -o obj/tests.o -I/usr/local/cuda/include
-g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL -c src/tests/tests.cpp -o obj/tests.o -Isrc -I/usr/local/cuda/include
+g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG -DDEVEL \
 	 obj/tests.o \
 	 obj/AES_key_schedule.o \
 	 obj/endianess.o \
@@ -26,6 +26,7 @@ g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
 	 obj/CUDACipherDevice.o \
 	 obj/logging.o \
 	 obj/Timer.o \
+	 obj/IO.o \
 	 obj/BlockIO.o \
 	 obj/SimpleIO.o \
 	 obj/SimpleCudaIO.o \
@@ -33,9 +34,10 @@ g++  -Wall -DBOOST_LOG_DYN_LINK -g -DDEBUG  \
 	 obj/CudaSharedIO.o \
 	 obj/Pinned.o \
 	 obj/CudaPinned.o \
+	 obj/Launcher.o \
 	 -o bin/paracrypt_tests -L/usr/lib -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L/usr/local/cuda/lib64 -lcuda -lcudart
 obj/tests.o: In function `GEN_128BPB_IO_FILES(std::string*, std::basic_fstream<char, std::char_traits<char> >**, std::string*, std::basic_fstream<char, std::char_traits<char> >**, unsigned int, std::fpos<__mbstate_t>, bool)':
-/media/jesus/Almacenamiento1/ArchivosDePrograma_2/dropboxUbuntu/Dropbox/Estudios/octavo_semestre/TFG/repository//src/tests/tests.cpp:1456: warning: the use of `tmpnam' is dangerous, better use `mkstemp'
+/media/jesus/Almacenamiento1/ArchivosDePrograma_2/dropboxUbuntu/Dropbox/Estudios/octavo_semestre/TFG/repository//src/tests/tests.cpp:1461: warning: the use of `tmpnam' is dangerous, better use `mkstemp'
 
-19:19:29 Build Finished (took 17s.366ms)
+17:39:44 Build Finished (took 15s.44ms)
 

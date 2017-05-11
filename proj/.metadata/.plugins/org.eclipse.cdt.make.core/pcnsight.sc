@@ -12,9 +12,11 @@
 <includePath path="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 <includePath path="/usr/include/x86_64-linux-gnu"/>
 <includePath path="/usr/include"/>
+<includePath path="/media/jesus/Almacenamiento1/ArchivosDePrograma_2/dropboxUbuntu/Dropbox/Estudios/octavo_semestre/TFG/repository/src"/>
 <includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="BOOST_LOG_DYN_LINK=1"/>
 <definedSymbol symbol="DEBUG=1"/>
+<definedSymbol symbol="DEVEL=1"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>
@@ -293,9 +295,11 @@
 <includePath path="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 <includePath path="/usr/include/x86_64-linux-gnu"/>
 <includePath path="/usr/include"/>
+<includePath path="/media/jesus/Almacenamiento1/ArchivosDePrograma_2/dropboxUbuntu/Dropbox/Estudios/octavo_semestre/TFG/repository/src"/>
 <includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="BOOST_LOG_DYN_LINK=1"/>
 <definedSymbol symbol="DEBUG=1"/>
+<definedSymbol symbol="DEVEL=1"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>
@@ -574,9 +578,11 @@
 <includePath path="/usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed"/>
 <includePath path="/usr/include/x86_64-linux-gnu"/>
 <includePath path="/usr/include"/>
+<includePath path="/media/jesus/Almacenamiento1/ArchivosDePrograma_2/dropboxUbuntu/Dropbox/Estudios/octavo_semestre/TFG/repository/src"/>
 <includePath path="/usr/local/cuda/include"/>
 <definedSymbol symbol="BOOST_LOG_DYN_LINK=1"/>
 <definedSymbol symbol="DEBUG=1"/>
+<definedSymbol symbol="DEVEL=1"/>
 <definedSymbol symbol="="/>
 <definedSymbol symbol="__CUDA_PREC_DIV=1"/>
 <definedSymbol symbol="__CUDA_RUNTIME_H__="/>

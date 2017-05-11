@@ -6,7 +6,7 @@
 <intAttribute key="org.eclipse.cdt.launch.ATTR_BUILD_BEFORE_LAUNCH_ATTR" value="0"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_ID" value="com.nvidia.cuda.ide.debug.cudagdb"/>
 <stringAttribute key="org.eclipse.cdt.launch.DEBUGGER_START_MODE" value="run"/>
-<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="--run_test=CUDA_AES_8B"/>
+<stringAttribute key="org.eclipse.cdt.launch.PROGRAM_ARGUMENTS" value="--run_test=CUDA_AES/CUDA_AES_8B"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROGRAM_NAME" value="bin/paracrypt_tests"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_ATTR" value="pcnsight"/>
 <stringAttribute key="org.eclipse.cdt.launch.PROJECT_BUILD_CONFIG_ID_ATTR" value="com.nvidia.cuda.ide.eight_zero.configuration.debug.1894982458"/>

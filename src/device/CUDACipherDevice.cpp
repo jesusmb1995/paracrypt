@@ -19,7 +19,7 @@
  */
 
 #include "CUDACipherDevice.hpp"
-#include "../logging.hpp"
+#include "logging.hpp"
 
 void paracrypt::HandlePrintError(cudaError_t err,
 					      const char *file, int line)
@@ -156,21 +156,23 @@ void paracrypt::CUDACipherDevice::memcpyFrom(void *dev, void *host,
 {
     cudaStream_t stream = this->acessStream(stream_id);
     HANDLE_ERROR(cudaMemcpyAsync(host, dev, size, cudaMemcpyDeviceToHost, stream));
-    boost::shared_lock < boost::shared_mutex > lock(this->streams_access);
-    HANDLE_ERROR(cudaEventRecord(this->cpyFromEvents[stream_id]));
-    boost::unordered_map<int,cudaStreamCallback_t>::const_iterator cb = this->cpyFromCallbacks.find(stream_id);
-    if(cb != this->cpyFromCallbacks.end()) {
-          HANDLE_ERROR(cudaStreamAddCallback(stream,cb->second,host,0));
-    }
+//    boost::shared_lock < boost::shared_mutex > lock(this->streams_access);
+    HANDLE_ERROR(cudaEventRecord(this->cpyFromEvents[stream_id],stream));
+//    HANDLE_ERROR(cudaEventRecord(this->globalCpyFromEvent));
+
+//    boost::unordered_map<int,cudaStreamCallback_t>::const_iterator cb = this->cpyFromCallbacks.find(stream_id);
+//    if(cb != this->cpyFromCallbacks.end()) {
+//          HANDLE_ERROR(cudaStreamAddCallback(stream,cb->second,host,0));
+//    }
 }
 
-void paracrypt::CUDACipherDevice::setMemCpyFromCallback(int stream_id,
-							cudaStreamCallback_t
-							func)
-{
-    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
-    this->cpyFromCallbacks[stream_id] = func;
-}
+//void paracrypt::CUDACipherDevice::setMemCpyFromCallback(int stream_id,
+//							cudaStreamCallback_t
+//							func)
+//{
+////    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+//    this->cpyFromCallbacks[stream_id] = func;
+//}
 
 namespace paracrypt {
     template <>
@@ -188,9 +190,10 @@ namespace paracrypt {
 
 int paracrypt::CUDACipherDevice::addStream()
 {
+	this->set();
     int id = paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::addStream();
 
-    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+//    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
     cudaEvent_t ev;
     HANDLE_ERROR(cudaEventCreate(&ev));
     this->cpyFromEvents[id] = ev;
@@ -200,14 +203,16 @@ int paracrypt::CUDACipherDevice::addStream()
 
 void paracrypt::CUDACipherDevice::delStream(int stream_id)
 {
+	this->set();
     paracrypt::GPUCipherDevice<cudaStream_t,cudaStreamCallback_t>::delStream(stream_id);
-    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
+//    boost::unique_lock< boost::shared_mutex > lock(this->streams_access);
     HANDLE_ERROR(cudaEventDestroy(this->cpyFromEvents[stream_id]));
     this->cpyFromEvents.erase(stream_id);
 }
 
 void paracrypt::CUDACipherDevice::waitMemcpyFrom(int stream_id)
 {
+	this->set();
     cudaEvent_t event = this->cpyFromEvents[stream_id];
     HANDLE_ERROR(cudaEventSynchronize(event));
 }
@@ -225,3 +230,51 @@ int paracrypt::CUDACipherDevice::checkMemcpyFrom(int stream_id)
               return status;
       }
 }
+
+//void paracrypt::CUDACipherDevice::waitMemcpyFrom()
+//{
+//	HANDLE_ERROR(cudaEventSynchronize(this->anyCpyFromEvent));
+//}
+//
+//void paracrypt::CUDACipherDevice::genGlobalMemcpyFromEvent()
+//{
+//	HANDLE_ERROR(cudaEventCreate(&this->globalCpyFromEvent));
+//}
+//
+//void paracrypt::CUDACipherDevice::setGlobalMemcpyFromEvent(cudaEvent_t e)
+//{
+//	this->globalCpyFromEvent = e;
+//}
+//
+//cudaEvent_t paracrypt::CUDACipherDevice::getGlobalMemcpyFromEvent(cudaEvent_t e)
+//{
+//	return this->globalCpyFromEvent;
+//}
+
+int paracrypt::CUDACipherDevice::getDevicesCount()
+{
+	int nDevices;
+	HANDLE_ERROR(cudaGetDeviceCount(&nDevices));
+	return nDevices;
+}
+
+paracrypt::CUDACipherDevice** paracrypt::CUDACipherDevice::instantiateAllDevices()
+{
+	int count = paracrypt::CUDACipherDevice::getDevicesCount();
+	paracrypt::CUDACipherDevice** devices = new paracrypt::CUDACipherDevice*[count];
+	for(int d = 0; d < count; d++) {
+		devices[d] = new paracrypt::CUDACipherDevice(d);
+	}
+	return devices;
+}
+
+void paracrypt::CUDACipherDevice::freeAllDevices(CUDACipherDevice** devices)
+{
+	int count = paracrypt::CUDACipherDevice::getDevicesCount();
+	for(int d = 0; d < count; d++) {
+		delete devices[d];
+	}
+	delete[] devices;
+}
+
+

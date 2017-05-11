@@ -20,24 +20,31 @@
 
 #pragma once
 
+#include "GPUCipherDevice.hpp"
 #include <boost/unordered_map.hpp>
 #include <boost/thread/shared_mutex.hpp>
 
 namespace paracrypt {
 
+//
+// This template includes part of the basic implementation that can
+//  be reused for a CUDA or OpenCL implementation.
+//
+// TODO OpenCL implementation with OpenCL devices
+//
     template < typename S, typename F > class GPUCipherDevice {
       protected:
     boost::unordered_map<int,S> streams;
-	boost::shared_mutex streams_access;
+//	boost::shared_mutex streams_access;
 	virtual S newStream();
 	virtual void freeStream(S s);
-	S acessStream(int stream_id);
 	int maxBlocksPerSM;
 	int nWarpsPerBlock;
 	int nThreadsPerThreadBlock;
 	int nConcurrentKernels;
       public:
-	 virtual ~ GPUCipherDevice();
+	S acessStream(int stream_id);
+	virtual ~ GPUCipherDevice();
 	int getThreadsPerThreadBlock();
 	void setThreadsPerThreadBlock(int tptb);
 	int getNWarpsPerBlock();
@@ -49,9 +56,10 @@ namespace paracrypt {
 	virtual void free(void *data) = 0;
 	virtual void memcpyTo(void *host, void *dev, int size, int stream_id) = 0;	// Async
 	virtual void memcpyFrom(void *dev, void *host, int size, int stream_id) = 0;	// Async
-	virtual void waitMemcpyFrom(int stream_id) = 0;;	//waits until mempcyFrom finishes
-	virtual int checkMemcpyFrom(int stream_id) = 0;;	//checks if memcpyFrom has finished
-	virtual void setMemCpyFromCallback(int stream_id, F func) = 0;;
+	virtual void waitMemcpyFrom(int stream_id) = 0;	//waits until mempcyFrom finishes
+	virtual int checkMemcpyFrom(int stream_id) = 0;	//checks if memcpyFrom has finished
+//	virtual void waitAnyGPUMemcpyFrom();
+//	virtual void setMemCpyFromCallback(int stream_id, F func) = 0;
 	int addStream();	// thread-safe
 	void delStream(int stream_id);	// thread-safe
     };

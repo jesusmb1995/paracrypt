@@ -19,7 +19,7 @@
  */
 
 #include "BlockIO.hpp"
-#include "../logging.hpp"
+#include "logging.hpp"
 #include <algorithm>
 
 namespace paracrypt {

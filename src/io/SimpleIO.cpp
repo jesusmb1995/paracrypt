@@ -19,7 +19,7 @@
  */
 
 #include "SimpleIO.hpp"
-#include "../logging.hpp"
+#include "logging.hpp"
 
 paracrypt::SimpleIO::SimpleIO(
 		std::string inFilename,

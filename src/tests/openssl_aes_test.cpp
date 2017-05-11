@@ -1,8 +1,8 @@
 #define BOOST_TEST_MODULE paracrypt_openssl
 #include <boost/test/included/unit_test.hpp>
 #include <stdint.h>
-#include "../logging.hpp"
-#include "../openssl/aes.h"
+#include "logging.hpp"
+#include "openssl/aes.h"
 
 	// From NIST 197
 	const unsigned char k[128] = {

@@ -41,11 +41,13 @@ namespace paracrypt {
     class CUDACipherDevice:public GPUCipherDevice < cudaStream_t,
 	cudaStreamCallback_t > {
       private:
+    // Triggerend when any GPU has finished
+//    cudaEvent_t globalCpyFromEvent = NULL;
     void printDeviceInfo();
 	int device;
 	cudaDeviceProp devProp;
     boost::unordered_map<int,cudaEvent_t> cpyFromEvents;
-    boost::unordered_map<int,cudaStreamCallback_t> cpyFromCallbacks;
+//    boost::unordered_map<int,cudaStreamCallback_t> cpyFromCallbacks;
       public:
 	// 0 <= device < cudaGetDeviceCount()
 	 CUDACipherDevice(int device);
@@ -56,9 +58,21 @@ namespace paracrypt {
 	void memcpyTo(void *host, void *dev, int size, int stream_id);
 	void memcpyFrom(void *dev, void *host, int size, int stream_id);
 	void waitMemcpyFrom(int stream_id);
+
+	static int getDevicesCount();
+
+	// WARNING: Is caller responsability to free dynamic memory
+	static CUDACipherDevice** instantiateAllDevices();
+	static void freeAllDevices(CUDACipherDevice** devices);
+
+//	void waitAnyGPUMemcpyFrom();
+//	void genGlobalMemcpyFromEvent();
+//	void setGlobalMemcpyFromEvent(cudaEvent_t e);
+//	cudaEvent_t getGlobalMemcpyFromEvent();
+
 	int checkMemcpyFrom(int stream_id);
-	void setMemCpyFromCallback(int stream_id,
-				   cudaStreamCallback_t func);
+//	void setMemCpyFromCallback(int stream_id,
+//				   cudaStreamCallback_t func);
 	int addStream();	// thread-safe
 	void delStream(int stream_id);	// thread-safe
     };

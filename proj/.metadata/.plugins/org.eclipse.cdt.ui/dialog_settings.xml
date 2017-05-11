@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
+	<item value="Driver API Host File" key="LastUsedSourceTemplate"/>
 	<item value="Default C++ header template" key="LastUsedHeaderTemplate"/>
 	<section name="org.eclipse.cdt.internal.ui.text.QuickOutline">
 		<item value="true" key="org.eclipse.cdt.internal.ui.text.COutlineInformationControlDIALOG_USE_PERSISTED_SIZE"/>
@@ -26,6 +27,7 @@
 		<item value="false" key="caseSensitive"/>
 		<item value="227191" key="searchFlags"/>
 		<list key="previousPatterns">
+			<item value="memcpyFrom"/>
 			<item value="LOG_FATAL"/>
 			<item value="**CopyrightC2017JesusMartinBerlangaAllRightsReserved**ThisfileispartofParacrypt**Paracryptisfreesoftware:youcanredistributeitandormodify*itunderthetermsoftheGNUGeneralPublicLicenseaspublishedby*theFreeSoftwareFoundationeitherversion3oftheLicenseor*atyouroptionanylaterversion**Foobarisdistributedinthehopethatitwillbeuseful*butWITHOUTANYWARRANTYwithouteventheimpliedwarrantyof*MERCHANTABILITYorFITNESSFORAPARTICULARPURPOSESeethe*GNUGeneralPublicLicenseformoredetails**YoushouldhavereceivedacopyoftheGNUGeneralPublicLicense*alongwithFoobarIfnotseehttp:wwwgnuorglicenses**"/>
 			<item value="lock"/>
@@ -48,6 +50,8 @@
 	<section name="CRenameRefactoringInputPage">
 	</section>
 	<section name="completion_proposal_size">
+		<item value="272" key="size.y"/>
+		<item value="818" key="size.x"/>
 	</section>
 	<section name="org.eclipse.cdt.internal.ui.wizards.classwizard.NewBaseClassSelectionDialogSettings">
 		<item value="false" key="show_enums"/>
