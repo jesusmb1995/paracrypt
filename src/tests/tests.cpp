@@ -243,6 +243,7 @@ void AES_SB_ENCRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
     aes->constantTables(constantTables);
     aes->malloc(n_blocks);
     aes->encrypt((unsigned char *) &data, (unsigned char *) &data, n_blocks);
+    aes->waitFinish();
 
     // first block hexdump
     hexdump("expected",vector.output,16);
@@ -267,6 +268,7 @@ void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
     aes->constantTables(constantTables);
     aes->malloc(n_blocks);
     aes->decrypt((unsigned char *) &data, (unsigned char *) &data, n_blocks);
+    aes->waitFinish();
 
     // first block hexdump
     hexdump("expected",vector.input,16);
@@ -1932,14 +1934,20 @@ BOOST_AUTO_TEST_SUITE(LAUNCHERS)
 		BOOST_AUTO_TEST_SUITE(SHAREDIO)
 			BOOST_AUTO_TEST_SUITE(AES)
 				BOOST_AUTO_TEST_SUITE(PARA_16B)
-					BOOST_AUTO_TEST_CASE(constant_128key_and_tables) {
-	CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<paracrypt::CudaEcbAES16B>(
-								"Multistream CUDA ECB AES-128 with constant key and tables.",
-								aes_example,
-								1000000, // 16KB TODO change to 1000
-								true, true
-						);
-					}
+					BOOST_AUTO_TEST_SUITE(KEY128)
+
+							BOOST_AUTO_TEST_CASE(constant_key_and_tables) {
+								CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<paracrypt::CudaEcbAES16B>(
+										"Multistream CUDA ECB AES-128 with constant key and tables.", aes_example,1000,true, true);}
+
+							BOOST_AUTO_TEST_CASE(constant_key) {
+								CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<paracrypt::CudaEcbAES16B>(
+										"Multistream CUDA ECB AES-128 with constant key.", aes_example,1000,true, false);}
+
+							BOOST_AUTO_TEST_CASE(dynamic_key_and_tables) {
+								CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<paracrypt::CudaEcbAES16B>(
+										"Multistream CUDA ECB AES-128 with constant key.", aes_example,1000,false, false);}
+					BOOST_AUTO_TEST_SUITE_END()
 				BOOST_AUTO_TEST_SUITE_END()
 			BOOST_AUTO_TEST_SUITE_END()
 		BOOST_AUTO_TEST_SUITE_END()

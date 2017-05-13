@@ -180,11 +180,12 @@ void paracrypt::SharedIO::construct(unsigned int nChunks, rlim_t bufferSizeLimit
 
     LOG_INF(boost::format(
     		"A new SharedIO object uses %llu bytes"
-    		" (%u chunks of %u bytes blocks) "
+    		" (%llu chunks - each one with %llu blocks of %u bytes) "
     		" of pinned memory for its internal buffers."
     		"\n")
     % bufferSizeBytes
     % this->getBufferSize()
+    % this->getChunkSize()
     % this->getBlockSize()
     );
 

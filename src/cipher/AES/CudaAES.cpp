@@ -812,17 +812,70 @@ static const uint8_t Td4[256] = {
 
 #define TTABLE_SIZE 1024 // 1024 = 256*4
 
+void paracrypt::CudaAES::initDeviceTe()
+{
+	if(!this->constantTables()) {
+		if (!this->isCopy && this->deviceTe0 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTe0), TTABLE_SIZE); // 1024 = 256*4
+			this->getDevice()->memcpyTo((void*)Te0,this->deviceTe0, TTABLE_SIZE, this->stream);
+		}
+		if (!this->isCopy && this->deviceTe1 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTe1), TTABLE_SIZE);
+			this->getDevice()->memcpyTo((void*)Te1,this->deviceTe1, TTABLE_SIZE, this->stream);
+		}
+		if (!this->isCopy && this->deviceTe2 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTe2), TTABLE_SIZE);
+			this->getDevice()->memcpyTo((void*)Te2,this->deviceTe2, TTABLE_SIZE, this->stream);
+		}
+		if (!this->isCopy && this->deviceTe3 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTe3), TTABLE_SIZE);
+			this->getDevice()->memcpyTo((void*)Te3,this->deviceTe3, TTABLE_SIZE, this->stream);
+		}
+	}
+}
+
+void paracrypt::CudaAES::initDeviceTd()
+{
+	if(!this->constantTables()) {
+		if (!this->isCopy && this->deviceTd0 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTd0), TTABLE_SIZE);
+			this->getDevice()->memcpyTo((void*)Td0,this->deviceTd0, TTABLE_SIZE, this->stream);
+		}
+		if (!this->isCopy && this->deviceTd1 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTd1), TTABLE_SIZE);
+			this->getDevice()->memcpyTo((void*)Td1,this->deviceTd1, TTABLE_SIZE, this->stream);
+		}
+		if (!this->isCopy && this->deviceTd2 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTd2), TTABLE_SIZE);
+			this->getDevice()->memcpyTo((void*)Td2,this->deviceTd2, TTABLE_SIZE, this->stream);
+		}
+		if (!this->isCopy && this->deviceTd3 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTd3), TTABLE_SIZE);
+			this->getDevice()->memcpyTo((void*)Td3,this->deviceTd3, TTABLE_SIZE, this->stream);
+		}
+		if (!this->isCopy && this->deviceTd4 == NULL)
+		{
+			this->getDevice()->malloc((void **) &(this->deviceTd4), 256);
+			this->getDevice()->memcpyTo((void*)Td4,this->deviceTd4, 256, this->stream);
+		}
+	}
+}
+
 uint32_t*  paracrypt::CudaAES::getDeviceTe0()
 {
 	if(this->constantTables()) {
 		return __Te0__();
 	}
 	else {
-		if (!this->isCopy && this->deviceTe0 == NULL)
-		{
-			this->getDevice()->malloc((void **) &(this->deviceTe0), TTABLE_SIZE); // 1024 = 256*4
-			this->getDevice()->memcpyTo((void*)Te0,this->deviceTe0, TTABLE_SIZE, this->stream);
-		}
+		this->initDeviceTe();
 		return this->deviceTe0;
 	}
 }
@@ -833,12 +886,8 @@ uint32_t*  paracrypt::CudaAES::getDeviceTe1()
 		return __Te1__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTe1 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTe1), TTABLE_SIZE);
-		this->getDevice()->memcpyTo((void*)Te1,this->deviceTe1, TTABLE_SIZE, this->stream);
-	}
-	return this->deviceTe1;
+		this->initDeviceTe();
+		return this->deviceTe1;
 	}
 }
 
@@ -848,12 +897,8 @@ uint32_t* paracrypt::CudaAES::getDeviceTe2()
 		return __Te2__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTe1 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTe2), TTABLE_SIZE);
-		this->getDevice()->memcpyTo((void*)Te2,this->deviceTe2, TTABLE_SIZE, this->stream);
-	}
-	return this->deviceTe2;
+		this->initDeviceTe();
+		return this->deviceTe2;
 	}
 }
 
@@ -863,12 +908,8 @@ uint32_t* paracrypt::CudaAES::getDeviceTe3()
 		return __Te3__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTe1 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTe3), TTABLE_SIZE);
-		this->getDevice()->memcpyTo((void*)Te3,this->deviceTe3, TTABLE_SIZE, this->stream);
-	}
-	return this->deviceTe3;
+		this->initDeviceTe();
+		return this->deviceTe3;
 	}
 }
 
@@ -878,12 +919,8 @@ uint32_t* paracrypt::CudaAES::getDeviceTd0()
 		return __Td0__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTd0 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTd0), TTABLE_SIZE);
-		this->getDevice()->memcpyTo((void*)Td0,this->deviceTd0, TTABLE_SIZE, this->stream);
-	}
-	return this->deviceTd0;
+		this->initDeviceTd();
+		return this->deviceTd0;
 	}
 }
 
@@ -893,12 +930,8 @@ uint32_t* paracrypt::CudaAES::getDeviceTd1()
 		return __Td1__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTd1 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTd1), TTABLE_SIZE);
-		this->getDevice()->memcpyTo((void*)Td1,this->deviceTd1, TTABLE_SIZE, this->stream);
-	}
-	return this->deviceTd1;
+		this->initDeviceTd();
+		return this->deviceTd1;
 	}
 }
 
@@ -908,12 +941,8 @@ uint32_t* paracrypt::CudaAES::getDeviceTd2()
 		return __Td2__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTd2 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTd2), TTABLE_SIZE);
-		this->getDevice()->memcpyTo((void*)Td2,this->deviceTd2, TTABLE_SIZE, this->stream);
-	}
-	return this->deviceTd2;
+		this->initDeviceTd();
+		return this->deviceTd2;
 	}
 }
 
@@ -923,12 +952,8 @@ uint32_t* paracrypt::CudaAES::getDeviceTd3()
 		return __Td3__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTd3 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTd3), TTABLE_SIZE);
-		this->getDevice()->memcpyTo((void*)Td3,this->deviceTd3, TTABLE_SIZE, this->stream);
-	}
-	return this->deviceTd3;
+		this->initDeviceTd();
+		return this->deviceTd3;
 	}
 }
 
@@ -938,12 +963,8 @@ uint8_t* paracrypt::CudaAES::getDeviceTd4()
 		return __Td4__();
 	}
 	else {
-	if (!this->isCopy && this->deviceTd4 == NULL)
-	{
-		this->getDevice()->malloc((void **) &(this->deviceTd4), 256);
-		this->getDevice()->memcpyTo((void*)Td4,this->deviceTd4, 256, this->stream);
-	}
-	return this->deviceTd4;
+		this->initDeviceTd();
+		return this->deviceTd4;
 	}
 }
 

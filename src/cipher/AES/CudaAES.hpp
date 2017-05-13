@@ -88,6 +88,8 @@ namespace paracrypt {
 
 	void initDeviceEKey();
 	void initDeviceDKey();
+	void initDeviceTe();
+	void initDeviceTd();
 
 //	int setOtherDeviceEncryptionKey(AES_KEY * expandedKey);
 //	int setOtherDeviceDecryptionKey(AES_KEY * expandedKey);

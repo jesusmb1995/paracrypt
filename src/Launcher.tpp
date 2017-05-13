@@ -37,6 +37,7 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 				c->constantTables(constantTables);
 				c->setKey(key,keyBits);
 				c->initDeviceEKey(); 
+				c->initDeviceTe();
 			} else if(i == 0) {
 				// each new cipher within the same GPU uses 
 				//  its own stream
@@ -48,6 +49,7 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 				//  expanding the key again
 				c->setEncryptionKey(ciphers.at(0)->getEncryptionExpandedKey());
 				c->initDeviceEKey();
+				c->initDeviceTe();
 			} else {
 				// reuse keys and tables already available in the same GPU device,
 				//   do not waste GPU resources having multiple copies of the
