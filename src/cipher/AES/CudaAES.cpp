@@ -28,45 +28,71 @@ paracrypt::CudaAES::CudaAES()
 	this->deviceDKeyConstant = false;
 	this->useConstantKey = false;
 	this->useConstantTables = false;
+	this->enInstantiatedButInOtherDevice = false;
+	this->deInstantiatedButInOtherDevice = false;
+}
+
+paracrypt::CudaAES::CudaAES(CudaAES* aes)
+	: paracrypt::CudaAES::AES(aes)
+{
+	this->setDevice(aes->device);
+	this->deviceEKey = aes->deviceEKey;
+	this->deviceEKeyConstant = aes->deviceEKeyConstant;
+	this->deviceDKey = aes->deviceDKey;
+	this->deviceDKeyConstant = aes->deviceDKeyConstant;
+	this->deviceTe0 = aes->deviceTe0;
+	this->deviceTe1 = aes->deviceTe1;
+	this->deviceTe2 = aes->deviceTe2;
+	this->deviceTe3 = aes->deviceTe3;
+	this->deviceTd0 = aes->deviceTd0;
+	this->deviceTd1 = aes->deviceTd1;
+	this->deviceTd2 = aes->deviceTd2;
+	this->deviceTd3 = aes->deviceTd3;
+	this->deviceTd4 = aes->deviceTd4;
+	this->useConstantKey = aes->useConstantKey;
+	this->useConstantTables = aes->useConstantTables;
+//	this->malloc(aes->n_blocks);
+	this->enInstantiatedButInOtherDevice = false;
+	this->deInstantiatedButInOtherDevice = false;
 }
 
 paracrypt::CudaAES::~CudaAES()
 {
-    if (this->deviceEKey != NULL && !deviceEKeyConstant) {
+    if (!this->isCopy && this->deviceEKey != NULL && !deviceEKeyConstant) {
 	this->getDevice()->free(this->deviceEKey);
     }
-    if (this->deviceDKey != NULL && !deviceDKeyConstant) {
+    if (!this->isCopy && this->deviceDKey != NULL && !deviceDKeyConstant) {
     	this->getDevice()->free(this->deviceDKey);
     }
     if (this->data != NULL) {
 	this->getDevice()->free(this->data);
 	this->getDevice()->delStream(this->stream);
     }
-    if (this->deviceTe0 != NULL) {
+    if (!this->isCopy && this->deviceTe0 != NULL) {
 	this->getDevice()->free(this->deviceTe0);
     }
-    if (this->deviceTe1 != NULL) {
+    if (!this->isCopy && this->deviceTe1 != NULL) {
 	this->getDevice()->free(this->deviceTe1);
     }
-    if (this->deviceTe2 != NULL) {
+    if (!this->isCopy && this->deviceTe2 != NULL) {
 	this->getDevice()->free(this->deviceTe2);
     }
-    if (this->deviceTe3 != NULL) {
+    if (!this->isCopy && this->deviceTe3 != NULL) {
 	this->getDevice()->free(this->deviceTe3);
     }
-    if (this->deviceTd0 != NULL) {
+    if (!this->isCopy && this->deviceTd0 != NULL) {
 	this->getDevice()->free(this->deviceTd0);
     }
-    if (this->deviceTd1 != NULL) {
+    if (!this->isCopy && this->deviceTd1 != NULL) {
 	this->getDevice()->free(this->deviceTd1);
     }
-    if (this->deviceTd2 != NULL) {
+    if (!this->isCopy && this->deviceTd2 != NULL) {
 	this->getDevice()->free(this->deviceTd2);
     }
-    if (this->deviceTd3 != NULL) {
+    if (!this->isCopy && this->deviceTd3 != NULL) {
 	this->getDevice()->free(this->deviceTd3);
     }
-    if (this->deviceTd4 != NULL) {
+    if (!this->isCopy && this->deviceTd4 != NULL) {
 	this->getDevice()->free(this->deviceTd4);
     }
 }
@@ -74,57 +100,57 @@ paracrypt::CudaAES::~CudaAES()
 // must be called after setKey
 void paracrypt::CudaAES::setDevice(CUDACipherDevice * device)
 {
-    if (this->deviceEKey != NULL && !deviceEKeyConstant) {
-	this->getDevice()->free(this->deviceEKey);
-	this->deviceEKey = NULL;
-    }
-    if (this->deviceDKey != NULL && !deviceDKeyConstant) {
-    	this->getDevice()->free(this->deviceDKey);
-    	this->deviceDKey = NULL;
-    }
-    if (this->data != NULL) {
-	this->getDevice()->free(this->data);
-	this->data = NULL;
-	this->getDevice()->delStream(this->stream);
-    }
-    if (this->deviceTe0 != NULL) {
-	this->getDevice()->free(this->deviceTe0);
-	this->deviceTe0 = NULL;
-    }
-    if (this->deviceTe1 != NULL) {
-	this->getDevice()->free(this->deviceTe1);
-	this->deviceTe1 = NULL;
-    }
-    if (this->deviceTe2 != NULL) {
-	this->getDevice()->free(this->deviceTe2);
-	this->deviceTe2 = NULL;
-    }
-    if (this->deviceTe3 != NULL) {
-	this->getDevice()->free(this->deviceTe3);
-	this->deviceTe3 = NULL;
-    }
-    if (this->deviceTd0 != NULL) {
-	this->getDevice()->free(this->deviceTd0);
-	this->deviceTd0 = NULL;
-    }
-    if (this->deviceTd1 != NULL) {
-	this->getDevice()->free(this->deviceTd1);
-	this->deviceTd1 = NULL;
-    }
-    if (this->deviceTd2 != NULL) {
-	this->getDevice()->free(this->deviceTd2);
-	this->deviceTd2 = NULL;
-    }
-    if (this->deviceTd3 != NULL) {
-	this->getDevice()->free(this->deviceTd3);
-	this->deviceTd3 = NULL;
-    }
-    if (this->deviceTd4 != NULL) {
-	this->getDevice()->free(this->deviceTd4);
-	this->deviceTd4 = NULL;
-    }
-    this->device = device;
-    this->stream = this->getDevice()->addStream();
+	if (!this->isCopy && this->deviceEKey != NULL && !deviceEKeyConstant) {
+		this->getDevice()->free(this->deviceEKey);
+		this->deviceEKey = NULL;
+	}
+	if (!this->isCopy && this->deviceDKey != NULL && !deviceDKeyConstant) {
+		this->getDevice()->free(this->deviceDKey);
+		this->deviceDKey = NULL;
+	}
+	if (this->data != NULL) {
+		this->getDevice()->free(this->data);
+		this->data = NULL;
+		this->getDevice()->delStream(this->stream);
+	}
+		if (!this->isCopy && this->deviceTe0 != NULL) {
+		this->getDevice()->free(this->deviceTe0);
+		this->deviceTe0 = NULL;
+		}
+		if (!this->isCopy && this->deviceTe1 != NULL) {
+		this->getDevice()->free(this->deviceTe1);
+		this->deviceTe1 = NULL;
+		}
+		if (!this->isCopy && this->deviceTe2 != NULL) {
+		this->getDevice()->free(this->deviceTe2);
+		this->deviceTe2 = NULL;
+		}
+		if (!this->isCopy && this->deviceTe3 != NULL) {
+		this->getDevice()->free(this->deviceTe3);
+		this->deviceTe3 = NULL;
+		}
+		if (!this->isCopy && this->deviceTd0 != NULL) {
+		this->getDevice()->free(this->deviceTd0);
+		this->deviceTd0 = NULL;
+		}
+		if (!this->isCopy && this->deviceTd1 != NULL) {
+		this->getDevice()->free(this->deviceTd1);
+		this->deviceTd1 = NULL;
+		}
+		if (!this->isCopy && this->deviceTd2 != NULL) {
+		this->getDevice()->free(this->deviceTd2);
+		this->deviceTd2 = NULL;
+		}
+		if (!this->isCopy && this->deviceTd3 != NULL) {
+		this->getDevice()->free(this->deviceTd3);
+		this->deviceTd3 = NULL;
+		}
+		if (!this->isCopy && this->deviceTd4 != NULL) {
+		this->getDevice()->free(this->deviceTd4);
+		this->deviceTd4 = NULL;
+		}
+		this->device = device;
+		this->stream = this->getDevice()->addStream();
 }
 
 paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
@@ -132,9 +158,8 @@ paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
     return this->device;
 }
 
-uint32_t* paracrypt::CudaAES::getDeviceEKey()
-{
-	if(this->deviceEKey == NULL) {
+void paracrypt::CudaAES::initDeviceEKey(){
+	if(this->deInstantiatedButInOtherDevice || (!this->isCopy && this->deviceEKey == NULL)) {
 		if(this->constantKey()) {
 			int nKeyWords = (4 * (this->getEncryptionExpandedKey()->rounds + 1));
 			this->deviceEKey = __setAesKey__(this->getEncryptionExpandedKey()->rd_key,nKeyWords);
@@ -150,12 +175,10 @@ uint32_t* paracrypt::CudaAES::getDeviceEKey()
 		deviceEKeyConstant = false;
 		}
 	}
-    return this->deviceEKey;
 }
 
-uint32_t* paracrypt::CudaAES::getDeviceDKey()
-{
-	if(this->deviceDKey == NULL) {
+void paracrypt::CudaAES::initDeviceDKey(){
+	if(this->deInstantiatedButInOtherDevice || (!this->isCopy &&  this->deviceDKey == NULL)) {
 		if(this->constantKey()) {
 			int nKeyWords = (4 * (this->getDecryptionExpandedKey()->rounds + 1));
 			this->deviceDKey = __setAesKey__(this->getDecryptionExpandedKey()->rd_key,nKeyWords);
@@ -171,11 +194,39 @@ uint32_t* paracrypt::CudaAES::getDeviceDKey()
 		deviceDKeyConstant = false;
 		}
 	}
+}
+
+
+// Only instantiate key when it is needed,
+//  avoid instantiating both encryption/decryption
+//  keys and wasting GPU mem. resources.
+uint32_t* paracrypt::CudaAES::getDeviceEKey()
+{
+    return this->deviceEKey;
+}
+
+uint32_t* paracrypt::CudaAES::getDeviceDKey()
+{
     return this->deviceDKey;
 }
 
-void paracrypt::CudaAES::malloc(int n_blocks)
+//int paracrypt::CudaAES::setOtherDeviceEncryptionKey(AES_KEY * expandedKey)
+//{
+//    this->setEncryptionKey(expandedKey);
+//	this->enInstantiatedButInOtherDevice = true;
+//    return 0;
+//}
+//
+//int paracrypt::CudaAES::setOtherDeviceDecryptionKey(AES_KEY * expandedKey)
+//{
+//    this->setDecryptionKey(expandedKey);
+//    this->deInstantiatedButInOtherDevice = true;
+//    return 0;
+//}
+
+void paracrypt::CudaAES::malloc(unsigned int n_blocks)
 {
+//	this->n_blocks = n_blocks;
     if (this->data != NULL) {
     	this->getDevice()->free(this->data);
     }
@@ -767,7 +818,7 @@ uint32_t*  paracrypt::CudaAES::getDeviceTe0()
 		return __Te0__();
 	}
 	else {
-		if (this->deviceTe0 == NULL)
+		if (!this->isCopy && this->deviceTe0 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTe0), TTABLE_SIZE); // 1024 = 256*4
 			this->getDevice()->memcpyTo((void*)Te0,this->deviceTe0, TTABLE_SIZE, this->stream);
@@ -782,7 +833,7 @@ uint32_t*  paracrypt::CudaAES::getDeviceTe1()
 		return __Te1__();
 	}
 	else {
-	if (this->deviceTe1 == NULL)
+	if (!this->isCopy && this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTe1), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Te1,this->deviceTe1, TTABLE_SIZE, this->stream);
@@ -797,7 +848,7 @@ uint32_t* paracrypt::CudaAES::getDeviceTe2()
 		return __Te2__();
 	}
 	else {
-	if (this->deviceTe1 == NULL)
+	if (!this->isCopy && this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTe2), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Te2,this->deviceTe2, TTABLE_SIZE, this->stream);
@@ -812,7 +863,7 @@ uint32_t* paracrypt::CudaAES::getDeviceTe3()
 		return __Te3__();
 	}
 	else {
-	if (this->deviceTe1 == NULL)
+	if (!this->isCopy && this->deviceTe1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTe3), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Te3,this->deviceTe3, TTABLE_SIZE, this->stream);
@@ -827,7 +878,7 @@ uint32_t* paracrypt::CudaAES::getDeviceTd0()
 		return __Td0__();
 	}
 	else {
-	if (this->deviceTd0 == NULL)
+	if (!this->isCopy && this->deviceTd0 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd0), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td0,this->deviceTd0, TTABLE_SIZE, this->stream);
@@ -842,7 +893,7 @@ uint32_t* paracrypt::CudaAES::getDeviceTd1()
 		return __Td1__();
 	}
 	else {
-	if (this->deviceTd1 == NULL)
+	if (!this->isCopy && this->deviceTd1 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd1), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td1,this->deviceTd1, TTABLE_SIZE, this->stream);
@@ -857,7 +908,7 @@ uint32_t* paracrypt::CudaAES::getDeviceTd2()
 		return __Td2__();
 	}
 	else {
-	if (this->deviceTd2 == NULL)
+	if (!this->isCopy && this->deviceTd2 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd2), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td2,this->deviceTd2, TTABLE_SIZE, this->stream);
@@ -872,7 +923,7 @@ uint32_t* paracrypt::CudaAES::getDeviceTd3()
 		return __Td3__();
 	}
 	else {
-	if (this->deviceTd3 == NULL)
+	if (!this->isCopy && this->deviceTd3 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd3), TTABLE_SIZE);
 		this->getDevice()->memcpyTo((void*)Td3,this->deviceTd3, TTABLE_SIZE, this->stream);
@@ -887,7 +938,7 @@ uint8_t* paracrypt::CudaAES::getDeviceTd4()
 		return __Td4__();
 	}
 	else {
-	if (this->deviceTd4 == NULL)
+	if (!this->isCopy && this->deviceTd4 == NULL)
 	{
 		this->getDevice()->malloc((void **) &(this->deviceTd4), 256);
 		this->getDevice()->memcpyTo((void*)Td4,this->deviceTd4, 256, this->stream);

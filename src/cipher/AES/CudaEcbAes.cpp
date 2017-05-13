@@ -21,6 +21,15 @@
 #include "CudaEcbAes.hpp"
 #include "assert.h"
 
+paracrypt::CudaEcbAES::CudaEcbAES()
+{}
+
+paracrypt::CudaEcbAES::CudaEcbAES(CudaEcbAES* aes) : CudaAES(aes)
+{}
+
+paracrypt::CudaEcbAES::~CudaEcbAES()
+{}
+
 int paracrypt::CudaEcbAES::encrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      int n_blocks)

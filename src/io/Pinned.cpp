@@ -23,6 +23,44 @@
 #include <algorithm>
 #include "logging.hpp"
 
+//
+// Equivalent to "ulimit -l 16" (16 kb)
+//
+void paracrypt::Pinned::setPinneableRAMLimit(rlim_t l)
+{
+	struct rlimit limit;
+	getrlimit(RLIMIT_MEMLOCK,&limit);
+	if(l > limit.rlim_max) {
+	    LOG_WAR(boost::format(
+	    		" Can't set lockable RAM to %llu bytes."
+	    		" Cannot surpass hard limit: %llu bytes."
+	    		"\n")
+	    % l
+	    % limit.rlim_max
+	    );
+	}
+	else {
+		limit.rlim_cur = l;
+		setrlimit(RLIMIT_MEMLOCK,&limit);
+	}
+}
+
+const rlim_t paracrypt::Pinned::getAvaliableRAM()
+{
+	struct sysinfo info;
+	sysinfo(&info);
+	rlim_t ram_limit = info.freeram;
+	return ram_limit;
+}
+
+
+//
+// Equivalent to the "ulimit -l" command
+//
+// NOTE: cudaHostMalloc function does not have RLIMIT_MEMLOCK limit.
+//       for CUDA use getAvaliableRAM() instead. On the other hand
+//       an OpenCL implementation could use this method.
+//
 const rlim_t paracrypt::Pinned::getAvaliablePinneableRAM()
 {
 	/*
@@ -44,18 +82,15 @@ const rlim_t paracrypt::Pinned::getAvaliablePinneableRAM()
 	 *            process may lock.
 	 */
 	struct rlimit limit;
-	struct sysinfo info;
 	getrlimit(RLIMIT_MEMLOCK,&limit);
-	sysinfo(&info);
 	rlim_t lock_limit = limit.rlim_cur;
-	rlim_t ram_limit = info.freeram;
+	rlim_t ram_limit = getAvaliableRAM();
 	rlim_t pinneable_limit = std::min(lock_limit, ram_limit);
 	return pinneable_limit;
 }
 
-const rlim_t paracrypt::Pinned::getReasonablyBigChunkOfRam(rlim_t lim)
+const rlim_t paracrypt::Pinned::getReasonablyBigChunk(rlim_t avaliableRam, rlim_t lim)
 {
-    rlim_t avaliableRam = getAvaliablePinneableRAM();
     rlim_t usableRAM = BUFFERS_RAM_USAGE_FACTOR*avaliableRam;
     rlim_t reasonableRam = lim == 0 ?
     		usableRAM :
@@ -72,6 +107,18 @@ const rlim_t paracrypt::Pinned::getReasonablyBigChunkOfRam(rlim_t lim)
     );
 
     return reasonableRam;
+}
+
+const rlim_t paracrypt::Pinned::getReasonablyBigChunkOfRam(rlim_t lim)
+{
+    rlim_t avaliableRam = getAvaliableRAM();
+    return getReasonablyBigChunk(avaliableRam,lim);
+}
+
+const rlim_t paracrypt::Pinned::getReasonablyBigChunkOfPinneableRam(rlim_t lim)
+{
+    rlim_t avaliableRam = getAvaliablePinneableRAM();
+    return getReasonablyBigChunk(avaliableRam,lim);
 }
 
 //const rlim_t paracrypt::Pinned::allocReasonablyBigChunkOfRam(

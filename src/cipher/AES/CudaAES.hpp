@@ -28,6 +28,7 @@ namespace paracrypt {
 
     class CudaAES: public AES, public CUDABlockCipher {
       private:
+//    	unsigned int n_blocks;
 	CUDACipherDevice * device;
 	uint32_t* deviceEKey = NULL;
 	bool deviceEKeyConstant;
@@ -58,11 +59,13 @@ namespace paracrypt {
 	uint32_t* getDeviceTd2();
 	uint32_t* getDeviceTd3();
 	uint8_t* getDeviceTd4();
-
+	bool enInstantiatedButInOtherDevice;
+	bool deInstantiatedButInOtherDevice;
 	int stream;
       public:
 	CudaAES();
-	~CudaAES();
+	CudaAES(CudaAES* aes); // Shallow copy constructor
+	virtual ~CudaAES();
 	virtual int encrypt(const unsigned char in[], // async
 			    const unsigned char out[], int n_blocks) = 0;
 	virtual int decrypt(const unsigned char in[], // async
@@ -72,7 +75,7 @@ namespace paracrypt {
 	bool checkFinish();
 
 	void setDevice(CUDACipherDevice * device);
-	void malloc(int n_blocks);	// Must be called to reserve enough space before encrypt/decrypt
+	void malloc(unsigned int n_blocks);
 	// returns -1 if an error has occurred
 	CUDACipherDevice *getDevice();
 	void constantKey(bool val);
@@ -82,6 +85,13 @@ namespace paracrypt {
 	int setBlockSize(int bits);
 	unsigned int getBlockSize();
 	int setKey(const unsigned char key[], int bits);
+
+	void initDeviceEKey();
+	void initDeviceDKey();
+
+//	int setOtherDeviceEncryptionKey(AES_KEY * expandedKey);
+//	int setOtherDeviceDecryptionKey(AES_KEY * expandedKey);
+
     };
 
 }

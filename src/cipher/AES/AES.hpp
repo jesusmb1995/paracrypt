@@ -36,12 +36,16 @@ namespace paracrypt {
     int keyBits;
 	AES_KEY * enRoundKeys;
 	AES_KEY * deRoundKeys;
+
 	bool enKeyPropietary;
 	bool deKeyPropietary;
-//      protected:
+      protected:
+	bool isCopy;
+
 //    virtual int getThreadsPerCipherBlock() = 0;
       public:
-	 AES();
+	AES();
+	AES(AES* aes); // Shallow copy constructor
 	virtual ~AES();
 
 // To be implemented by child when combining AES with BlockCipher

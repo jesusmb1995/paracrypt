@@ -29,12 +29,17 @@
 namespace paracrypt {
 
 class Pinned {
+private:
+	static const rlim_t getReasonablyBigChunk(rlim_t avaliable, rlim_t lim);
 public:
 	virtual ~Pinned(){};
 	virtual bool alloc(void** ptr, std::streampos size) = 0;
 	virtual void free(void* ptr) = 0;
+	static const rlim_t getAvaliableRAM();
 	static const rlim_t getAvaliablePinneableRAM();
 	static const rlim_t getReasonablyBigChunkOfRam(rlim_t lim);
+	static const rlim_t getReasonablyBigChunkOfPinneableRam(rlim_t lim);
+	static void setPinneableRAMLimit(rlim_t l);
 };
 
 } /* namespace paracrypt */

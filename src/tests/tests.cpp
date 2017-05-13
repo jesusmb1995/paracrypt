@@ -43,6 +43,7 @@
 #include "io/SimpleCudaIO.hpp"
 #include "io/BlockIO.hpp"
 #include "io/CudaSharedIO.hpp"
+#include "io/Pinned.hpp"
 #include "Launcher.hpp"
 
 int random_data_n_blocks;
@@ -1935,7 +1936,7 @@ BOOST_AUTO_TEST_SUITE(LAUNCHERS)
 	CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<paracrypt::CudaEcbAES16B>(
 								"Multistream CUDA ECB AES-128 with constant key and tables.",
 								aes_example,
-								1000, // 16KB
+								1000000, // 16KB TODO change to 1000
 								true, true
 						);
 					}

@@ -222,7 +222,7 @@ $(OBJ_DIR)/openssl_aes_test.o
 	 $(OBJ_DIR)/openssl_aes.o \
 	 -o $(BIN_DIR)/openssl_aes_test $(LIBS)
 #
-tests: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
+tests: CXX_FLAGS_ += -g -DDEBUG #-DDEVEL
 tests: NVCC_FLAGS_ += -g -DDEBUG #-DDEVEL
 tests: \
 $(OBJ_DIR)/tests.o \

@@ -11,6 +11,8 @@ void paracrypt::Launcher::freeCiphers(Cipher_t* ciphers[], unsigned int n)
     delete[] ciphers;	
 }
 
+// NOTE: Is the caller responsability to malloc desinred number of blocks
+//        per each cipher
 template < class CudaAES_t >
 CudaAES_t** paracrypt::Launcher::linkAES(
 		CUDACipherDevice* devices[], 
@@ -27,14 +29,30 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 	
 	for(unsigned int d = 0; d < n; d++) {
 		for(int i = 0; i < devices[d]->getConcurrentKernels(); i++) {
-			CudaAES_t* c = new CudaAES_t();
-			c->setDevice(devices[d]);
-			c->constantKey(constantKey);
-			c->constantTables(constantTables);
+			CudaAES_t* c;
 			if(d == 0 && i == 0) {
+				c = new CudaAES_t();
+				c->setDevice(devices[d]);
+				c->constantKey(constantKey);
+				c->constantTables(constantTables);
 				c->setKey(key,keyBits);
-			} else {
+				c->initDeviceEKey(); 
+			} else if(i == 0) {
+				// each new cipher within the same GPU uses 
+				//  its own stream
+				c = new CudaAES_t();
+				c->setDevice(devices[d]);
+				c->constantKey(constantKey);
+				c->constantTables(constantTables);
+				// reuse expanded key, do not waste CPU resources
+				//  expanding the key again
 				c->setEncryptionKey(ciphers.at(0)->getEncryptionExpandedKey());
+				c->initDeviceEKey();
+			} else {
+				// reuse keys and tables already available in the same GPU device,
+				//   do not waste GPU resources having multiple copies of the
+				//   same key in the same GPU.
+				c = new CudaAES_t(ciphers.back());
 			}
 			ciphers.push_back(c);
 		}

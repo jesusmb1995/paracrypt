@@ -30,6 +30,18 @@ paracrypt::AES::AES()
 	this->keyBits = -1;
     this->enRoundKeys = NULL;
     this->deRoundKeys = NULL;
+    this->isCopy = false;
+    this->enKeyPropietary = false;
+    this->deKeyPropietary = false;
+}
+
+paracrypt::AES::AES(AES* aes)
+{
+	this->key = aes->key;
+	this->keyBits = aes->keyBits;
+	this->enRoundKeys = aes->enRoundKeys;
+	this->deRoundKeys = aes->deRoundKeys;
+	this->isCopy = true;
     this->enKeyPropietary = false;
     this->deKeyPropietary = false;
 }
@@ -42,24 +54,30 @@ paracrypt::AES::~AES()
     if(this->deKeyPropietary && this->deRoundKeys != NULL) {
     	free(this->deRoundKeys);
     }
-    free(this->key);
+    if(!this->isCopy && this->key != NULL) {
+        free(this->key);
+    }
 }
 
 int paracrypt::AES::setKey(const unsigned char key[], int bits)
 {
-    if (this->key == NULL) {
-    	if(bits != 128 && bits != 192 && bits != 256) {
-    		ERR("AES only support a key-length of 128, 192, or 256 bits.");
-    	}
-    	this->keyBits = bits;
-    	int bytes = bits/8;
-    	this->key = (unsigned char*) malloc(bytes);
-    	memcpy(this->key,key,bytes);
-    }
+	if(this->isCopy) {
+		LOG_WAR("Is not posible to modify a shallow copied AES object.");
+	} else {
+		if (this->key == NULL) {
+			if(bits != 128 && bits != 192 && bits != 256) {
+				ERR("AES only support a key-length of 128, 192, or 256 bits.");
+			}
+			this->keyBits = bits;
+			int bytes = bits/8;
+			this->key = (unsigned char*) malloc(bytes);
+			memcpy(this->key,key,bytes);
+		}
+	}
     return 0;
 }
 
-// Warning: If we destruct the object who owns the key 
+// Warning: If we destruct the object who owns the key
 //  we will point to nowhere
 int paracrypt::AES::setEncryptionKey(AES_KEY * expandedKey)
 {

@@ -123,8 +123,6 @@ void paracrypt::Launcher::encrypt(
 		//  version mejorada y simple!
 
 
-
-		paracrypt::BlockIO::readStatus status = paracrypt::BlockIO::OK;
 		std::vector<int> executingKernells;
 		std::vector<int>::iterator it;
 		paracrypt::BlockIO::chunk c;

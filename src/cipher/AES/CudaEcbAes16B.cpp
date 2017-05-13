@@ -21,6 +21,15 @@
 #include "CudaEcbAes16B.hpp"
 #include "CudaEcbAes16B.cuh"
 
+paracrypt::CudaEcbAES16B::CudaEcbAES16B()
+{}
+
+paracrypt::CudaEcbAES16B::CudaEcbAES16B(CudaEcbAES16B* aes) : CudaEcbAES(aes)
+{}
+
+paracrypt::CudaEcbAES16B::~CudaEcbAES16B()
+{}
+
 int paracrypt::CudaEcbAES16B::getThreadsPerCipherBlock() {
 	return 1;
 }
@@ -51,7 +60,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_encrypt(
 	default:
 		return -1;
 	}
-	LOG_TRACE(boost::format("cuda_ecb_aes_16b_encrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_16b_encrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -107,7 +116,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_decrypt(
 	default:
 		return -1;
 	}
-	LOG_TRACE(boost::format("cuda_ecb_aes_16b_decrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_16b_decrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
