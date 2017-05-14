@@ -2,3 +2,6 @@ proj/.metadata/*
 bin/*
 obj/*
 lib/*
+.fuse_hidden*
+info/*
+**~

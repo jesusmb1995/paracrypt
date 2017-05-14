@@ -43,7 +43,7 @@ public:
 	virtual void dump(chunk c) = 0;
 
 	typedef enum {
-		APPEND_ZEROS = 0,
+		APPEND_ZEROS_TO_INPUT = 0, // Only to the input
 		PKCS7 = 1,
 	} paddingScheme;
 	BlockIO(
@@ -63,6 +63,8 @@ public:
 	paddingScheme getPadding();
 	const unsigned int getBlockSize();
 	std::string getInFileName();
+	std::streamsize getInFileSize();
+	std::streamsize getInNBlocks();
 	std::string getOutFileName();
 	std::streampos getBegin();
 	std::streampos getEnd();
@@ -71,6 +73,8 @@ public:
 private:
 	std::ifstream inFile;
 	std::string inFileName;
+	std::streamsize inFileSize; // in number of blocks
+	std::streamsize inNBlocks;
 	readStatus inFileReadStatus;
 	std::ofstream outFile;
 	std::string outFileName;
@@ -79,6 +83,8 @@ private:
 	std::streamsize alreadyReadBlocks;
 	paddingScheme paddingType;
 	void applyPadding(unsigned char* data, std::streamsize dataSize, std::streamsize desiredSize);
+	// return the padded size
+	std::streamsize removePadding(unsigned char* data, std::streamsize dataSize);
 	std::streampos begin;
 	std::streampos beginBlock;
 	std::streampos end;

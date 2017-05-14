@@ -89,7 +89,7 @@ void paracrypt::SharedIO::dump(chunk c)
 void paracrypt::SharedIO::writing() {
 	chunk c;
 	c.status = OK;
-	while(c.status != END) {
+	while(!(*finishThreading) || this->outputChunks->size() > 0) {
 		boost::unique_lock<boost::mutex> lock(chunk_access);
 			if(this->outputChunks->size() <= 0) {
 				if(*finishThreading) {
@@ -118,7 +118,7 @@ void paracrypt::SharedIO::writing() {
 
 		lock.lock();
 			emptyChunks->enqueue(c);
-			DEV_TRACE(boost::format("SharedIO writer: %llu free chunks.")%emptyChunks->size());
+			DEV_TRACE(boost::format("SharedIO writer: %llu free chunks.") % this->emptyChunks->size());
 			if(this->emptyChunks->size() == 1) {
 				DEV_TRACE("SharedIO writer: Notifying the reader.");
 				this->thereAreEmptyChunks.notify_one();
@@ -192,21 +192,28 @@ void paracrypt::SharedIO::construct(unsigned int nChunks, rlim_t bufferSizeLimit
     // launch reader and writer threads
     this->readyToReadChunks = new LimitedQueue<chunk>(this->getBufferSize());
     this->outputChunks = new LimitedQueue<chunk>(this->getBufferSize());
-    finishThreading = new bool();
+    this->finishThreading = new bool();
     *finishThreading = false;
     this->reader = new boost::thread(boost::bind(&paracrypt::SharedIO::reading, this));
     this->writer = new boost::thread(boost::bind(&paracrypt::SharedIO::writing, this));
 }
 void paracrypt::SharedIO::destruct() {
-	*finishThreading = true;
-	this->thereAreEmptyChunks.notify_all();
-	this->thereAreChunksToWrite.notify_all();
+
+	DEV_TRACE("SharedIO user: Ordering threads to finish... \n");
+	boost::unique_lock<boost::mutex> lock(chunk_access);
+		*finishThreading = true;
+		this->thereAreEmptyChunks.notify_all();
+		this->thereAreChunksToWrite.notify_all();
+	lock.unlock();
 	this->reader->join();
 	this->writer->join();
-	delete finishThreading;
-	delete emptyChunks;
-	delete readyToReadChunks;
-	delete outputChunks;
+
+	delete this->reader;
+	delete this->writer;
+	delete this->finishThreading;
+	delete this->emptyChunks;
+	delete this->readyToReadChunks;
+	delete this->outputChunks;
 	delete[] this->chunks;
 	this->getPinned()->free((void*)this->chunksData);
 }

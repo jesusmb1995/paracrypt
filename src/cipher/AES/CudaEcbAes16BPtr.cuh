@@ -25,6 +25,7 @@
 void cuda_ecb_aes_16b_ptr_encrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  cudaStream_t stream,
 		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,
@@ -38,6 +39,7 @@ void cuda_ecb_aes_16b_ptr_encrypt(
 void cuda_ecb_aes_16b_ptr_decrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  cudaStream_t stream,
 		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,

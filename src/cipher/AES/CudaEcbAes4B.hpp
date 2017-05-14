@@ -25,6 +25,10 @@
 namespace paracrypt {
 
     class CudaEcbAES4B:public CudaEcbAES {
+    public:
+    	CudaEcbAES4B();
+    	CudaEcbAES4B(CudaEcbAES4B* aes);
+    	~CudaEcbAES4B();
     protected:
   int getThreadsPerCipherBlock();
   int cuda_ecb_aes_encrypt(

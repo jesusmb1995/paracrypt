@@ -836,6 +836,7 @@ __global__ void __cuda_ecb_aes_8b_decrypt__(
 void cuda_ecb_aes_8b_encrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  cudaStream_t stream,
 		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,
@@ -848,7 +849,7 @@ void cuda_ecb_aes_8b_encrypt(
 {
 	// (threadsPerBlock/2)4*2*sizeof(uint32_t);
 	int shared_memory = threadsPerBlock*4*sizeof(uint32_t);
-	__cuda_ecb_aes_8b_encrypt__<<<gridSize,threadsPerBlock,shared_memory>>>(//*2>>>(
+	__cuda_ecb_aes_8b_encrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(//*2>>>(
 			n_blocks,
 			(uint32_t*)data,
 			expanded_key,
@@ -863,6 +864,7 @@ void cuda_ecb_aes_8b_encrypt(
 void cuda_ecb_aes_8b_decrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  cudaStream_t stream,
 		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,
@@ -875,7 +877,7 @@ void cuda_ecb_aes_8b_decrypt(
 	      )
 {
 	int shared_memory = threadsPerBlock*4*sizeof(uint32_t);
-	__cuda_ecb_aes_8b_decrypt__<<<gridSize,threadsPerBlock,shared_memory>>>(
+	__cuda_ecb_aes_8b_decrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(
 			n_blocks,
 			(uint32_t*)data,
 			expanded_key,

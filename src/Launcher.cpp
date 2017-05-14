@@ -135,6 +135,8 @@ void paracrypt::Launcher::encrypt(
 				c = chunks[i];
 				c = io->read();
 				chunks[i] = c;
+				DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
+					% c.blockOffset % i);
 				ciphers[i]->encrypt(c.data,c.data,c.nBlocks);
 				executingKernells.push_back(i);
 //			}
@@ -145,22 +147,23 @@ void paracrypt::Launcher::encrypt(
 				//  the global wait is in any device...
 				//	ciphers[0]->getdevice()->waitanygpumemcpyfrom();
 
-			for(unsigned int i = 0; i < n; i++) {
+			for(unsigned int i = 0; c.status == paracrypt::BlockIO::OK && i < n; i++) {
 				if(ciphers[i]->checkFinish()) {
+					DEV_TRACE(boost::format("Launcher: chunk starting at block %llu in stream %u has finished encryption.\n")
+						% c.blockOffset % i);
 					c = chunks[i];
 					io->dump(c);
 					c = io->read();
 					chunks[i] = c;
+					DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
+						% c.blockOffset % i);
 					ciphers[i]->encrypt(c.data,c.data,c.nBlocks);
-					if(c.status == paracrypt::BlockIO::END) {
-						it = find (executingKernells.begin(), executingKernells.end(), i);
-						executingKernells.erase(it);
-						break;
-					}
 				}
 			}
 		}
 
+
+		DEV_TRACE(boost::format("Launcher: Let's wait for %i chunks to finish... \n") % executingKernells.size() );
 
 		// One of the kernels has reached EOF: make
 		//  sure we have recollect all the outputs before exit
@@ -171,9 +174,15 @@ void paracrypt::Launcher::encrypt(
 			it = executingKernells.begin();
 			while(it != executingKernells.end()) {
 				if(ciphers[*it]->checkFinish()) {
+					DEV_TRACE(boost::format("Launcher: chunk starting at block %llu in stream "
+							"%u has finished. Waiting for another %%i chunks... \n")
+						% executingKernells.size()
+						% *it
+					);
 					c = chunks[*it];
 					io->dump(c);
 					it = executingKernells.erase(it);
+					DEV_TRACE(boost::format("Launcher: I'm yet waiting for another %i chunks... \n") % executingKernells.size());
 				} else  {
 					++it;
 				}
@@ -191,6 +200,8 @@ void paracrypt::Launcher::encrypt(
 //		ciphers[i]->getDevice()->getConcurrentKernels();
 
 		delete[] chunks;
+
+		DEV_TRACE("Launcher: I'm finished dealing with the encryption.\n");
 }
 
 // TODO para la versión simple va a hacer falta version multibuffer

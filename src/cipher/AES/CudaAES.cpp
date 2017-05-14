@@ -202,11 +202,13 @@ void paracrypt::CudaAES::initDeviceDKey(){
 //  keys and wasting GPU mem. resources.
 uint32_t* paracrypt::CudaAES::getDeviceEKey()
 {
+	this->initDeviceEKey();
     return this->deviceEKey;
 }
 
 uint32_t* paracrypt::CudaAES::getDeviceDKey()
 {
+	this->initDeviceDKey();
     return this->deviceDKey;
 }
 

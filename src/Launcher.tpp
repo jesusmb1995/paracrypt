@@ -1,5 +1,6 @@
 #include "Launcher.hpp"
 #include "cipher/AES/CudaAES.hpp"
+#include "logging.hpp"
 
 template < class Cipher_t >
 void paracrypt::Launcher::freeCiphers(Cipher_t* ciphers[], unsigned int n)
@@ -68,6 +69,7 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 
 template < class CudaAES_t >
 void paracrypt::Launcher::launchSharedIOCudaAES(
+		operation_t op,
 		std::string inFileName,
 		std::string outFileName,
 		const unsigned char key[],
@@ -99,10 +101,21 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 		cudaBlockCiphers[i] = ciphers[i];
 	}
 	delete[] ciphers;
-	
-	paracrypt::Launcher::encrypt(cudaBlockCiphers, nCiphers, io);
 
+	DEV_TRACE("Launcher: starting encryption...");
+	switch(op) {
+	case paracrypt::Launcher::ENCRYPT:
+		paracrypt::Launcher::encrypt(cudaBlockCiphers, nCiphers, io);
+	case paracrypt::Launcher::DECRYPT:
+		paracrypt::Launcher::decrypt(cudaBlockCiphers, nCiphers, io);
+	default:	
+		ERR("Unknown cipher operation.");
+	}
+
+	DEV_TRACE("Launcher: freeying ciphers...");
 	paracrypt::Launcher::freeCiphers<CUDABlockCipher>(cudaBlockCiphers,nCiphers);
+	DEV_TRACE("Launcher: deleting IO...");
     delete io;
+    DEV_TRACE("Launcher: freeying devices...");
     paracrypt::CUDACipherDevice::freeAllDevices(devices);
 }

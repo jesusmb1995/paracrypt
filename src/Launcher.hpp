@@ -79,8 +79,14 @@ public:
 	 );
 
 
+	typedef enum {
+		ENCRYPT = 0,
+		DECRYPT = 1,
+	} operation_t;
+
 	template < class CudaAES_t >
 	static void launchSharedIOCudaAES(
+			operation_t op,
 			std::string inFileName,
 			std::string outFileName,
 			const unsigned char key[],

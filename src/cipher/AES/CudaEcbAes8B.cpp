@@ -21,6 +21,15 @@
 #include "CudaEcbAes8B.hpp"
 #include "CudaEcbAes8B.cuh"
 
+paracrypt::CudaEcbAES8B::CudaEcbAES8B()
+{}
+
+paracrypt::CudaEcbAES8B::CudaEcbAES8B(CudaEcbAES8B* aes) : CudaEcbAES(aes)
+{}
+
+paracrypt::CudaEcbAES8B::~CudaEcbAES8B()
+{}
+
 int paracrypt::CudaEcbAES8B::getThreadsPerCipherBlock() {
 	return 2;
 }
@@ -51,7 +60,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
 	default:
 		return -1;
 	}
-	LOG_TRACE(boost::format("cuda_ecb_aes_8b_encrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_8b_encrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -67,6 +76,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
 	cuda_ecb_aes_8b_encrypt(
 			gridSize,
 			threadsPerBlock,
+			this->getDevice()->acessStream(this->stream),
 			n_blocks,
 			this->data,
 			key,
@@ -106,7 +116,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
 	default:
 		return -1;
 	}
-	LOG_TRACE(boost::format("cuda_ecb_aes_8b_decrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_8b_decrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -122,6 +132,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
 	cuda_ecb_aes_8b_decrypt(
 			gridSize,
 			threadsPerBlock,
+			this->getDevice()->acessStream(this->stream),
 			n_blocks,
 			this->data,
 			key,

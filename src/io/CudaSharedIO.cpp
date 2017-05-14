@@ -39,6 +39,7 @@ CudaSharedIO::CudaSharedIO(
 
 CudaSharedIO::~CudaSharedIO()
 {
+	DEV_TRACE("Deleting CudaSharedIO.\n");
 	this->destruct();
 	delete this->pin;
 }

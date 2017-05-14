@@ -21,6 +21,7 @@
 #include "BlockIO.hpp"
 #include "logging.hpp"
 #include <algorithm>
+#include "IO.hpp"
 
 namespace paracrypt {
 
@@ -39,6 +40,13 @@ BlockIO::BlockIO(
 		ERR(boost::format("cannot open %s: %s") % inFilename % strerror(errno));
 	}
 	this->inFileReadStatus = OK;
+	this->inFileSize = IO::fileSize(&inFile);
+	this->inNBlocks = inFileSize / blockSize;
+	unsigned int remBytesFileSize = inFileSize % blockSize;
+	if(remBytesFileSize > 0) {
+		this->inNBlocks++;
+	}
+
 	if(begin != NO_RANDOM_ACCESS) {
 		this->beginBlock = begin/blockSize;
 		this->begin = this->beginBlock*this->blockSize; // aligned to block
@@ -78,7 +86,7 @@ BlockIO::BlockIO(
 	}
 	this->begin = begin;
 	this->end = end;
-	this->paddingType = APPEND_ZEROS; // default padding
+	this->paddingType = APPEND_ZEROS_TO_INPUT; // default padding
 }
 
 BlockIO::~BlockIO() {
@@ -142,11 +150,17 @@ void paracrypt::BlockIO::outFileWriteBytes(unsigned char* data, std::streampos n
 {
 	this->outFile.seekp(byteOffset);
 	this->outFile.write((const char*)data,nBytes);
+	if(!outFile) {
+		FATAL(boost::format("Error writing to output file: %s\n") % strerror(errno));
+	}
 }
 
 void paracrypt::BlockIO::outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset)
 {
-	unsigned long size = nBlocks*this->blockSize;
+	std::streamsize size = nBlocks*this->blockSize;
+	if(blockOffset+nBlocks >= this->inNBlocks) {
+		size = this->removePadding(data, size);
+	}
 	std::streampos byteOffset = blockOffset*this->blockSize;
 	this->outFileWriteBytes(data, size, byteOffset);
 }
@@ -156,7 +170,7 @@ void paracrypt::BlockIO::applyPadding(unsigned char* data, std::streamsize dataS
 	std::streamsize paddingSize = desiredSize-dataSize;
 	unsigned char* padding = data+dataSize;
 	switch(this->paddingType) {
-		case APPEND_ZEROS:
+		case APPEND_ZEROS_TO_INPUT:
 			memset(padding, 0, paddingSize);
 			break;
 		case PKCS7:
@@ -167,6 +181,38 @@ void paracrypt::BlockIO::applyPadding(unsigned char* data, std::streamsize dataS
 			// the unsigned char conversion of this value.
 			break;
 	}
+}
+
+std::streamsize paracrypt::BlockIO::removePadding(unsigned char* data, std::streamsize dataSize)
+{
+	std::streamsize unpaddedSize = dataSize;
+	if(dataSize > 0) {
+		unsigned char* ptr = data+(dataSize-1);
+		switch(this->paddingType) {
+			case APPEND_ZEROS_TO_INPUT:
+	// case APPEND_ZEROS:
+	//			while(*ptr == 0) {
+	//				unpaddedSize--;
+	//				ptr--;
+	//			}
+				break;
+			case PKCS7:
+				unsigned char n = *ptr;
+				bool hasPadding = true;
+				for(int i = 0; i < n; i++) {
+					if(*ptr != n) {
+						hasPadding = false;
+						break;
+					}
+					ptr--;
+				}
+				if(hasPadding) {
+					unpaddedSize = unpaddedSize - n;
+				}
+				break;
+		}
+	}
+	return unpaddedSize;
 }
 
 std::string paracrypt::BlockIO::getInFileName()
@@ -192,6 +238,16 @@ std::streampos paracrypt::BlockIO::getEnd()
 std::streamsize paracrypt::BlockIO::getMaxBlocksRead()
 {
 	return this->maxBlocksRead;
+}
+
+std::streamsize paracrypt::BlockIO::getInFileSize()
+{
+	return this->inFileSize;
+}
+
+std::streamsize paracrypt::BlockIO::getInNBlocks()
+{
+	return this->inNBlocks;
 }
 
 } /* namespace paracrypt */

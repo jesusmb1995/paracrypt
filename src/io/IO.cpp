@@ -23,7 +23,7 @@
 
 namespace paracrypt {
 
-const std::streampos paracrypt::IO::fileSize( std::ifstream *file ){
+const std::streampos paracrypt::IO::fileSize( std::fstream *file ){
 	std::streampos save = file->tellg();
 
     file->seekg( 0, std::ios::end );
@@ -31,6 +31,10 @@ const std::streampos paracrypt::IO::fileSize( std::ifstream *file ){
 
     file->seekg(save);
     return fsize;
+}
+
+const std::streampos paracrypt::IO::fileSize( std::ifstream *file ){
+	return fileSize((std::fstream*)file);
 }
 
 const std::streampos paracrypt::IO::fileSize( std::string fileName ){

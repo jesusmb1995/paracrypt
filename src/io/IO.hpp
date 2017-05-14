@@ -27,6 +27,7 @@ namespace paracrypt {
 
 class IO {
 public:
+	static const std::streampos fileSize( std::fstream *file);
 	static const std::streampos fileSize( std::ifstream *file);
 	static const std::streampos fileSize( std::string fileName );
 };

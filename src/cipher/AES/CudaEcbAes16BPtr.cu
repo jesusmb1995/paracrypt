@@ -357,6 +357,7 @@ __global__ void __cuda_ecb_aes_16b_ptr_decrypt__(
 void cuda_ecb_aes_16b_ptr_encrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  cudaStream_t stream,
 		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,
@@ -367,7 +368,7 @@ void cuda_ecb_aes_16b_ptr_encrypt(
 		  	  uint32_t* deviceTe3
 	      )
 {
-	__cuda_ecb_aes_16b_ptr_encrypt__<<<gridSize,threadsPerBlock>>>(
+	__cuda_ecb_aes_16b_ptr_encrypt__<<<gridSize,threadsPerBlock,0,stream>>>(
 			n_blocks,
 			(uint32_t*)data,
 			expanded_key,
@@ -382,6 +383,7 @@ void cuda_ecb_aes_16b_ptr_encrypt(
 void cuda_ecb_aes_16b_ptr_decrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
+		  	  cudaStream_t stream,
 		  	  int n_blocks,
 		  	  unsigned char data[],
 		  	  uint32_t* expanded_key,
@@ -393,7 +395,7 @@ void cuda_ecb_aes_16b_ptr_decrypt(
 		  	  uint8_t* deviceTd4
 	      )
 {
-	__cuda_ecb_aes_16b_ptr_decrypt__<<<gridSize,threadsPerBlock>>>(
+	__cuda_ecb_aes_16b_ptr_decrypt__<<<gridSize,threadsPerBlock,0,stream>>>(
 			n_blocks,
 			(uint32_t*)data,
 			expanded_key,

@@ -44,6 +44,7 @@ TST_DIR ?= $(SRC_DIR)/tests
 BIN_DIR ?= bin
 LIB_DIR ?= lib
 OBJ_DIR ?= obj
+INF_DIR = info
 #
 LIBS ?= -L$(BOOST_LIB) -lboost_system -lboost_log -lboost_log_setup -lboost_thread -lpthread -L$(CUDA_LIB) -lcuda -lcudart
 INCL ?= -I$(SRC_DIR) -I$(CUDA_INC)
@@ -319,10 +320,21 @@ clean:
 	rm -f $(OBJ_DIR)/*.ptx
 	rm -f $(LIB_DIR)/*.a
 	rm -f $(BIN_DIR)/*
+	rm -f $(BIN_DIR)/.fuse_hidden*
 	rm -f $(SRC_DIR)/*~
 	rm -f $(SRC_DIR)/tests/*~
 	rm -f $(SRC_DIR)/openssl/*~
+	rm -f $(INF_DIR)/*
 #
 all: tests
 # make icc
 
+
+###################################################################################
+# RUNS ############################################################################
+###################################################################################
+#
+leaks: tests
+	valgrind --leak-check=summary $(BIN_DIR)/paracrypt_tests
+	valgrind --leak-check=full --log-file=$(INF_DIR)/leaks.txt $(BIN_DIR)/paracrypt_tests
+	
