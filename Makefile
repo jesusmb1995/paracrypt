@@ -334,7 +334,8 @@ all: tests
 # RUNS ############################################################################
 ###################################################################################
 #
-leaks: tests
+check: tests
 	valgrind --leak-check=summary $(BIN_DIR)/paracrypt_tests
 	valgrind --leak-check=full --log-file=$(INF_DIR)/leaks.txt $(BIN_DIR)/paracrypt_tests
+	valgrind --tool=memcheck ---log-file=$(INF_DIR)/mem.txt  $(BIN_DIR)/paracrypt_tests
 	

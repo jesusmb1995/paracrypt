@@ -20,15 +20,17 @@
 
 #pragma once
 
+#include <fstream>
+
 namespace paracrypt {
 
     class BlockCipher {
       public:
 	virtual ~BlockCipher() {}
 	virtual int encrypt(const unsigned char in[],
-			      const unsigned char out[], int n_blocks) = 0;
+			      const unsigned char out[], std::streamsize n_blocks) = 0;
 	virtual int decrypt(const unsigned char in[],
-			    const unsigned char out[], int n_blocks) = 0;
+			    const unsigned char out[], std::streamsize n_blocks) = 0;
 	virtual int setKey(const unsigned char key[], int bits) = 0;
 	virtual int setBlockSize(int bits) = 0;
 	virtual unsigned int getBlockSize() = 0;

@@ -16,6 +16,7 @@ void paracrypt::Launcher::freeCiphers(Cipher_t* ciphers[], unsigned int n)
 //        per each cipher
 template < class CudaAES_t >
 CudaAES_t** paracrypt::Launcher::linkAES(
+		operation_t op,
 		CUDACipherDevice* devices[], 
 		unsigned int n, 
 		const unsigned char key[], 
@@ -37,8 +38,18 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 				c->constantKey(constantKey);
 				c->constantTables(constantTables);
 				c->setKey(key,keyBits);
-				c->initDeviceEKey(); 
-				c->initDeviceTe();
+				switch(op) {
+				case paracrypt::Launcher::ENCRYPT:
+					c->initDeviceEKey(); 
+					c->initDeviceTe();
+					break;
+				case paracrypt::Launcher::DECRYPT:
+					c->initDeviceDKey(); 
+					c->initDeviceTd();
+					break;
+				default:
+					ERR("Unknown cipher operation.");
+				}				
 			} else if(i == 0) {
 				// each new cipher within the same GPU uses 
 				//  its own stream
@@ -48,9 +59,20 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 				c->constantTables(constantTables);
 				// reuse expanded key, do not waste CPU resources
 				//  expanding the key again
-				c->setEncryptionKey(ciphers.at(0)->getEncryptionExpandedKey());
-				c->initDeviceEKey();
-				c->initDeviceTe();
+				switch(op) {
+				case paracrypt::Launcher::ENCRYPT:
+					c->setEncryptionKey(ciphers.at(0)->getEncryptionExpandedKey());
+					c->initDeviceEKey();
+					c->initDeviceTe();
+					break;
+				case paracrypt::Launcher::DECRYPT:
+					c->setDecryptionKey(ciphers.at(0)->getDecryptionExpandedKey());
+					c->initDeviceEKey();
+					c->initDeviceTe();
+					break;
+				default:
+					ERR("Unknown cipher operation.");
+				}
 			} else {
 				// reuse keys and tables already available in the same GPU device,
 				//   do not waste GPU resources having multiple copies of the
@@ -79,6 +101,9 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 		std::streampos begin,
 		std::streampos end
  ){
+	LOG_TRACE(boost::format("Launcher input file %s")  % inFileName );
+	LOG_TRACE(boost::format("Launcher output file %s") % outFileName);
+	
 	int nDevices = paracrypt::CUDACipherDevice::getDevicesCount();
 	CUDACipherDevice** devices = paracrypt::CUDACipherDevice::instantiateAllDevices();
 	SharedIO* io = paracrypt::Launcher::newAdjustedSharedIO(
@@ -89,6 +114,7 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 
 	unsigned int nCiphers;
 	CudaAES_t** ciphers = paracrypt::Launcher::linkAES<CudaAES_t>(
+			op,
 			devices, nDevices,
 			key, key_bits,
 			constantKey, constantTables,
@@ -102,20 +128,15 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 	}
 	delete[] ciphers;
 
-	DEV_TRACE("Launcher: starting encryption...");
-	switch(op) {
-	case paracrypt::Launcher::ENCRYPT:
-		paracrypt::Launcher::encrypt(cudaBlockCiphers, nCiphers, io);
-	case paracrypt::Launcher::DECRYPT:
-		paracrypt::Launcher::decrypt(cudaBlockCiphers, nCiphers, io);
-	default:	
-		ERR("Unknown cipher operation.");
-	}
-
-	DEV_TRACE("Launcher: freeying ciphers...");
+	LOG_TRACE("Launcher: starting encryption...");
+	operation(op,cudaBlockCiphers, nCiphers, io);
+	
+	LOG_TRACE("Launcher: freeying ciphers...");
 	paracrypt::Launcher::freeCiphers<CUDABlockCipher>(cudaBlockCiphers,nCiphers);
-	DEV_TRACE("Launcher: deleting IO...");
+	
+	LOG_TRACE("Launcher: deleting IO...");
     delete io;
-    DEV_TRACE("Launcher: freeying devices...");
+    
+    LOG_TRACE("Launcher: freeying devices...");
     paracrypt::CUDACipherDevice::freeAllDevices(devices);
 }

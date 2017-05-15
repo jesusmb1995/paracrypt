@@ -34,31 +34,6 @@ public:
 	Launcher(){};
 	virtual ~Launcher();
 
-	// IMPORTANT: Returned CudaAES objects have to be freed
-	//  CudaAES_t is a cipher class which has CudaAES as a base.
-	template < class CudaAES_t >
-	static CudaAES_t** linkAES(
-			CUDACipherDevice* devices[],
-			unsigned int n,
-			const unsigned char key[],
-			int keyBits,
-			bool constantKey,
-			bool constantTables,
-			unsigned int *nCiphers);
-
-	template < class Cipher >
-	static void freeCiphers(Cipher* ciphers[], unsigned int n);
-
-	// IMPORTANT: SharedIO object has to be freed by the caller
-	static SharedIO* newAdjustedSharedIO(
-			std::string inFilename,
-			std::string outFilename,
-			unsigned int blockSize,
-			CUDACipherDevice* devices[],
-			int n,
-			std::streampos begin = NO_RANDOM_ACCESS,
-			std::streampos end = NO_RANDOM_ACCESS
-	);
 
 	// TODO set keys
 
@@ -72,11 +47,7 @@ public:
 //			 SimpleIO* io
 //			 );
 
-	static void encrypt(
-			 CUDABlockCipher* ciphers[],
-			 unsigned int n,
-			 SharedIO* io
-	 );
+
 
 
 	typedef enum {
@@ -93,9 +64,9 @@ public:
 			int key_bits,
 			bool constantKey,
 			bool constantTables,
-			std::streampos begin,
-			std::streampos end
-	 );
+			std::streampos begin = NO_RANDOM_ACCESS,
+			std::streampos end = NO_RANDOM_ACCESS
+	);
 
 //
 //	static void encrypt(
@@ -130,6 +101,40 @@ public:
 
 
 	// TODO Hybrid CPU-GPU implementations
+private:
+	// IMPORTANT: Returned CudaAES objects have to be freed
+	//  CudaAES_t is a cipher class which has CudaAES as a base.
+	template < class CudaAES_t >
+	static CudaAES_t** linkAES(
+			operation_t op,
+			CUDACipherDevice* devices[],
+			unsigned int n,
+			const unsigned char key[],
+			int keyBits,
+			bool constantKey,
+			bool constantTables,
+			unsigned int *nCiphers);
+
+	template < class Cipher >
+	static void freeCiphers(Cipher* ciphers[], unsigned int n);
+
+	// IMPORTANT: SharedIO object has to be freed by the caller
+	static SharedIO* newAdjustedSharedIO(
+			std::string inFilename,
+			std::string outFilename,
+			unsigned int blockSize,
+			CUDACipherDevice* devices[],
+			int n,
+			std::streampos begin = NO_RANDOM_ACCESS,
+			std::streampos end = NO_RANDOM_ACCESS
+	);
+
+	static void operation(
+			 operation_t op,
+			 CUDABlockCipher* ciphers[],
+			 unsigned int n,
+			 SharedIO* io
+	 );
 
 };
 

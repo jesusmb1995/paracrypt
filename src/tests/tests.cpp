@@ -957,7 +957,7 @@ void GEN_AES_ENCRYPT_FILE(
 		tv vector,
 		unsigned int nBlocks
 ){
-	void GEN_AES_TEST_FILE(fileName,file,(const char*)vector.input,sizeof(vector.input),nBlocks);
+	GEN_AES_TEST_FILE(fileName,file,(const char*)vector.input,sizeof(vector.input),nBlocks);
 }
 void GEN_AES_DECRYPT_FILE(
 		std::string *fileName,
@@ -965,26 +965,35 @@ void GEN_AES_DECRYPT_FILE(
 		tv vector,
 		unsigned int nBlocks
 ){
-	void GEN_AES_TEST_FILE(fileName,file,(const char*)vector.output,sizeof(vector.output),nBlocks);
+	GEN_AES_TEST_FILE(fileName,file,(const char*)vector.output,sizeof(vector.output),nBlocks);
 }
 
 // TODO random encrypt and decrypt with padding...
 
 template < class CudaAES_t >
-void CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST(
-			std::string title,
-			tv vector,
-			int n_blocks,
-			bool constantKey,
-			bool constantTables,
-			std::streampos begin = NO_RANDOM_ACCESS,
-			std::streampos end = NO_RANDOM_ACCESS
+void CUDA_AES_SHARED_IO_LAUNCHER_SB_OPERATION_TEST(
+		paracrypt::Launcher::operation_t op,
+		std::string title,
+		tv vector,
+		int n_blocks,
+		bool constantKey,
+		bool constantTables
 ){
 	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
 
 	std::string inFileName;
 	std::fstream *inFile;
-	GEN_AES_ENCRYPT_FILE(&inFileName,&inFile,vector,n_blocks);
+
+	switch(op) {
+		case paracrypt::Launcher::ENCRYPT:
+			GEN_AES_ENCRYPT_FILE(&inFileName,&inFile,vector,n_blocks);
+			break;
+		case paracrypt::Launcher::DECRYPT:
+			GEN_AES_DECRYPT_FILE(&inFileName,&inFile,vector,n_blocks);
+			break;
+		default:
+			ERR("Unknown cipher operation.");
+	}
 
 	std::string outFileName;
 	{
@@ -995,10 +1004,10 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST(
 	std::ofstream* outFile = new std::ofstream(outFileName.c_str(),std::fstream::out | std::fstream::binary);
 
     paracrypt::Launcher::launchSharedIOCudaAES<CudaAES_t>(
+    		op,
     		inFileName, outFileName,
     		vector.key, vector.key_bits,
-    		constantKey, constantTables,
-    		begin, end
+    		constantKey, constantTables
     );
 
 	// Verify output blocks are correct
@@ -1008,7 +1017,6 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST(
 	BOOST_REQUIRE_EQUAL(inFileSize,outFileSize);
 	unsigned char buffer[16];
 	for(int i = 0; i < n_blocks; i++) {
-		DEV_TRACE(boost::format("Checking block %i...\n") % i);
 		upadatedOutFile->read((char*)buffer,16);
 		bool err = upadatedOutFile;
 	    BOOST_CHECK(err); // check no err
@@ -1020,7 +1028,27 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST(
 				FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
 			}
 		}
-    	BOOST_REQUIRE_EQUAL_COLLECTIONS(buffer,buffer+16,vector.output,vector.output+16);
+		switch(op) {
+			case paracrypt::Launcher::ENCRYPT:
+				// TODO REMOVE
+				if(buffer[0] != vector.output[0]) {
+					LOG_TRACE(boost::format("Checking block %i...\n") % i); // TODO set as DEV_TRACE
+					fdump("error file",outFileName);
+					//exit(-1);
+				}
+		    	BOOST_REQUIRE_EQUAL_COLLECTIONS(buffer,buffer+16,vector.output,vector.output+16);
+				break;
+			case paracrypt::Launcher::DECRYPT:
+				if(buffer[0] != vector.input[0]) { // TODO REMOVE
+					LOG_TRACE(boost::format("Checking block %i...\n") % i); // TODO set as DEV_TRACE
+					fdump("error file",outFileName);
+					//exit(-1);
+				}
+				BOOST_REQUIRE_EQUAL_COLLECTIONS(buffer,buffer+16,vector.input,vector.input+16);
+				break;
+			default:
+				ERR("Unknown cipher operation.");
+		}
 	}
 	upadatedOutFile->close();
 	delete upadatedOutFile;
@@ -1030,6 +1058,22 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST(
 
     outFile->close();
     delete outFile;
+}
+
+template < class CudaAES_t >
+void CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST(
+			std::string title,
+			tv vector,
+			int n_blocks,
+			bool constantKey,
+			bool constantTables
+){
+	CUDA_AES_SHARED_IO_LAUNCHER_SB_OPERATION_TEST<CudaAES_t>(
+			paracrypt::Launcher::ENCRYPT,
+			title,
+			vector, n_blocks,
+			constantKey, constantTables
+	);
 }
 
 template < class CudaAES_t >
@@ -1038,64 +1082,19 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST(
 			tv vector,
 			int n_blocks,
 			bool constantKey,
-			bool constantTables,
-			std::streampos begin = NO_RANDOM_ACCESS,
-			std::streampos end = NO_RANDOM_ACCESS
+			bool constantTables
 ){
-	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
-
-	std::string inFileName;
-	std::fstream *inFile;
-	GEN_AES_ENCRYPT_FILE(&inFileName,&inFile,vector,n_blocks);
-
-	std::string outFileName;
-	{
-		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
-		outFileName = std::string(nameBuffer);
-	}
-	std::ofstream* outFile = new std::ofstream(outFileName.c_str(),std::fstream::out | std::fstream::binary);
-
-    paracrypt::Launcher::launchSharedIOCudaAES<CudaAES_t>(
-    		inFileName, outFileName,
-    		vector.key, vector.key_bits,
-    		constantKey, constantTables,
-    		begin, end
-    );
-
-	// Verify output blocks are correct
-	std::ifstream* upadatedOutFile = new std::ifstream(outFileName.c_str(),std::fstream::in | std::fstream::binary);
-	std::streamsize inFileSize  = paracrypt::IO::fileSize(inFile);
-	std::streamsize outFileSize = paracrypt::IO::fileSize(upadatedOutFile);
-	BOOST_REQUIRE_EQUAL(inFileSize,outFileSize);
-	unsigned char buffer[16];
-	for(int i = 0; i < n_blocks; i++) {
-		DEV_TRACE(boost::format("Checking block %i...\n") % i);
-		upadatedOutFile->read((char*)buffer,16);
-		bool err = upadatedOutFile;
-	    BOOST_CHECK(err); // check no err
-		if(upadatedOutFile->fail()){
-			if(upadatedOutFile->eof()) {
-				std::streamsize readBytes = upadatedOutFile->gcount();
-				BOOST_REQUIRE_EQUAL(readBytes, 128); // the files only contain full blocks
-			} else {
-				FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
-			}
-		}
-    	BOOST_REQUIRE_EQUAL_COLLECTIONS(buffer,buffer+16,vector.input,vector.input+16);
-	}
-	upadatedOutFile->close();
-	delete upadatedOutFile;
-
-    inFile->close();
-    delete inFile;
-
-    outFile->close();
-    delete outFile;
+	CUDA_AES_SHARED_IO_LAUNCHER_SB_OPERATION_TEST<CudaAES_t>(
+			paracrypt::Launcher::DECRYPT,
+			title,
+			vector, n_blocks,
+			constantKey, constantTables
+	);
 }
 
 #define AES_LAUNCHER_TEST_SUITE(id, testName, className) \
 	BOOST_AUTO_TEST_SUITE(id) \
+ \
 		BOOST_AUTO_TEST_SUITE(KEY128) \
 				BOOST_AUTO_TEST_CASE(constant_key_and_tables) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<className>( \
@@ -1106,7 +1105,18 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST(
 				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<className>( \
 							"Multistream " testName " CUDA ECB AES-128.", aes_example,1000,false, false);} \
+ \
+				BOOST_AUTO_TEST_CASE(constant_key_and_tables_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-128 with constant key and tables.", aes_example,1000,true, true);} \
+				BOOST_AUTO_TEST_CASE(constant_key_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-128 with constant key.", aes_example,1000,true, false);} \
+				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-128.", aes_example,1000,false, false);} \
 		BOOST_AUTO_TEST_SUITE_END() \
+\
 		BOOST_AUTO_TEST_SUITE(KEY192) \
 				BOOST_AUTO_TEST_CASE(constant_key_and_tables) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<className>( \
@@ -1117,7 +1127,18 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST(
 				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<className>( \
 							"Multistream " testName " CUDA ECB AES-192.", aes_192_tv,1000,false, false);} \
+ \
+				BOOST_AUTO_TEST_CASE(constant_key_and_tables_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-192 decryption with constant key and tables.", aes_192_tv,1000,true, true);} \
+				BOOST_AUTO_TEST_CASE(constant_key_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-192 decryption with constant key.", aes_192_tv,1000,true, false);} \
+				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-192 decryption.", aes_192_tv,1000,false, false);} \
 		BOOST_AUTO_TEST_SUITE_END() \
+ \
 		BOOST_AUTO_TEST_SUITE(KEY256) \
 				BOOST_AUTO_TEST_CASE(constant_key_and_tables) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<className>( \
@@ -1128,6 +1149,17 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST(
 				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_SB_ENCRYPT_TEST<className>( \
 							"Multistream " testName " CUDA ECB AES-256.", aes_256_tv,1000,false, false);} \
+ \
+				BOOST_AUTO_TEST_CASE(constant_key_and_tables_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-256 decryption with constant key and tables.", aes_256_tv,1000,true, true);} \
+				BOOST_AUTO_TEST_CASE(constant_key_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-256 decryption with constant key.", aes_256_tv,1000,true, false);} \
+				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables_decrypt) { \
+					CUDA_AES_SHARED_IO_LAUNCHER_SB_DECRYPT_TEST<className>( \
+							"Multistream " testName " CUDA ECB AES-256 decryption.", aes_256_tv,1000,false, false);} \
+ \
 		BOOST_AUTO_TEST_SUITE_END() \
 	BOOST_AUTO_TEST_SUITE_END()
 

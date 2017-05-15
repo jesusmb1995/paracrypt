@@ -132,6 +132,12 @@ void paracrypt::CUDACipherDevice::free(void *data)
     HANDLE_ERROR(cudaFree(data));
 }
 
+
+// copyTo in the default stream
+void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, int size) {
+	HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice));
+}
+
 void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, int size,
 					   int stream_id)
 {

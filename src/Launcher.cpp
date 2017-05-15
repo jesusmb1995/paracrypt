@@ -63,10 +63,11 @@ paracrypt::SharedIO* paracrypt::Launcher::newAdjustedSharedIO(
 	return io;
 }
 
-void paracrypt::Launcher::encrypt(
-			 CUDABlockCipher* ciphers[],
-			 unsigned int n,
-			 SharedIO* io
+void paracrypt::Launcher::operation(
+		 operation_t op,
+		 CUDABlockCipher* ciphers[],
+		 unsigned int n,
+		 SharedIO* io
 ){
 		if(n == 0) return;
 
@@ -78,86 +79,60 @@ void paracrypt::Launcher::encrypt(
 			// block sizes in bits
 			assert(io->getBlockSize()*8 == ciphers[i]->getBlockSize());
 			ciphers[i]->malloc(chunkSizeBytes);
-//			if(i == 0){
-//				ciphers[0]->getDevice()->genGlobalMemcpyFromEvent();
-//			} else {
-//				ciphers[i]->getDevice()->setGlobalMemcpyFromEvent(
-//						ciphers[0]->getDevice()->genGlobalMemcpyFromEvent());
-//			}
 		}
-
-		/*
-		 * HOLY GRAIL -\
-		 * https://devtalk.nvidia.com/default/topic/488265/get-rid-of-busy-waiting-during-asynchronous-cuda-stream-executions/
-		 *
-		 * Hacer varias versiones:
-		 *  1- busy wait...
-		 *  2- block wait y hacer issues siempre en mismo orden...
-         *  3- Usar busy wait... cudaEventSynchronize evento cualquier stream...
-         *
-         * ahora mismo se realiza de forma Depth first... probar width?
-         *
-         *  cudaEvent_t is useful for timing, but for performance use <--
-         *  cudaEventCreateWithFlags ( &event, cudaEventDisableTiming )
-         *
-         *  TODO traza llamadas metodos cuda en CUDACipherDevice como en cualquier otro lado
-         *     para ver que funciona ben
-         *
-         *  TODO asegurarse con el profiler que se ejecutan concurrentemente...
-		 */
-		/*
-		 *
-		 * Callbacks are processed by a driver thread
-		 *	—
-		 *		The same thread processes all callbacks
-		 *		—
-		 *		You can use this thread to signal other threads
-		 *
-		 */			//
-		// Callbacks must not make any CUDA API calls. Attempting to use CUDA APIs will result in cudaErrorNotPermitted. Callbacks must not perform any synchronization that may depend on outstanding device work or other callbacks that are not mandated to run earlier. Callbacks without a mandated order (in independent streams) execute in undefined order and may be serialized.
-		//
-		// Read more at: http://docs.nvidia.com/cuda/cuda-runtime-api/index.html#ixzz4gWhWLVBu
-		//Follow us: @GPUComputing on Twitter | NVIDIA on Facebook
-		//
-		// Usar callbacks para revivir a este thread y que no haya busy wait!
-		//  version mejorada y simple!
-
 
 		std::vector<int> executingKernells;
 		std::vector<int>::iterator it;
 		paracrypt::BlockIO::chunk c;
 		c.status = paracrypt::BlockIO::OK;
 
+		#define operate(i) \
+			switch(op) { \
+			case paracrypt::Launcher::ENCRYPT: \
+				ciphers[i]->encrypt(c.data,c.data,c.nBlocks); \
+				break; \
+			case paracrypt::Launcher::DECRYPT: \
+				ciphers[i]->decrypt(c.data,c.data,c.nBlocks); \
+				break; \
+			default: \
+				ERR("Unknown cipher operation."); \
+			}
+
 		// launch first kernels
 		for(unsigned int i = 0; c.status == paracrypt::BlockIO::OK && i < n; i++) {
-// habrá un varios cipher para mismo device.
-//			for(int j = 0; j < ciphers[i]->getDevice()->getConcurrentKernels(); j++) {
 				c = chunks[i];
 				c = io->read();
+//				// TODO toremove
+//				if(i < 5) {
+//					hexdump("readed block sample", c.data, c.nBlocks);
+//				}
 				chunks[i] = c;
 				DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
 					% c.blockOffset % i);
-				ciphers[i]->encrypt(c.data,c.data,c.nBlocks);
+				operate(i);
 				executingKernells.push_back(i);
-//			}
 		}
 
 		while(c.status == paracrypt::BlockIO::OK) {
-				// blocking call in order not to busy wait
-				//  the global wait is in any device...
-				//	ciphers[0]->getdevice()->waitanygpumemcpyfrom();
-
 			for(unsigned int i = 0; c.status == paracrypt::BlockIO::OK && i < n; i++) {
 				if(ciphers[i]->checkFinish()) {
 					DEV_TRACE(boost::format("Launcher: chunk starting at block %llu in stream %u has finished encryption.\n")
 						% c.blockOffset % i);
 					c = chunks[i];
+//					// TODO toremove
+//					if(i < 5) {
+//						hexdump("to output block sample", c.data, c.nBlocks);
+//					}
 					io->dump(c);
 					c = io->read();
+//					// TODO toremove
+//					if(i < 5) {
+//						hexdump("readed block sample", c.data, c.nBlocks);
+//					}
 					chunks[i] = c;
 					DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
 						% c.blockOffset % i);
-					ciphers[i]->encrypt(c.data,c.data,c.nBlocks);
+					operate(i);
 				}
 			}
 		}
@@ -180,6 +155,10 @@ void paracrypt::Launcher::encrypt(
 						% *it
 					);
 					c = chunks[*it];
+//					// TODO toremove
+//					if(*it < 5) {
+//						hexdump("to output block sample", c.data, c.nBlocks);
+//					}
 					io->dump(c);
 					it = executingKernells.erase(it);
 					DEV_TRACE(boost::format("Launcher: I'm yet waiting for another %i chunks... \n") % executingKernells.size());
@@ -189,19 +168,9 @@ void paracrypt::Launcher::encrypt(
 			}
 		}
 
-//
-//			 CUDABlockCipher <-- set clone method
-//				devices[0]->
-//
-//
-//			 if(!finished)
-//			   wait...
-
-//		ciphers[i]->getDevice()->getConcurrentKernels();
-
 		delete[] chunks;
 
-		DEV_TRACE("Launcher: I'm finished dealing with the encryption.\n");
+		LOG_TRACE("Launcher: I'm finished dealing with the encryption.\n");
 }
 
 // TODO para la versión simple va a hacer falta version multibuffer

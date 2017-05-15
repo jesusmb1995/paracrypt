@@ -59,9 +59,9 @@ namespace paracrypt {
   		) = 0;
     public:
 	int encrypt(const unsigned char in[],
-		    const unsigned char out[], int n_blocks);
+		    const unsigned char out[], std::streamsize n_blocks);
 	int decrypt(const unsigned char in[],
-		    const unsigned char out[], int n_blocks);
+		    const unsigned char out[], std::streamsize n_blocks);
     };
 
 }

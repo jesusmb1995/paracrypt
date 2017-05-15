@@ -67,9 +67,9 @@ namespace paracrypt {
 	CudaAES(CudaAES* aes); // Shallow copy constructor
 	virtual ~CudaAES();
 	virtual int encrypt(const unsigned char in[], // async
-			    const unsigned char out[], int n_blocks) = 0;
+			    const unsigned char out[], std::streamsize n_blocks) = 0;
 	virtual int decrypt(const unsigned char in[], // async
-			    const unsigned char out[], int n_blocks) = 0;
+			    const unsigned char out[], std::streamsize n_blocks) = 0;
 
 	void waitFinish();
 	bool checkFinish();

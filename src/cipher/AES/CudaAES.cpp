@@ -170,8 +170,9 @@ void paracrypt::CudaAES::initDeviceEKey(){
 			(4 * (this->getEncryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
 		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
 		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
+		// copy to default stream so that all kernels in other streams can access the key
 		this->getDevice()->memcpyTo(this->getEncryptionExpandedKey()->rd_key,
-					this->deviceEKey, keySize, this->stream);
+					this->deviceEKey, keySize);
 		deviceEKeyConstant = false;
 		}
 	}
@@ -190,7 +191,7 @@ void paracrypt::CudaAES::initDeviceDKey(){
 		this->getDevice()->malloc((void **) &(this->deviceDKey), keySize);
 		this->getDevice()->malloc((void **) &(this->deviceDKey), keySize);
 		this->getDevice()->memcpyTo(this->getDecryptionExpandedKey()->rd_key,
-					this->deviceDKey, keySize, this->stream);
+					this->deviceDKey, keySize);
 		deviceDKeyConstant = false;
 		}
 	}
@@ -820,22 +821,23 @@ void paracrypt::CudaAES::initDeviceTe()
 		if (!this->isCopy && this->deviceTe0 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTe0), TTABLE_SIZE); // 1024 = 256*4
-			this->getDevice()->memcpyTo((void*)Te0,this->deviceTe0, TTABLE_SIZE, this->stream);
+			// memcpy to general stream 0 so that all copies of CudaAES can reutilize this table.
+			this->getDevice()->memcpyTo((void*)Te0,this->deviceTe0, TTABLE_SIZE);
 		}
 		if (!this->isCopy && this->deviceTe1 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTe1), TTABLE_SIZE);
-			this->getDevice()->memcpyTo((void*)Te1,this->deviceTe1, TTABLE_SIZE, this->stream);
+			this->getDevice()->memcpyTo((void*)Te1,this->deviceTe1, TTABLE_SIZE);
 		}
 		if (!this->isCopy && this->deviceTe2 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTe2), TTABLE_SIZE);
-			this->getDevice()->memcpyTo((void*)Te2,this->deviceTe2, TTABLE_SIZE, this->stream);
+			this->getDevice()->memcpyTo((void*)Te2,this->deviceTe2, TTABLE_SIZE);
 		}
 		if (!this->isCopy && this->deviceTe3 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTe3), TTABLE_SIZE);
-			this->getDevice()->memcpyTo((void*)Te3,this->deviceTe3, TTABLE_SIZE, this->stream);
+			this->getDevice()->memcpyTo((void*)Te3,this->deviceTe3, TTABLE_SIZE);
 		}
 	}
 }
@@ -846,27 +848,27 @@ void paracrypt::CudaAES::initDeviceTd()
 		if (!this->isCopy && this->deviceTd0 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTd0), TTABLE_SIZE);
-			this->getDevice()->memcpyTo((void*)Td0,this->deviceTd0, TTABLE_SIZE, this->stream);
+			this->getDevice()->memcpyTo((void*)Td0,this->deviceTd0, TTABLE_SIZE);
 		}
 		if (!this->isCopy && this->deviceTd1 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTd1), TTABLE_SIZE);
-			this->getDevice()->memcpyTo((void*)Td1,this->deviceTd1, TTABLE_SIZE, this->stream);
+			this->getDevice()->memcpyTo((void*)Td1,this->deviceTd1, TTABLE_SIZE);
 		}
 		if (!this->isCopy && this->deviceTd2 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTd2), TTABLE_SIZE);
-			this->getDevice()->memcpyTo((void*)Td2,this->deviceTd2, TTABLE_SIZE, this->stream);
+			this->getDevice()->memcpyTo((void*)Td2,this->deviceTd2, TTABLE_SIZE);
 		}
 		if (!this->isCopy && this->deviceTd3 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTd3), TTABLE_SIZE);
-			this->getDevice()->memcpyTo((void*)Td3,this->deviceTd3, TTABLE_SIZE, this->stream);
+			this->getDevice()->memcpyTo((void*)Td3,this->deviceTd3, TTABLE_SIZE);
 		}
 		if (!this->isCopy && this->deviceTd4 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTd4), 256);
-			this->getDevice()->memcpyTo((void*)Td4,this->deviceTd4, 256, this->stream);
+			this->getDevice()->memcpyTo((void*)Td4,this->deviceTd4, 256);
 		}
 	}
 }

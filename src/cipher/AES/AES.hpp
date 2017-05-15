@@ -51,10 +51,10 @@ namespace paracrypt {
 // To be implemented by child when combining AES with BlockCipher
 //
 //	virtual int encrypt(const unsigned char in[],
-//			    const unsigned char out[], int n_blocks)
+//			    const unsigned char out[], std::streamsize n_blocks)
 //	    = 0;
 //	virtual int decrypt(const unsigned char in[],
-//			    const unsigned char out[], int n_blocks)
+//			    const unsigned char out[], std::streamsize n_blocks)
 //	    = 0;
 //
 // int setKey(const unsigned char key[], int bits) {

@@ -93,7 +93,11 @@ BlockIO::~BlockIO() {
 	if(this->inFile.is_open())
 		this->inFile.close();
 	this->outFile.flush();
+	if(!outFile) {
+		FATAL(boost::format("Error flushing output file: %s\n") % strerror(errno));
+	}
 	this->outFile.close();
+	LOG_TRACE("Output file flushed and closed.");
 }
 
 const unsigned int paracrypt::BlockIO::getBlockSize() {

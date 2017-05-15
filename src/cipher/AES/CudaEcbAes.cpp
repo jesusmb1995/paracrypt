@@ -20,6 +20,7 @@
 
 #include "CudaEcbAes.hpp"
 #include "assert.h"
+#include "logging.hpp" // TODO TOREMOVE
 
 paracrypt::CudaEcbAES::CudaEcbAES()
 {}
@@ -32,7 +33,7 @@ paracrypt::CudaEcbAES::~CudaEcbAES()
 
 int paracrypt::CudaEcbAES::encrypt(const unsigned char in[],
 				      const unsigned char out[],
-				      int n_blocks)
+				      std::streamsize n_blocks)
 {
 	int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
     int gridSize = this->getDevice()->getGridSize(n_blocks, threadsPerCipherBlock);
@@ -41,6 +42,24 @@ int paracrypt::CudaEcbAES::encrypt(const unsigned char in[],
     uint32_t *key = this->getDeviceEKey();
     assert(key != NULL);
     int rounds = this->getEncryptionExpandedKey()->rounds;
+
+    // TODO TOREMOVE
+//    if(rounds == 128 && in[0] != 0x32)  {
+//    			hexdump("wrong input", in, 16*n_blocks);
+//    }
+//    if(rounds == 192 && in[1] != 0x11)  {
+//        	hexdump("wrong input", in, 16*n_blocks);
+//    }
+//    if(rounds == 256 && in[1] != 0x11)  {
+//    	hexdump("wrong input", in, 16*n_blocks);
+//    }
+//    LOG_TRACE(boost::format("encryption key: %x") % key);
+//    LOG_TRACE(boost::format("encryption data ptr: %x") % (int*) in);
+//    LOG_TRACE(boost::format("encryption data size: %i") % dataSize);
+//    LOG_TRACE(boost::format("encryption Te0: %x") % this->getDeviceTe0());
+//    LOG_TRACE(boost::format("encryption Te1: %x") % this->getDeviceTe1());
+//    LOG_TRACE(boost::format("encryption Te2: %x") % this->getDeviceTe2());
+//    LOG_TRACE(boost::format("encryption Te3: %x") % this->getDeviceTe3());
 
     this->getDevice()->memcpyTo((void *) in, this->data, dataSize,
 				this->stream);
@@ -64,7 +83,7 @@ int paracrypt::CudaEcbAES::encrypt(const unsigned char in[],
 
 int paracrypt::CudaEcbAES::decrypt(const unsigned char in[],
 				      const unsigned char out[],
-				      int n_blocks)
+				      std::streamsize n_blocks)
 {
 	int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
     int gridSize = this->getDevice()->getGridSize(n_blocks, threadsPerCipherBlock);
@@ -73,6 +92,25 @@ int paracrypt::CudaEcbAES::decrypt(const unsigned char in[],
     uint32_t *key = this->getDeviceDKey();
     assert(key != NULL);
     int rounds = this->getDecryptionExpandedKey()->rounds;
+
+    // TODO TOREMOVE
+//    if(rounds == 128 && in[0] != 0x39)  {
+//    			hexdump("wrong input", in, 16*n_blocks);
+//    }
+//    if(rounds == 192 && in[1] != 0xa9)  {
+//        	hexdump("wrong input", in, 16*n_blocks);
+//    }
+//    if(rounds == 256 && in[1] != 0xa2)  {
+//    	hexdump("wrong input", in, 16*n_blocks);
+//    }
+//    LOG_TRACE(boost::format("decryption key: %x") % key);
+//    LOG_TRACE(boost::format("decryption data ptr: %x") % (int*) in);
+//    LOG_TRACE(boost::format("decryption data size: %i") % dataSize);
+//    LOG_TRACE(boost::format("decryption Td0: %x") % this->getDeviceTd0());
+//    LOG_TRACE(boost::format("decryption Td1: %x") % this->getDeviceTd1());
+//    LOG_TRACE(boost::format("decryption Td2: %x") % this->getDeviceTd2());
+//    LOG_TRACE(boost::format("decryption Td3: %x") % this->getDeviceTd3());
+//    LOG_TRACE(boost::format("decryption Td4: %x") % (int*) this->getDeviceTd4());
 
     this->getDevice()->memcpyTo((void *) in, this->data, dataSize,
 				this->stream);

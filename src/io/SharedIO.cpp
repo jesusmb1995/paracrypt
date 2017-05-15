@@ -57,7 +57,7 @@ void paracrypt::SharedIO::reading() {
 			}
 		lock.unlock();
 	}
-	DEV_TRACE("SharedIO reader exits.");
+	LOG_TRACE("SharedIO reader exits.");
 }
 
 // Main thread
@@ -125,7 +125,7 @@ void paracrypt::SharedIO::writing() {
 			}
 		lock.unlock();
 	}
-	DEV_TRACE("SharedIO writer exits.");
+	LOG_TRACE("SharedIO writer exits.");
 }
 
 paracrypt::SharedIO::SharedIO(
@@ -199,7 +199,7 @@ void paracrypt::SharedIO::construct(unsigned int nChunks, rlim_t bufferSizeLimit
 }
 void paracrypt::SharedIO::destruct() {
 
-	DEV_TRACE("SharedIO user: Ordering threads to finish... \n");
+	LOG_TRACE("SharedIO user: Ordering threads to finish... \n");
 	boost::unique_lock<boost::mutex> lock(chunk_access);
 		*finishThreading = true;
 		this->thereAreEmptyChunks.notify_all();
