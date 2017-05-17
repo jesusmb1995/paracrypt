@@ -18,23 +18,23 @@
  *
  */
 
-#include "CudaEcbAes1B.hpp"
-#include "CudaEcbAes1B.cuh"
+#include "CudaAes4B.hpp"
+#include "CudaAes4B.cuh"
 
-paracrypt::CudaEcbAES1B::CudaEcbAES1B()
+paracrypt::CudaAES4B::CudaAES4B()
 {}
 
-paracrypt::CudaEcbAES1B::CudaEcbAES1B(CudaEcbAES1B* aes) : CudaEcbAES(aes)
+paracrypt::CudaAES4B::CudaAES4B(CudaAES4B* aes) : CudaAES(aes)
 {}
 
-paracrypt::CudaEcbAES1B::~CudaEcbAES1B()
+paracrypt::CudaAES4B::~CudaAES4B()
 {}
 
-int paracrypt::CudaEcbAES1B::getThreadsPerCipherBlock() {
-	return 16;
+int paracrypt::CudaAES4B::getThreadsPerCipherBlock() {
+	return 4;
 }
 
-int paracrypt::CudaEcbAES1B::cuda_ecb_aes_encrypt(
+int paracrypt::CudaAES4B::cuda_ecb_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -60,7 +60,7 @@ int paracrypt::CudaEcbAES1B::cuda_ecb_aes_encrypt(
 	default:
 		return -1;
 	}
-	DEV_TRACE(boost::format("cuda_ecb_aes_1b_encrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_4b_encrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -73,7 +73,7 @@ int paracrypt::CudaEcbAES1B::cuda_ecb_aes_encrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_1b_encrypt(
+	cuda_ecb_aes_4b_encrypt(
 			gridSize,
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),
@@ -89,7 +89,7 @@ int paracrypt::CudaEcbAES1B::cuda_ecb_aes_encrypt(
 	return 0;
 }
 
-int paracrypt::CudaEcbAES1B::cuda_ecb_aes_decrypt(
+int paracrypt::CudaAES4B::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -116,7 +116,7 @@ int paracrypt::CudaEcbAES1B::cuda_ecb_aes_decrypt(
 	default:
 		return -1;
 	}
-	DEV_TRACE(boost::format("cuda_ecb_aes_1b_decrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_8b_decrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -129,7 +129,7 @@ int paracrypt::CudaEcbAES1B::cuda_ecb_aes_decrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_1b_decrypt(
+	cuda_ecb_aes_4b_decrypt(
 			gridSize,
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),

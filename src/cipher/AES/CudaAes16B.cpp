@@ -18,23 +18,23 @@
  *
  */
 
-#include "CudaEcbAes4B.hpp"
-#include "CudaEcbAes4B.cuh"
+#include "CudaAes16B.hpp"
+#include "CudaAes16B.cuh"
 
-paracrypt::CudaEcbAES4B::CudaEcbAES4B()
+paracrypt::CudaAES16B::CudaAES16B()
 {}
 
-paracrypt::CudaEcbAES4B::CudaEcbAES4B(CudaEcbAES4B* aes) : CudaEcbAES(aes)
+paracrypt::CudaAES16B::CudaAES16B(CudaAES16B* aes) : CudaAES(aes)
 {}
 
-paracrypt::CudaEcbAES4B::~CudaEcbAES4B()
+paracrypt::CudaAES16B::~CudaAES16B()
 {}
 
-int paracrypt::CudaEcbAES4B::getThreadsPerCipherBlock() {
-	return 4;
+int paracrypt::CudaAES16B::getThreadsPerCipherBlock() {
+	return 1;
 }
 
-int paracrypt::CudaEcbAES4B::cuda_ecb_aes_encrypt(
+int paracrypt::CudaAES16B::cuda_ecb_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -60,7 +60,7 @@ int paracrypt::CudaEcbAES4B::cuda_ecb_aes_encrypt(
 	default:
 		return -1;
 	}
-	DEV_TRACE(boost::format("cuda_ecb_aes_4b_encrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_16b_encrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -73,7 +73,7 @@ int paracrypt::CudaEcbAES4B::cuda_ecb_aes_encrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_4b_encrypt(
+	cuda_ecb_aes_16b_encrypt(
 			gridSize,
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),
@@ -89,7 +89,7 @@ int paracrypt::CudaEcbAES4B::cuda_ecb_aes_encrypt(
 	return 0;
 }
 
-int paracrypt::CudaEcbAES4B::cuda_ecb_aes_decrypt(
+int paracrypt::CudaAES16B::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -116,7 +116,7 @@ int paracrypt::CudaEcbAES4B::cuda_ecb_aes_decrypt(
 	default:
 		return -1;
 	}
-	DEV_TRACE(boost::format("cuda_ecb_aes_8b_decrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_16b_decrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -129,7 +129,7 @@ int paracrypt::CudaEcbAES4B::cuda_ecb_aes_decrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_4b_decrypt(
+	cuda_ecb_aes_16b_decrypt(
 			gridSize,
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),

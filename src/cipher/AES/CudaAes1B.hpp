@@ -20,15 +20,15 @@
 
 #pragma once
 
-#include "CudaEcbAes.hpp"
+#include "CudaAES.hpp"
 
 namespace paracrypt {
 
-    class CudaEcbAES8B:public CudaEcbAES {
+    class CudaAES1B:public CudaAES {
     public:
-    	CudaEcbAES8B();
-    	CudaEcbAES8B(CudaEcbAES8B* aes);
-    	~CudaEcbAES8B();
+    	CudaAES1B();
+    	CudaAES1B(CudaAES1B* aes);
+    	~CudaAES1B();
     protected:
   int getThreadsPerCipherBlock();
   int cuda_ecb_aes_encrypt(

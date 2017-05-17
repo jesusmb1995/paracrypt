@@ -18,7 +18,7 @@
  *
  */
 
-#include "CudaEcbAes16B.cuh"
+#include "CudaAes16B.cuh"
 #include "cuda_logging.cuh"
 
 __global__ void __cuda_ecb_aes_16b_encrypt__(

@@ -18,9 +18,9 @@
  *
  */
 
-#include "CudaEcbAes4B.cuh"
+#include "CudaAes8B.cuh"
 
-__global__ void __cuda_ecb_aes_4b_encrypt__(
+__global__ void __cuda_ecb_aes_8b_encrypt__(
 		  int n,
 		  uint32_t* d,
 	  	  uint32_t* k,
@@ -36,7 +36,8 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 	extern __shared__ uint32_t state[];
 
 	int bi = ((blockIdx.x * blockDim.x) + threadIdx.x); // section index
-	const int s_size = blockDim.x/4;
+
+	const int s_size = blockDim.x/2;
 	//__LOG_TRACE__("s_size => %d", s_size);
 	uint32_t* s0 = state           ;
 	uint32_t* s1 = state+(  s_size);
@@ -47,10 +48,10 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 	uint32_t* t2 = state+(6*s_size);
 	uint32_t* t3 = state+(7*s_size);
 
-	int p = bi;
-	int sti = threadIdx.x/4; //state index
-	int ti = threadIdx.x%4; // block-thread index: 0, 1, 2 or 3 (4 threads per cipher-block)
-	int valid_thread = bi < n*4;
+	int p = bi*2;
+	int sti = threadIdx.x/2; //state index
+	int ti = threadIdx.x%2; // block-thread index: 0 or 1 (2 threads per cipher-block)
+	int valid_thread = bi < n*2;
 	int key_index_sum = 0;
 
 #if defined(DEBUG) && defined(DEVEL)
@@ -65,28 +66,25 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 	 * and add initial round key:
 	 */
 	if(valid_thread && ti == 0) {
-		__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
-		s0[sti] = d[p] ^ k[0];
-		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
+	__LOG_TRACE__("p %d: ti => %d",p,ti);
+	__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
+	__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p+1]);
+	__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
+	__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
+	s0[sti] = d[p]   ^ k[0];
+	s1[sti] = d[p+1] ^ k[1];
+	__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
+	__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 	}
 	else if(valid_thread && ti == 1) {
-		__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
-		s1[sti] = d[p] ^ k[1];
-		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
-	}
-	else if(valid_thread && ti == 2) {
-		__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
-		s2[sti] = d[p] ^ k[2];
-		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-	}
-	else if(valid_thread && ti == 3) {
-		__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
-		s3[sti] = d[p] ^ k[3];
-		__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
+	__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p]);
+	__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p+1]);
+	__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
+	__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
+	s2[sti] = d[p]   ^ k[2];
+	s3[sti] = d[p+1] ^ k[3];
+	__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
+	__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 	}
 
 	// 8 rounds - in each loop we do two rounds
@@ -94,25 +92,6 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 	for(int r2 = 1; r2 <= 4; r2++) {
 		__syncthreads();
 		if(valid_thread && ti == 0) {
-			t0[sti] =
-				T0[(s0[sti]      ) & 0xff] ^
-				T1[(s1[sti] >>  8) & 0xff] ^
-				T2[(s2[sti] >> 16) & 0xff] ^
-				T3[(s3[sti] >> 24)       ] ^
-				k[(r2*8)-4];
-			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-
-		}
-		else if(valid_thread && ti == 1) {
-		t1[sti] =
-			T0[(s1[sti]      ) & 0xff] ^
-			T1[(s2[sti] >>  8) & 0xff] ^
-			T2[(s3[sti] >> 16) & 0xff] ^
-			T3[(s0[sti] >> 24)       ] ^
-			k[(r2*8)-3];
-		__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
-		}
-		else if(valid_thread && ti == 2) {
 			__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
 			__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
 			__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
@@ -121,23 +100,46 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 			__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
 			__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
 			__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
-			__LOG_TRACE__("p %d: k[%d] => 0x%04x",p,(r2*8)-2 , k[(r2*8)-2]);
-			t2[sti] =
-				T0[(s2[sti]      ) & 0xff] ^
-				T1[(s3[sti] >>  8) & 0xff] ^
-				T2[(s0[sti] >> 16) & 0xff] ^
-				T3[(s1[sti] >> 24)       ] ^
-				k[(r2*8)-2];
-			__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+			__LOG_TRACE__("p %d: k[%d] => 0x%04x",p,(r2*8)-4 , k[(r2*8)-4]);
+			t0[sti] =
+				T0[(s0[sti]      ) & 0xff] ^
+				T1[(s1[sti] >>  8) & 0xff] ^
+				T2[(s2[sti] >> 16) & 0xff] ^
+				T3[(s3[sti] >> 24)       ] ^
+				k[(r2*8)-4];
+			t1[sti] =
+				T0[(s1[sti]      ) & 0xff] ^
+				T1[(s2[sti] >>  8) & 0xff] ^
+				T2[(s3[sti] >> 16) & 0xff] ^
+				T3[(s0[sti] >> 24)       ] ^
+				k[(r2*8)-3];
+			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
+			__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 		}
-		else if(valid_thread && ti == 3) {
-			t3[sti] =
-				T0[(s3[sti]      ) & 0xff] ^
-				T1[(s0[sti] >>  8) & 0xff] ^
-				T2[(s1[sti] >> 16) & 0xff] ^
-				T3[(s2[sti] >> 24)       ] ^
-				k[(r2*8)-1];
-			__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
+		else if(valid_thread && ti == 1) {
+		__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+		__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+		__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+		__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+		__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+		__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+		__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+		__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+		__LOG_TRACE__("p %d: k[%d] => 0x%04x",p,(r2*8)-4 , k[(r2*8)-4]);
+		t2[sti] =
+			T0[(s2[sti]      ) & 0xff] ^
+			T1[(s3[sti] >>  8) & 0xff] ^
+			T2[(s0[sti] >> 16) & 0xff] ^
+			T3[(s1[sti] >> 24)       ] ^
+			k[(r2*8)-2];
+		t3[sti] =
+			T0[(s3[sti]      ) & 0xff] ^
+			T1[(s0[sti] >>  8) & 0xff] ^
+			T2[(s1[sti] >> 16) & 0xff] ^
+			T3[(s2[sti] >> 24)       ] ^
+			k[(r2*8)-1];
+		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+		__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 		}
 		__syncthreads();
 		if(valid_thread && ti == 0) {
@@ -147,34 +149,29 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 				T2[(t2[sti] >> 16) & 0xff] ^
 				T3[(t3[sti] >> 24)       ] ^
 				k[(r2*8)  ];
-			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
-
-		}
-		else if(valid_thread && ti == 1) {
 			s1[sti] =
 				T0[(t1[sti]      ) & 0xff] ^
 				T1[(t2[sti] >>  8) & 0xff] ^
 				T2[(t3[sti] >> 16) & 0xff] ^
 				T3[(t0[sti] >> 24)       ] ^
 				k[(r2*8)+1];
+			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 			__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 		}
-		if(valid_thread && ti == 2) {
+		else if(valid_thread && ti == 1) {
 			s2[sti] =
 				T0[(t2[sti]      ) & 0xff] ^
 				T1[(t3[sti] >>  8) & 0xff] ^
 				T2[(t0[sti] >> 16) & 0xff] ^
 				T3[(t1[sti] >> 24)       ] ^
 				k[(r2*8)+2];
-			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-		}
-		if(valid_thread && ti == 3) {
 			s3[sti] =
 				T0[(t3[sti]      ) & 0xff] ^
 				T1[(t0[sti] >>  8) & 0xff] ^
 				T2[(t1[sti] >> 16) & 0xff] ^
 				T3[(t2[sti] >> 24)       ] ^
 				k[(r2*8)+3];
+			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
 			__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 		}
 	}
@@ -183,42 +180,55 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 		key_index_sum = 8;
 		__syncthreads();
 		if(valid_thread && ti == 0) {
+			__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+			__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+			__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+			__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+			__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+			__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+			__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+			__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+			__LOG_TRACE__("p %d: k[36] => 0x%04x",p, k[36]);
 			t0[sti] =
 				T0[(s0[sti]      ) & 0xff] ^
 				T1[(s1[sti] >>  8) & 0xff] ^
 				T2[(s2[sti] >> 16) & 0xff] ^
 				T3[(s3[sti] >> 24)       ] ^
 				k[36];
-			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-		}
-		else if(valid_thread && ti == 1) {
 			t1[sti] =
 				T0[(s1[sti]      ) & 0xff] ^
 				T1[(s2[sti] >>  8) & 0xff] ^
 				T2[(s3[sti] >> 16) & 0xff] ^
 				T3[(s0[sti] >> 24)       ] ^
 				k[37];
+			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
 			__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 		}
-		else if(valid_thread && ti == 2) {
-			t2[sti] =
-				T0[(s2[sti]      ) & 0xff] ^
-				T1[(s3[sti] >>  8) & 0xff] ^
-				T2[(s0[sti] >> 16) & 0xff] ^
-				T3[(s1[sti] >> 24)       ] ^
-				k[38];
-			__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+		else if(valid_thread && ti == 1) {
+		__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+		__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+		__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+		__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+		__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+		__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+		__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+		__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+		__LOG_TRACE__("p %d: k[38] => 0x%04x",p, k[38]);
+		t2[sti] =
+			T0[(s2[sti]      ) & 0xff] ^
+			T1[(s3[sti] >>  8) & 0xff] ^
+			T2[(s0[sti] >> 16) & 0xff] ^
+			T3[(s1[sti] >> 24)       ] ^
+			k[38];
+		t3[sti] =
+			T0[(s3[sti]      ) & 0xff] ^
+			T1[(s0[sti] >>  8) & 0xff] ^
+			T2[(s1[sti] >> 16) & 0xff] ^
+			T3[(s2[sti] >> 24)       ] ^
+			k[39];
+		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+		__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 		}
-		else if(valid_thread && ti == 3) {
-			t3[sti] =
-				T0[(s3[sti]      ) & 0xff] ^
-				T1[(s0[sti] >>  8) & 0xff] ^
-				T2[(s1[sti] >> 16) & 0xff] ^
-				T3[(s2[sti] >> 24)       ] ^
-				k[39];
-			__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
-		}
-
 		__syncthreads();
 		if(valid_thread && ti == 0) {
 			s0[sti] =
@@ -227,33 +237,29 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 				T2[(t2[sti] >> 16) & 0xff] ^
 				T3[(t3[sti] >> 24)       ] ^
 				k[40];
-			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
-		}
-		else if(valid_thread && ti == 1) {
 			s1[sti] =
 				T0[(t1[sti]      ) & 0xff] ^
 				T1[(t2[sti] >>  8) & 0xff] ^
 				T2[(t3[sti] >> 16) & 0xff] ^
 				T3[(t0[sti] >> 24)       ] ^
 				k[41];
+			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 			__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 		}
-		else if(valid_thread && ti == 2) {
+		else if(valid_thread && ti == 1) {
 			s2[sti] =
 				T0[(t2[sti]      ) & 0xff] ^
 				T1[(t3[sti] >>  8) & 0xff] ^
 				T2[(t0[sti] >> 16) & 0xff] ^
 				T3[(t1[sti] >> 24)       ] ^
 				k[42];
-			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-		}
-		else if(valid_thread && ti == 3) {
 			s3[sti] =
 				T0[(t3[sti]      ) & 0xff] ^
 				T1[(t0[sti] >>  8) & 0xff] ^
 				T2[(t1[sti] >> 16) & 0xff] ^
 				T3[(t2[sti] >> 24)       ] ^
 				k[43];
+			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
 			__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 		}
 
@@ -261,40 +267,54 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 			key_index_sum = 16;
 			__syncthreads();
 			if(valid_thread && ti == 0) {
+				__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+				__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+				__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+				__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+				__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+				__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+				__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+				__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+				__LOG_TRACE__("p %d: k[44] => 0x%04x",p, k[44]);
 				t0[sti] =
 					T0[(s0[sti]      ) & 0xff] ^
 					T1[(s1[sti] >>  8) & 0xff] ^
 					T2[(s2[sti] >> 16) & 0xff] ^
 					T3[(s3[sti] >> 24)       ] ^
 					k[44];
-				__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-			}
-			else if(valid_thread && ti == 1) {
 				t1[sti] =
 					T0[(s1[sti]      ) & 0xff] ^
 					T1[(s2[sti] >>  8) & 0xff] ^
 					T2[(s3[sti] >> 16) & 0xff] ^
 					T3[(s0[sti] >> 24)       ] ^
 					k[45];
+				__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
 				__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 			}
-			if(valid_thread && ti == 2) {
-				t2[sti] =
-					T0[(s2[sti]      ) & 0xff] ^
-					T1[(s3[sti] >>  8) & 0xff] ^
-					T2[(s0[sti] >> 16) & 0xff] ^
-					T3[(s1[sti] >> 24)       ] ^
-					k[46];
-				__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
-			}
-			if(valid_thread && ti == 3) {
-				t3[sti] =
-					T0[(s3[sti]      ) & 0xff] ^
-					T1[(s0[sti] >>  8) & 0xff] ^
-					T2[(s1[sti] >> 16) & 0xff] ^
-					T3[(s2[sti] >> 24)       ] ^
-					k[47];
-				__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
+			else if(valid_thread && ti == 1) {
+			__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+			__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+			__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+			__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+			__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+			__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+			__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+			__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+			__LOG_TRACE__("p %d: k[46] => 0x%04x",p, k[46]);
+			t2[sti] =
+				T0[(s2[sti]      ) & 0xff] ^
+				T1[(s3[sti] >>  8) & 0xff] ^
+				T2[(s0[sti] >> 16) & 0xff] ^
+				T3[(s1[sti] >> 24)       ] ^
+				k[46];
+			t3[sti] =
+				T0[(s3[sti]      ) & 0xff] ^
+				T1[(s0[sti] >>  8) & 0xff] ^
+				T2[(s1[sti] >> 16) & 0xff] ^
+				T3[(s2[sti] >> 24)       ] ^
+				k[47];
+			__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+			__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 			}
 			__syncthreads();
 			if(valid_thread && ti == 0) {
@@ -304,33 +324,29 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 					T2[(t2[sti] >> 16) & 0xff] ^
 					T3[(t3[sti] >> 24)       ] ^
 					k[48];
-				__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
-			}
-			else if(valid_thread && ti == 1) {
 				s1[sti] =
 					T0[(t1[sti]      ) & 0xff] ^
 					T1[(t2[sti] >>  8) & 0xff] ^
 					T2[(t3[sti] >> 16) & 0xff] ^
 					T3[(t0[sti] >> 24)       ] ^
 					k[49];
+				__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 				__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 			}
-			if(valid_thread && ti == 2) {
+			else if(valid_thread && ti == 1) {
 				s2[sti] =
 					T0[(t2[sti]      ) & 0xff] ^
 					T1[(t3[sti] >>  8) & 0xff] ^
 					T2[(t0[sti] >> 16) & 0xff] ^
 					T3[(t1[sti] >> 24)       ] ^
 					k[50];
-				__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-			}
-			if(valid_thread && ti == 3) {
 				s3[sti] =
 					T0[(t3[sti]      ) & 0xff] ^
 					T1[(t0[sti] >>  8) & 0xff] ^
 					T2[(t1[sti] >> 16) & 0xff] ^
 					T3[(t2[sti] >> 24)       ] ^
 					k[51];
+				__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
 				__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 			}
 		}
@@ -344,33 +360,29 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 			T2[(s2[sti] >> 16) & 0xff] ^
 			T3[(s3[sti] >> 24)       ] ^
 			k[36+key_index_sum];
-		__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-	}
-	if(valid_thread && ti == 1) {
 		t1[sti] =
 			T0[(s1[sti]      ) & 0xff] ^
 			T1[(s2[sti] >>  8) & 0xff] ^
 			T2[(s3[sti] >> 16) & 0xff] ^
 			T3[(s0[sti] >> 24)       ] ^
 			k[37+key_index_sum];
+		__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
 		__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 	}
-	if(valid_thread && ti == 2) {
+	if(valid_thread && ti == 1) {
 		t2[sti] =
 			T0[(s2[sti]      ) & 0xff] ^
 			T1[(s3[sti] >>  8) & 0xff] ^
 			T2[(s0[sti] >> 16) & 0xff] ^
 			T3[(s1[sti] >> 24)       ] ^
 			k[38+key_index_sum];
-		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
-	}
-	if(valid_thread && ti == 3) {
 		t3[sti] =
 			T0[(s3[sti]      ) & 0xff] ^
 			T1[(s0[sti] >>  8) & 0xff] ^
 			T2[(s1[sti] >> 16) & 0xff] ^
 			T3[(s2[sti] >> 24)       ] ^
 			k[39+key_index_sum];
+		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
 		__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 	}
 
@@ -385,8 +397,6 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 			k[40+key_index_sum];
 		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 		d[p] = s0[sti];
-	}
-	else if(valid_thread && ti == 1){
 		s1[sti] =
 			(T2[(t1[sti]      ) & 0xff] & 0x000000ff) ^
 			(T3[(t2[sti] >>  8) & 0xff] & 0x0000ff00) ^
@@ -394,9 +404,9 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 			(T1[(t0[sti] >> 24)       ] & 0xff000000) ^
 			k[41+key_index_sum];
 		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
-		d[p] = s1[sti];
+		d[p+1] = s1[sti];
 	}
-	if(valid_thread && ti == 2) {
+	else if(valid_thread && ti == 1){
 		s2[sti] =
 			(T2[(t2[sti]      ) & 0xff] & 0x000000ff) ^
 			(T3[(t3[sti] >>  8) & 0xff] & 0x0000ff00) ^
@@ -405,8 +415,6 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 			k[42+key_index_sum];
 		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
 		d[p] = s2[sti];
-	}
-	if(valid_thread && ti == 3) {
 		s3[sti] =
 			(T2[(t3[sti]      ) & 0xff] & 0x000000ff) ^
 			(T3[(t0[sti] >>  8) & 0xff] & 0x0000ff00) ^
@@ -414,11 +422,11 @@ __global__ void __cuda_ecb_aes_4b_encrypt__(
 			(T2[(t2[sti] >> 24)       ] & 0xff000000) ^
 			k[43+key_index_sum];
 		__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
-		d[p] = s3[sti];
+		d[p+1] = s3[sti];
 	}
 }
 
-__global__ void __cuda_ecb_aes_4b_decrypt__(
+__global__ void __cuda_ecb_aes_8b_decrypt__(
 		  int n,
 		  uint32_t* d,
 	  	  uint32_t* k,
@@ -435,7 +443,8 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 	extern __shared__ uint32_t state[];
 
 	int bi = ((blockIdx.x * blockDim.x) + threadIdx.x); // section index
-	const int s_size = blockDim.x/4;
+
+	const int s_size = blockDim.x/2;
 	//__LOG_TRACE__("s_size => %d", s_size);
 	uint32_t* s0 = state           ;
 	uint32_t* s1 = state+(  s_size);
@@ -446,10 +455,10 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 	uint32_t* t2 = state+(6*s_size);
 	uint32_t* t3 = state+(7*s_size);
 
-	int p = bi;
-	int sti = threadIdx.x/4; //state index
-	int ti = threadIdx.x%4; // block-thread index: 0, 1, 2 or 3 (4 threads per cipher-block)
-	int valid_thread = bi < n*4;
+	int p = bi*2;
+	int sti = threadIdx.x/2; //state index
+	int ti = threadIdx.x%2; // block-thread index: 0 or 1 (2 threads per cipher-block)
+	int valid_thread = bi < n*2;
 	int key_index_sum = 0;
 
 #if defined(DEBUG) && defined(DEVEL)
@@ -464,28 +473,25 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 	 * and add initial round key:
 	 */
 	if(valid_thread && ti == 0) {
-		__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
-		s0[sti] = d[p] ^ k[0];
-		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
+	__LOG_TRACE__("p %d: ti => %d",p,ti);
+	__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
+	__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p+1]);
+	__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
+	__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
+	s0[sti] = d[p]   ^ k[0];
+	s1[sti] = d[p+1] ^ k[1];
+	__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
+	__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 	}
 	else if(valid_thread && ti == 1) {
-		__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
-		s1[sti] = d[p] ^ k[1];
-		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
-	}
-	else if(valid_thread && ti == 2) {
-		__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
-		s2[sti] = d[p] ^ k[2];
-		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-	}
-	else if(valid_thread && ti == 3) {
-		__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
-		s3[sti] = d[p] ^ k[3];
-		__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
+	__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p]);
+	__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p+1]);
+	__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
+	__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
+	s2[sti] = d[p]   ^ k[2];
+	s3[sti] = d[p+1] ^ k[3];
+	__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
+	__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 	}
 
 	// 8 rounds - in each loop we do two rounds
@@ -493,25 +499,6 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 	for(int r2 = 1; r2 <= 4; r2++) {
 		__syncthreads();
 		if(valid_thread && ti == 0) {
-			t0[sti] =
-				T0[(s0[sti]      ) & 0xff] ^
-				T1[(s3[sti] >>  8) & 0xff] ^
-				T2[(s2[sti] >> 16) & 0xff] ^
-				T3[(s1[sti] >> 24)       ] ^
-				k[(r2*8)-4];
-			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-
-		}
-		else if(valid_thread && ti == 1) {
-		t1[sti] =
-			T0[(s1[sti]      ) & 0xff] ^
-			T1[(s0[sti] >>  8) & 0xff] ^
-			T2[(s3[sti] >> 16) & 0xff] ^
-			T3[(s2[sti] >> 24)       ] ^
-			k[(r2*8)-3];
-		__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
-		}
-		else if(valid_thread && ti == 2) {
 			__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
 			__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
 			__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
@@ -520,23 +507,46 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 			__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
 			__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
 			__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
-			__LOG_TRACE__("p %d: k[%d] => 0x%04x",p,(r2*8)-2 , k[(r2*8)-2]);
-			t2[sti] =
-				T0[(s2[sti]      ) & 0xff] ^
-				T1[(s1[sti] >>  8) & 0xff] ^
-				T2[(s0[sti] >> 16) & 0xff] ^
-				T3[(s3[sti] >> 24)       ] ^
-				k[(r2*8)-2];
-			__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+			__LOG_TRACE__("p %d: k[%d] => 0x%04x",p,(r2*8)-4 , k[(r2*8)-4]);
+			t0[sti] =
+				T0[(s0[sti]      ) & 0xff] ^
+				T1[(s3[sti] >>  8) & 0xff] ^
+				T2[(s2[sti] >> 16) & 0xff] ^
+				T3[(s1[sti] >> 24)       ] ^
+				k[(r2*8)-4];
+			t1[sti] =
+				T0[(s1[sti]      ) & 0xff] ^
+				T1[(s0[sti] >>  8) & 0xff] ^
+				T2[(s3[sti] >> 16) & 0xff] ^
+				T3[(s2[sti] >> 24)       ] ^
+				k[(r2*8)-3];
+			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
+			__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 		}
-		else if(valid_thread && ti == 3) {
-			t3[sti] =
-				T0[(s3[sti]      ) & 0xff] ^
-				T1[(s2[sti] >>  8) & 0xff] ^
-				T2[(s1[sti] >> 16) & 0xff] ^
-				T3[(s0[sti] >> 24)       ] ^
-				k[(r2*8)-1];
-			__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
+		else if(valid_thread && ti == 1) {
+		__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+		__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+		__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+		__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+		__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+		__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+		__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+		__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+		__LOG_TRACE__("p %d: k[%d] => 0x%04x",p,(r2*8)-4 , k[(r2*8)-4]);
+		t2[sti] =
+			T0[(s2[sti]      ) & 0xff] ^
+			T1[(s1[sti] >>  8) & 0xff] ^
+			T2[(s0[sti] >> 16) & 0xff] ^
+			T3[(s3[sti] >> 24)       ] ^
+			k[(r2*8)-2];
+		t3[sti] =
+			T0[(s3[sti]      ) & 0xff] ^
+			T1[(s2[sti] >>  8) & 0xff] ^
+			T2[(s1[sti] >> 16) & 0xff] ^
+			T3[(s0[sti] >> 24)       ] ^
+			k[(r2*8)-1];
+		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+		__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 		}
 		__syncthreads();
 		if(valid_thread && ti == 0) {
@@ -546,34 +556,29 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 				T2[(t2[sti] >> 16) & 0xff] ^
 				T3[(t1[sti] >> 24)       ] ^
 				k[(r2*8)  ];
-			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
-
-		}
-		else if(valid_thread && ti == 1) {
 			s1[sti] =
 				T0[(t1[sti]      ) & 0xff] ^
 				T1[(t0[sti] >>  8) & 0xff] ^
 				T2[(t3[sti] >> 16) & 0xff] ^
 				T3[(t2[sti] >> 24)       ] ^
 				k[(r2*8)+1];
+			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 			__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 		}
-		if(valid_thread && ti == 2) {
+		else if(valid_thread && ti == 1) {
 			s2[sti] =
 				T0[(t2[sti]      ) & 0xff] ^
 				T1[(t1[sti] >>  8) & 0xff] ^
 				T2[(t0[sti] >> 16) & 0xff] ^
 				T3[(t3[sti] >> 24)       ] ^
 				k[(r2*8)+2];
-			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-		}
-		if(valid_thread && ti == 3) {
 			s3[sti] =
 				T0[(t3[sti]      ) & 0xff] ^
 				T1[(t2[sti] >>  8) & 0xff] ^
 				T2[(t1[sti] >> 16) & 0xff] ^
 				T3[(t0[sti] >> 24)       ] ^
 				k[(r2*8)+3];
+			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
 			__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 		}
 	}
@@ -582,42 +587,55 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 		key_index_sum = 8;
 		__syncthreads();
 		if(valid_thread && ti == 0) {
+			__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+			__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+			__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+			__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+			__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+			__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+			__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+			__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+			__LOG_TRACE__("p %d: k[36] => 0x%04x",p, k[36]);
 			t0[sti] =
 				T0[(s0[sti]      ) & 0xff] ^
 				T1[(s3[sti] >>  8) & 0xff] ^
 				T2[(s2[sti] >> 16) & 0xff] ^
 				T3[(s1[sti] >> 24)       ] ^
 				k[36];
-			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-		}
-		else if(valid_thread && ti == 1) {
 			t1[sti] =
 				T0[(s1[sti]      ) & 0xff] ^
 				T1[(s0[sti] >>  8) & 0xff] ^
 				T2[(s3[sti] >> 16) & 0xff] ^
 				T3[(s2[sti] >> 24)       ] ^
 				k[37];
+			__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
 			__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 		}
-		else if(valid_thread && ti == 2) {
-			t2[sti] =
-				T0[(s2[sti]      ) & 0xff] ^
-				T1[(s1[sti] >>  8) & 0xff] ^
-				T2[(s0[sti] >> 16) & 0xff] ^
-				T3[(s3[sti] >> 24)       ] ^
-				k[38];
-			__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+		else if(valid_thread && ti == 1) {
+		__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+		__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+		__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+		__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+		__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+		__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+		__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+		__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+		__LOG_TRACE__("p %d: k[38] => 0x%04x",p, k[38]);
+		t2[sti] =
+			T0[(s2[sti]      ) & 0xff] ^
+			T1[(s1[sti] >>  8) & 0xff] ^
+			T2[(s0[sti] >> 16) & 0xff] ^
+			T3[(s3[sti] >> 24)       ] ^
+			k[38];
+		t3[sti] =
+			T0[(s3[sti]      ) & 0xff] ^
+			T1[(s2[sti] >>  8) & 0xff] ^
+			T2[(s1[sti] >> 16) & 0xff] ^
+			T3[(s0[sti] >> 24)       ] ^
+			k[39];
+		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+		__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 		}
-		else if(valid_thread && ti == 3) {
-			t3[sti] =
-				T0[(s3[sti]      ) & 0xff] ^
-				T1[(s2[sti] >>  8) & 0xff] ^
-				T2[(s1[sti] >> 16) & 0xff] ^
-				T3[(s0[sti] >> 24)       ] ^
-				k[39];
-			__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
-		}
-
 		__syncthreads();
 		if(valid_thread && ti == 0) {
 			s0[sti] =
@@ -626,33 +644,29 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 				T2[(t2[sti] >> 16) & 0xff] ^
 				T3[(t1[sti] >> 24)       ] ^
 				k[40];
-			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
-		}
-		else if(valid_thread && ti == 1) {
 			s1[sti] =
 				T0[(t1[sti]      ) & 0xff] ^
 				T1[(t0[sti] >>  8) & 0xff] ^
 				T2[(t3[sti] >> 16) & 0xff] ^
 				T3[(t2[sti] >> 24)       ] ^
 				k[41];
+			__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 			__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 		}
-		else if(valid_thread && ti == 2) {
+		else if(valid_thread && ti == 1) {
 			s2[sti] =
 				T0[(t2[sti]      ) & 0xff] ^
 				T1[(t1[sti] >>  8) & 0xff] ^
 				T2[(t0[sti] >> 16) & 0xff] ^
 				T3[(t3[sti] >> 24)       ] ^
 				k[42];
-			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-		}
-		else if(valid_thread && ti == 3) {
 			s3[sti] =
 				T0[(t3[sti]      ) & 0xff] ^
 				T1[(t2[sti] >>  8) & 0xff] ^
 				T2[(t1[sti] >> 16) & 0xff] ^
 				T3[(t0[sti] >> 24)       ] ^
 				k[43];
+			__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
 			__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 		}
 
@@ -660,40 +674,54 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 			key_index_sum = 16;
 			__syncthreads();
 			if(valid_thread && ti == 0) {
+				__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+				__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+				__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+				__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+				__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+				__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+				__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+				__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+				__LOG_TRACE__("p %d: k[44] => 0x%04x",p, k[44]);
 				t0[sti] =
 					T0[(s0[sti]      ) & 0xff] ^
 					T1[(s3[sti] >>  8) & 0xff] ^
 					T2[(s2[sti] >> 16) & 0xff] ^
 					T3[(s1[sti] >> 24)       ] ^
 					k[44];
-				__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-			}
-			else if(valid_thread && ti == 1) {
 				t1[sti] =
 					T0[(s1[sti]      ) & 0xff] ^
 					T1[(s0[sti] >>  8) & 0xff] ^
 					T2[(s3[sti] >> 16) & 0xff] ^
 					T3[(s2[sti] >> 24)       ] ^
 					k[45];
+				__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
 				__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 			}
-			if(valid_thread && ti == 2) {
-				t2[sti] =
-					T0[(s2[sti]      ) & 0xff] ^
-					T1[(s1[sti] >>  8) & 0xff] ^
-					T2[(s0[sti] >> 16) & 0xff] ^
-					T3[(s3[sti] >> 24)       ] ^
-					k[46];
-				__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
-			}
-			if(valid_thread && ti == 3) {
-				t3[sti] =
-					T0[(s3[sti]      ) & 0xff] ^
-					T1[(s2[sti] >>  8) & 0xff] ^
-					T2[(s1[sti] >> 16) & 0xff] ^
-					T3[(s0[sti] >> 24)       ] ^
-					k[47];
-				__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
+			else if(valid_thread && ti == 1) {
+			__LOG_TRACE__("p %d: (s0      ) & 0xff => 0x%04x",p,(s0[sti]      ) & 0xff);
+			__LOG_TRACE__("p %d: (s1 >>  8) & 0xff => 0x%04x",p,(s1[sti] >>  8) & 0xff);
+			__LOG_TRACE__("p %d: (s2 >> 16) & 0xff => 0x%04x",p,(s2[sti] >> 16) & 0xff);
+			__LOG_TRACE__("p %d: (s3 >> 24)        => 0x%04x",p,(s3[sti] >> 24));
+			__LOG_TRACE__("p %d: T0[(s0      ) & 0xff] => 0x%04x",p,T0[(s0[sti]      ) & 0xff]);
+			__LOG_TRACE__("p %d: T1[(s1 >>  8) & 0xff] => 0x%04x",p,T1[(s1[sti] >>  8) & 0xff]);
+			__LOG_TRACE__("p %d: T2[(s2 >> 16) & 0xff] => 0x%04x",p,T2[(s2[sti] >> 16) & 0xff]);
+			__LOG_TRACE__("p %d: T3[(s3 >> 24)       ] => 0x%04x",p,T3[(s3[sti] >> 24)       ]);
+			__LOG_TRACE__("p %d: k[46] => 0x%04x",p, k[46]);
+			t2[sti] =
+				T0[(s2[sti]      ) & 0xff] ^
+				T1[(s1[sti] >>  8) & 0xff] ^
+				T2[(s0[sti] >> 16) & 0xff] ^
+				T3[(s3[sti] >> 24)       ] ^
+				k[46];
+			t3[sti] =
+				T0[(s3[sti]      ) & 0xff] ^
+				T1[(s2[sti] >>  8) & 0xff] ^
+				T2[(s1[sti] >> 16) & 0xff] ^
+				T3[(s0[sti] >> 24)       ] ^
+				k[47];
+			__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
+			__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 			}
 			__syncthreads();
 			if(valid_thread && ti == 0) {
@@ -703,33 +731,29 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 					T2[(t2[sti] >> 16) & 0xff] ^
 					T3[(t1[sti] >> 24)       ] ^
 					k[48];
-				__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
-			}
-			else if(valid_thread && ti == 1) {
 				s1[sti] =
 					T0[(t1[sti]      ) & 0xff] ^
 					T1[(t0[sti] >>  8) & 0xff] ^
 					T2[(t3[sti] >> 16) & 0xff] ^
 					T3[(t2[sti] >> 24)       ] ^
 					k[49];
+				__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 				__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1[sti]);
 			}
-			if(valid_thread && ti == 2) {
+			else if(valid_thread && ti == 1) {
 				s2[sti] =
 					T0[(t2[sti]      ) & 0xff] ^
 					T1[(t1[sti] >>  8) & 0xff] ^
 					T2[(t0[sti] >> 16) & 0xff] ^
 					T3[(t3[sti] >> 24)       ] ^
 					k[50];
-				__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-			}
-			if(valid_thread && ti == 3) {
 				s3[sti] =
 					T0[(t3[sti]      ) & 0xff] ^
 					T1[(t2[sti] >>  8) & 0xff] ^
 					T2[(t1[sti] >> 16) & 0xff] ^
 					T3[(t0[sti] >> 24)       ] ^
 					k[51];
+				__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
 				__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
 			}
 		}
@@ -743,33 +767,29 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 			T2[(s2[sti] >> 16) & 0xff] ^
 			T3[(s1[sti] >> 24)       ] ^
 			k[36+key_index_sum];
-		__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
-	}
-	if(valid_thread && ti == 1) {
 		t1[sti] =
 			T0[(s1[sti]      ) & 0xff] ^
 			T1[(s0[sti] >>  8) & 0xff] ^
 			T2[(s3[sti] >> 16) & 0xff] ^
 			T3[(s2[sti] >> 24)       ] ^
 			k[37+key_index_sum];
+		__LOG_TRACE__("p %d: t0 => 0x%04x",p,t0[sti]);
 		__LOG_TRACE__("p %d: t1 => 0x%04x",p,t1[sti]);
 	}
-	if(valid_thread && ti == 2) {
+	if(valid_thread && ti == 1) {
 		t2[sti] =
 			T0[(s2[sti]      ) & 0xff] ^
 			T1[(s1[sti] >>  8) & 0xff] ^
 			T2[(s0[sti] >> 16) & 0xff] ^
 			T3[(s3[sti] >> 24)       ] ^
 			k[38+key_index_sum];
-		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
-	}
-	if(valid_thread && ti == 3) {
 		t3[sti] =
 			T0[(s3[sti]      ) & 0xff] ^
 			T1[(s2[sti] >>  8) & 0xff] ^
 			T2[(s1[sti] >> 16) & 0xff] ^
 			T3[(s0[sti] >> 24)       ] ^
 			k[39+key_index_sum];
+		__LOG_TRACE__("p %d: t2 => 0x%04x",p,t2[sti]);
 		__LOG_TRACE__("p %d: t3 => 0x%04x",p,t3[sti]);
 	}
 
@@ -784,8 +804,6 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 			k[40+key_index_sum];
 		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0[sti]);
 		d[p] = s0[sti];
-	}
-	else if(valid_thread && ti == 1){
 		s1[sti] =
 			((uint32_t)T4[(t1[sti]      ) & 0xff]      ) ^
 			((uint32_t)T4[(t0[sti] >>  8) & 0xff] <<  8) ^
@@ -793,9 +811,9 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 			((uint32_t)T4[(t2[sti] >> 24)       ] << 24) ^
 			k[41+key_index_sum];
 		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
-		d[p] = s1[sti];
+		d[p+1] = s1[sti];
 	}
-	if(valid_thread && ti == 2) {
+	else if(valid_thread && ti == 1){
 		s2[sti] =
 			((uint32_t)T4[(t2[sti]      ) & 0xff]      ) ^
 			((uint32_t)T4[(t1[sti] >>  8) & 0xff] <<  8) ^
@@ -803,9 +821,7 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 			((uint32_t)T4[(t3[sti] >> 24)       ] << 24) ^
 			k[42+key_index_sum];
 		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2[sti]);
-		d[p] = s2[sti];
-	}
-	if(valid_thread && ti == 3) {
+		d[p] = s2[sti]; // todo save directly to d[p]
 		s3[sti] =
 			((uint32_t)T4[(t3[sti]      ) & 0xff]      ) ^
 			((uint32_t)T4[(t2[sti] >>  8) & 0xff] <<  8) ^
@@ -813,11 +829,11 @@ __global__ void __cuda_ecb_aes_4b_decrypt__(
 			((uint32_t)T4[(t0[sti] >> 24)       ] << 24) ^
 			k[43+key_index_sum];
 		__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3[sti]);
-		d[p] = s3[sti];
+		d[p+1] = s3[sti];
 	}
 }
 
-void cuda_ecb_aes_4b_encrypt(
+void cuda_ecb_aes_8b_encrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
 		  	  cudaStream_t stream,
@@ -831,8 +847,9 @@ void cuda_ecb_aes_4b_encrypt(
 		  	  uint32_t* deviceTe3
 	      )
 {
-	int shared_memory = threadsPerBlock*2*sizeof(uint32_t);
-	__cuda_ecb_aes_4b_encrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(//*2>>>(
+	// (threadsPerBlock/2)4*2*sizeof(uint32_t);
+	int shared_memory = threadsPerBlock*4*sizeof(uint32_t);
+	__cuda_ecb_aes_8b_encrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(//*2>>>(
 			n_blocks,
 			(uint32_t*)data,
 			expanded_key,
@@ -844,7 +861,7 @@ void cuda_ecb_aes_4b_encrypt(
 	);
 }
 
-void cuda_ecb_aes_4b_decrypt(
+void cuda_ecb_aes_8b_decrypt(
 		  	  int gridSize,
 		  	  int threadsPerBlock,
 		  	  cudaStream_t stream,
@@ -859,8 +876,8 @@ void cuda_ecb_aes_4b_decrypt(
 		  	  uint8_t* deviceTd4
 	      )
 {
-	int shared_memory = threadsPerBlock*2*sizeof(uint32_t);
-	__cuda_ecb_aes_4b_decrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(
+	int shared_memory = threadsPerBlock*4*sizeof(uint32_t);
+	__cuda_ecb_aes_8b_decrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(
 			n_blocks,
 			(uint32_t*)data,
 			expanded_key,

@@ -64,49 +64,46 @@ $(OBJ_DIR)/CudaAES.o: $(SRC_DIR)/cipher/AES/CudaAES.cpp
 $(OBJ_DIR)/CudaAESConstant.cu.o: $(SRC_DIR)/cipher/AES/CudaConstant.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes.o: $(SRC_DIR)/cipher/AES/CudaEcbAes.cpp
+$(OBJ_DIR)/CudaAes16B.o: $(SRC_DIR)/cipher/AES/CudaAes16B.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes16B.o: $(SRC_DIR)/cipher/AES/CudaEcbAes16B.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
-#
-$(OBJ_DIR)/CudaEcbAes16B.cu.o: $(SRC_DIR)/cipher/AES/CudaEcbAes16B.cu
+$(OBJ_DIR)/CudaAes16B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes16B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes16BPtr.o: $(SRC_DIR)/cipher/AES/CudaEcbAes16BPtr.cpp
+$(OBJ_DIR)/CudaAes16BPtr.o: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes16BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaEcbAes16BPtr.cu
+$(OBJ_DIR)/CudaAes16BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes8B.o: $(SRC_DIR)/cipher/AES/CudaEcbAes8B.cpp
+$(OBJ_DIR)/CudaAes8B.o: $(SRC_DIR)/cipher/AES/CudaAes8B.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes8B.cu.o: $(SRC_DIR)/cipher/AES/CudaEcbAes8B.cu
+$(OBJ_DIR)/CudaAes8B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes8B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes8BPtr.o: $(SRC_DIR)/cipher/AES/CudaEcbAes8BPtr.cpp
+$(OBJ_DIR)/CudaAes8BPtr.o: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes8BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaEcbAes8BPtr.cu
+$(OBJ_DIR)/CudaAes8BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes4B.o: $(SRC_DIR)/cipher/AES/CudaEcbAes4B.cpp
+$(OBJ_DIR)/CudaAes4B.o: $(SRC_DIR)/cipher/AES/CudaAes4B.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes4B.cu.o: $(SRC_DIR)/cipher/AES/CudaEcbAes4B.cu
+$(OBJ_DIR)/CudaAes4B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes4B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes4BPtr.o: $(SRC_DIR)/cipher/AES/CudaEcbAes4BPtr.cpp
+$(OBJ_DIR)/CudaAes4BPtr.o: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes4BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaEcbAes4BPtr.cu
+$(OBJ_DIR)/CudaAes4BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes1B.o: $(SRC_DIR)/cipher/AES/CudaEcbAes1B.cpp
+$(OBJ_DIR)/CudaAes1B.o: $(SRC_DIR)/cipher/AES/CudaAes1B.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaEcbAes1B.cu.o: $(SRC_DIR)/cipher/AES/CudaEcbAes1B.cu
+$(OBJ_DIR)/CudaAes1B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
 $(OBJ_DIR)/CUDACipherDevice.o: $(SRC_DIR)/device/CUDACipherDevice.cpp
@@ -166,35 +163,35 @@ $(OBJ_DIR)/Launcher.o: $(SRC_DIR)/Launcher.cpp
 # Generate PTX assembly code: Might be useful for fine 
 #  grain code inspection and optimization
 #
-$(OBJ_DIR)/CudaEcbAes16B.ptx: $(SRC_DIR)/cipher/AES/CudaEcbAes16B.cu
+$(OBJ_DIR)/CudaAes16B.ptx: $(SRC_DIR)/cipher/AES/CudaAes16B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaEcbAes16BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaEcbAes16BPtr.cu
+$(OBJ_DIR)/CudaAes16BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaEcbAes8B.ptx: $(SRC_DIR)/cipher/AES/CudaEcbAes8B.cu
+$(OBJ_DIR)/CudaAes8B.ptx: $(SRC_DIR)/cipher/AES/CudaAes8B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaEcbAes8BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaEcbAes8BPtr.cu
+$(OBJ_DIR)/CudaAes8BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaEcbAes4B.ptx: $(SRC_DIR)/cipher/AES/CudaEcbAes4B.cu
+$(OBJ_DIR)/CudaAes4B.ptx: $(SRC_DIR)/cipher/AES/CudaAes4B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaEcbAes4BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaEcbAes4BPtr.cu
+$(OBJ_DIR)/CudaAes4BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaEcbAes1B.ptx: $(SRC_DIR)/cipher/AES/CudaEcbAes1B.cu
+$(OBJ_DIR)/CudaAes1B.ptx: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
 ptx: \
-$(OBJ_DIR)/CudaEcbAes16B.ptx \
-$(OBJ_DIR)/CudaEcbAes16BPtr.ptx \
-$(OBJ_DIR)/CudaEcbAes8B.ptx \
-$(OBJ_DIR)/CudaEcbAes8BPtr.ptx \
-$(OBJ_DIR)/CudaEcbAes4B.ptx \
-$(OBJ_DIR)/CudaEcbAes4BPtr.ptx \
-$(OBJ_DIR)/CudaEcbAes1B.ptx 
+$(OBJ_DIR)/CudaAes16B.ptx \
+$(OBJ_DIR)/CudaAes16BPtr.ptx \
+$(OBJ_DIR)/CudaAes8B.ptx \
+$(OBJ_DIR)/CudaAes8BPtr.ptx \
+$(OBJ_DIR)/CudaAes4B.ptx \
+$(OBJ_DIR)/CudaAes4BPtr.ptx \
+$(OBJ_DIR)/CudaAes1B.ptx 
 #
 
 
@@ -234,21 +231,20 @@ $(OBJ_DIR)/Timer.o \
 $(OBJ_DIR)/AES.o \
 $(OBJ_DIR)/CudaAES.o \
 $(OBJ_DIR)/CudaAESConstant.cu.o \
-$(OBJ_DIR)/CudaEcbAes.o \
-$(OBJ_DIR)/CudaEcbAes16B.o  \
-$(OBJ_DIR)/CudaEcbAes16B.cu.o \
-$(OBJ_DIR)/CudaEcbAes16BPtr.o  \
-$(OBJ_DIR)/CudaEcbAes16BPtr.cu.o \
-$(OBJ_DIR)/CudaEcbAes8B.o \
-$(OBJ_DIR)/CudaEcbAes8B.cu.o \
-$(OBJ_DIR)/CudaEcbAes8BPtr.o \
-$(OBJ_DIR)/CudaEcbAes8BPtr.cu.o \
-$(OBJ_DIR)/CudaEcbAes4B.o \
-$(OBJ_DIR)/CudaEcbAes4B.cu.o \
-$(OBJ_DIR)/CudaEcbAes4BPtr.o \
-$(OBJ_DIR)/CudaEcbAes4BPtr.cu.o \
-$(OBJ_DIR)/CudaEcbAes1B.o \
-$(OBJ_DIR)/CudaEcbAes1B.cu.o \
+$(OBJ_DIR)/CudaAes16B.o  \
+$(OBJ_DIR)/CudaAes16B.cu.o \
+$(OBJ_DIR)/CudaAes16BPtr.o  \
+$(OBJ_DIR)/CudaAes16BPtr.cu.o \
+$(OBJ_DIR)/CudaAes8B.o \
+$(OBJ_DIR)/CudaAes8B.cu.o \
+$(OBJ_DIR)/CudaAes8BPtr.o \
+$(OBJ_DIR)/CudaAes8BPtr.cu.o \
+$(OBJ_DIR)/CudaAes4B.o \
+$(OBJ_DIR)/CudaAes4B.cu.o \
+$(OBJ_DIR)/CudaAes4BPtr.o \
+$(OBJ_DIR)/CudaAes4BPtr.cu.o \
+$(OBJ_DIR)/CudaAes1B.o \
+$(OBJ_DIR)/CudaAes1B.cu.o \
 $(OBJ_DIR)/CUDACipherDevice.o \
 $(OBJ_DIR)/IO.o \
 $(OBJ_DIR)/BlockIO.o \
@@ -266,21 +262,20 @@ $(OBJ_DIR)/Launcher.o
 	 $(OBJ_DIR)/AES.o \
 	 $(OBJ_DIR)/CudaAESConstant.cu.o \
 	 $(OBJ_DIR)/CudaAES.o \
-	 $(OBJ_DIR)/CudaEcbAes.o \
-	 $(OBJ_DIR)/CudaEcbAes16B.o \
-	 $(OBJ_DIR)/CudaEcbAes16B.cu.o \
-	 $(OBJ_DIR)/CudaEcbAes16BPtr.o \
-	 $(OBJ_DIR)/CudaEcbAes16BPtr.cu.o \
-	 $(OBJ_DIR)/CudaEcbAes8B.o \
-	 $(OBJ_DIR)/CudaEcbAes8B.cu.o \
-	 $(OBJ_DIR)/CudaEcbAes8BPtr.o \
-	 $(OBJ_DIR)/CudaEcbAes8BPtr.cu.o \
-	 $(OBJ_DIR)/CudaEcbAes4B.o \
-	 $(OBJ_DIR)/CudaEcbAes4B.cu.o \
-	 $(OBJ_DIR)/CudaEcbAes4BPtr.o \
-	 $(OBJ_DIR)/CudaEcbAes4BPtr.cu.o \
-	 $(OBJ_DIR)/CudaEcbAes1B.o \
-	 $(OBJ_DIR)/CudaEcbAes1B.cu.o \
+	 $(OBJ_DIR)/CudaAes16B.o \
+	 $(OBJ_DIR)/CudaAes16B.cu.o \
+	 $(OBJ_DIR)/CudaAes16BPtr.o \
+	 $(OBJ_DIR)/CudaAes16BPtr.cu.o \
+	 $(OBJ_DIR)/CudaAes8B.o \
+	 $(OBJ_DIR)/CudaAes8B.cu.o \
+	 $(OBJ_DIR)/CudaAes8BPtr.o \
+	 $(OBJ_DIR)/CudaAes8BPtr.cu.o \
+	 $(OBJ_DIR)/CudaAes4B.o \
+	 $(OBJ_DIR)/CudaAes4B.cu.o \
+	 $(OBJ_DIR)/CudaAes4BPtr.o \
+	 $(OBJ_DIR)/CudaAes4BPtr.cu.o \
+	 $(OBJ_DIR)/CudaAes1B.o \
+	 $(OBJ_DIR)/CudaAes1B.cu.o \
 	 $(OBJ_DIR)/CUDACipherDevice.o \
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/Timer.o \

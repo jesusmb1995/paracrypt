@@ -18,23 +18,23 @@
  *
  */
 
-#include "CudaEcbAes16B.hpp"
-#include "CudaEcbAes16B.cuh"
+#include "CudaAes8BPtr.hpp"
+#include "CudaAes8BPtr.cuh"
 
-paracrypt::CudaEcbAES16B::CudaEcbAES16B()
+paracrypt::CudaAES8BPtr::CudaAES8BPtr()
 {}
 
-paracrypt::CudaEcbAES16B::CudaEcbAES16B(CudaEcbAES16B* aes) : CudaEcbAES(aes)
+paracrypt::CudaAES8BPtr::CudaAES8BPtr(CudaAES8BPtr* aes) : CudaAES(aes)
 {}
 
-paracrypt::CudaEcbAES16B::~CudaEcbAES16B()
+paracrypt::CudaAES8BPtr::~CudaAES8BPtr()
 {}
 
-int paracrypt::CudaEcbAES16B::getThreadsPerCipherBlock() {
-	return 1;
+int paracrypt::CudaAES8BPtr::getThreadsPerCipherBlock() {
+	return 2;
 }
 
-int paracrypt::CudaEcbAES16B::cuda_ecb_aes_encrypt(
+int paracrypt::CudaAES8BPtr::cuda_ecb_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -60,7 +60,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_encrypt(
 	default:
 		return -1;
 	}
-	DEV_TRACE(boost::format("cuda_ecb_aes_16b_encrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_8b_ptr_encrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -73,7 +73,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_encrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_16b_encrypt(
+	cuda_ecb_aes_8b_ptr_encrypt(
 			gridSize,
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),
@@ -89,7 +89,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_encrypt(
 	return 0;
 }
 
-int paracrypt::CudaEcbAES16B::cuda_ecb_aes_decrypt(
+int paracrypt::CudaAES8BPtr::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -116,7 +116,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_decrypt(
 	default:
 		return -1;
 	}
-	DEV_TRACE(boost::format("cuda_ecb_aes_16b_decrypt("
+	DEV_TRACE(boost::format("cuda_ecb_aes_8b_ptr_decrypt("
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
@@ -129,7 +129,7 @@ int paracrypt::CudaEcbAES16B::cuda_ecb_aes_decrypt(
 		% n_blocks
 		% key
 		% rounds);
-	cuda_ecb_aes_16b_decrypt(
+	cuda_ecb_aes_8b_ptr_decrypt(
 			gridSize,
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),

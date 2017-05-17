@@ -18,7 +18,7 @@
  *
  */
 
-#include "CudaEcbAes1B.cuh"
+#include "CudaAes1B.cuh"
 
 #define AES_1B_ROUND_KEY(state_pointer, n_state) \
 { \

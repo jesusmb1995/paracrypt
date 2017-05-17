@@ -18,23 +18,23 @@
  *
  */
 
-#include "CudaEcbAes16BPtr.hpp"
-#include "CudaEcbAes16BPtr.cuh"
+#include "CudaAes16BPtr.hpp"
+#include "CudaAes16BPtr.cuh"
 
-paracrypt::CudaEcbAES16BPtr::CudaEcbAES16BPtr()
+paracrypt::CudaAES16BPtr::CudaAES16BPtr()
 {}
 
-paracrypt::CudaEcbAES16BPtr::CudaEcbAES16BPtr(CudaEcbAES16BPtr* aes) : CudaEcbAES(aes)
+paracrypt::CudaAES16BPtr::CudaAES16BPtr(CudaAES16BPtr* aes) : CudaAES(aes)
 {}
 
-paracrypt::CudaEcbAES16BPtr::~CudaEcbAES16BPtr()
+paracrypt::CudaAES16BPtr::~CudaAES16BPtr()
 {}
 
-int paracrypt::CudaEcbAES16BPtr::getThreadsPerCipherBlock() {
+int paracrypt::CudaAES16BPtr::getThreadsPerCipherBlock() {
 	return 1;
 }
 
-int paracrypt::CudaEcbAES16BPtr::cuda_ecb_aes_encrypt(
+int paracrypt::CudaAES16BPtr::cuda_ecb_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -89,7 +89,7 @@ int paracrypt::CudaEcbAES16BPtr::cuda_ecb_aes_encrypt(
 	return 0;
 }
 
-int paracrypt::CudaEcbAES16BPtr::cuda_ecb_aes_decrypt(
+int paracrypt::CudaAES16BPtr::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,

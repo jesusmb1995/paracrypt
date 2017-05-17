@@ -18,23 +18,23 @@
  *
  */
 
-#include "CudaEcbAes8B.hpp"
-#include "CudaEcbAes8B.cuh"
+#include "CudaAes8B.hpp"
+#include "CudaAes8B.cuh"
 
-paracrypt::CudaEcbAES8B::CudaEcbAES8B()
+paracrypt::CudaAES8B::CudaAES8B()
 {}
 
-paracrypt::CudaEcbAES8B::CudaEcbAES8B(CudaEcbAES8B* aes) : CudaEcbAES(aes)
+paracrypt::CudaAES8B::CudaAES8B(CudaAES8B* aes) : CudaAES(aes)
 {}
 
-paracrypt::CudaEcbAES8B::~CudaEcbAES8B()
+paracrypt::CudaAES8B::~CudaAES8B()
 {}
 
-int paracrypt::CudaEcbAES8B::getThreadsPerCipherBlock() {
+int paracrypt::CudaAES8B::getThreadsPerCipherBlock() {
 	return 2;
 }
 
-int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
+int paracrypt::CudaAES8B::cuda_ecb_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,
@@ -89,7 +89,7 @@ int paracrypt::CudaEcbAES8B::cuda_ecb_aes_encrypt(
 	return 0;
 }
 
-int paracrypt::CudaEcbAES8B::cuda_ecb_aes_decrypt(
+int paracrypt::CudaAES8B::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
    		unsigned char * data,

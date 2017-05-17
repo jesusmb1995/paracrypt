@@ -18,7 +18,7 @@
  *
  */
 
-#include "CudaEcbAes16BPtr.cuh"
+#include "CudaAes16BPtr.cuh"
 
 __global__ void __cuda_ecb_aes_16b_ptr_encrypt__(
 		  int n,

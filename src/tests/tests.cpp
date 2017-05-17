@@ -24,13 +24,13 @@
 #include "logging.hpp"
 #include "openssl/AES_key_schedule.h"
 #include "device/CUDACipherDevice.hpp"
-#include "cipher/AES/CudaEcbAes16B.hpp"
-#include "cipher/AES/CudaEcbAes16BPtr.hpp"
-#include "cipher/AES/CudaEcbAes8B.hpp"
-#include "cipher/AES/CudaEcbAes8BPtr.hpp"
-#include "cipher/AES/CudaEcbAes4B.hpp"
-#include "cipher/AES/CudaEcbAes4BPtr.hpp"
-#include "cipher/AES/CudaEcbAes1B.hpp"
+#include "cipher/AES/CudaAes16B.hpp"
+#include "cipher/AES/CudaAes16BPtr.hpp"
+#include "cipher/AES/CudaAes8B.hpp"
+#include "cipher/AES/CudaAes8BPtr.hpp"
+#include "cipher/AES/CudaAes4B.hpp"
+#include "cipher/AES/CudaAes4BPtr.hpp"
+#include "cipher/AES/CudaAes1B.hpp"
 #include "endianess.h"
 #include "Timer.hpp"
 #include "assert.h"
@@ -391,13 +391,13 @@ void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
 	BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(CUDA_AES)
-	AES_TEST_SUITE(CUDA_AES_16B, "16B parallelism", paracrypt::CudaEcbAES16B());
-	AES_TEST_SUITE(CUDA_AES_16B_PTR, "16B (ptr) parallelism", paracrypt::CudaEcbAES16BPtr());
-	AES_TEST_SUITE(CUDA_AES_8B, "8B parallelism", paracrypt::CudaEcbAES8B());
-	AES_TEST_SUITE(CUDA_AES_8B_PTR, "8B (ptr) parallelism", paracrypt::CudaEcbAES8BPtr());
-	AES_TEST_SUITE(CUDA_AES_4B, "4B parallelism", paracrypt::CudaEcbAES4B());
-	AES_TEST_SUITE(CUDA_AES_4B_PTR, "4B (ptr) parallelism", paracrypt::CudaEcbAES4BPtr());
-	AES_TEST_SUITE(CUDA_AES_1B, "1B parallelism", paracrypt::CudaEcbAES1B());
+	AES_TEST_SUITE(CUDA_AES_16B, "16B parallelism", paracrypt::CudaAES16B());
+	AES_TEST_SUITE(CUDA_AES_16B_PTR, "16B (ptr) parallelism", paracrypt::CudaAES16BPtr());
+	AES_TEST_SUITE(CUDA_AES_8B, "8B parallelism", paracrypt::CudaAES8B());
+	AES_TEST_SUITE(CUDA_AES_8B_PTR, "8B (ptr) parallelism", paracrypt::CudaAES8BPtr());
+	AES_TEST_SUITE(CUDA_AES_4B, "4B parallelism", paracrypt::CudaAES4B());
+	AES_TEST_SUITE(CUDA_AES_4B_PTR, "4B (ptr) parallelism", paracrypt::CudaAES4BPtr());
+	AES_TEST_SUITE(CUDA_AES_1B, "1B parallelism", paracrypt::CudaAES1B());
 BOOST_AUTO_TEST_SUITE_END()
 
 //
@@ -1135,13 +1135,13 @@ BOOST_AUTO_TEST_SUITE(LAUNCHERS)
 	BOOST_AUTO_TEST_SUITE(CUDA)
 		BOOST_AUTO_TEST_SUITE(SHAREDIO)
 			BOOST_AUTO_TEST_SUITE(AES)
-				AES_LAUNCHER_TEST_SUITE(PARA_16B,"16B parallelism",paracrypt::CudaEcbAES16B);
-				AES_LAUNCHER_TEST_SUITE(PARA_16B_PTR,"16B (ptr) parallelism",paracrypt::CudaEcbAES16BPtr);
-				AES_LAUNCHER_TEST_SUITE(PARA_8B,"8B parallelism",paracrypt::CudaEcbAES8B);
-				AES_LAUNCHER_TEST_SUITE(PARA_8B_PTR,"8B (ptr) parallelism",paracrypt::CudaEcbAES8BPtr);
-				AES_LAUNCHER_TEST_SUITE(PARA_4B,"4B parallelism",paracrypt::CudaEcbAES4B);
-				AES_LAUNCHER_TEST_SUITE(PARA_4B_PTR,"4B (ptr) parallelism",paracrypt::CudaEcbAES4BPtr);
-				AES_LAUNCHER_TEST_SUITE(PARA_1B,"1B parallelism",paracrypt::CudaEcbAES1B);
+				AES_LAUNCHER_TEST_SUITE(PARA_16B,"16B parallelism",paracrypt::CudaAES16B);
+				AES_LAUNCHER_TEST_SUITE(PARA_16B_PTR,"16B (ptr) parallelism",paracrypt::CudaAES16BPtr);
+				AES_LAUNCHER_TEST_SUITE(PARA_8B,"8B parallelism",paracrypt::CudaAES8B);
+				AES_LAUNCHER_TEST_SUITE(PARA_8B_PTR,"8B (ptr) parallelism",paracrypt::CudaAES8BPtr);
+				AES_LAUNCHER_TEST_SUITE(PARA_4B,"4B parallelism",paracrypt::CudaAES4B);
+				AES_LAUNCHER_TEST_SUITE(PARA_4B_PTR,"4B (ptr) parallelism",paracrypt::CudaAES4BPtr);
+				AES_LAUNCHER_TEST_SUITE(PARA_1B,"1B parallelism",paracrypt::CudaAES1B);
 			BOOST_AUTO_TEST_SUITE_END()
 		BOOST_AUTO_TEST_SUITE_END()
 	BOOST_AUTO_TEST_SUITE_END()

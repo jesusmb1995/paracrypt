@@ -46,7 +46,35 @@ namespace paracrypt {
 	bool useConstantKey;
 	bool useConstantTables;
       protected:
-    virtual int getThreadsPerCipherBlock() = 0;
+
+	// Each level-of-parallelism version will implement these methods
+	  virtual int getThreadsPerCipherBlock() = 0;
+	  virtual int cuda_ecb_aes_encrypt(
+	  		int gridSize,
+	  		int threadsPerBlock,
+	  		unsigned char * data,
+	  		int n_blocks,
+	  		uint32_t* key,
+	  		int rounds,
+	  		uint32_t* deviceTe0,
+	  		uint32_t* deviceTe1,
+	  		uint32_t* deviceTe2,
+	  		uint32_t* deviceTe3
+	  		) = 0;
+	  virtual int cuda_ecb_aes_decrypt(
+	  		int gridSize,
+	  		int threadsPerBlock,
+	  		unsigned char * data,
+	  		int n_blocks,
+	  		uint32_t* key,
+	  		int rounds,
+	  		uint32_t* deviceTd0,
+	  		uint32_t* deviceTd1,
+	  		uint32_t* deviceTd2,
+	  		uint32_t* deviceTd3,
+	  		uint8_t* deviceTd4
+	  		) = 0;
+
 	unsigned char *data = NULL;
 	uint32_t* getDeviceEKey();
 	uint32_t* getDeviceDKey();
@@ -66,10 +94,12 @@ namespace paracrypt {
 	CudaAES();
 	CudaAES(CudaAES* aes); // Shallow copy constructor
 	virtual ~CudaAES();
-	virtual int encrypt(const unsigned char in[], // async
-			    const unsigned char out[], std::streamsize n_blocks) = 0;
-	virtual int decrypt(const unsigned char in[], // async
-			    const unsigned char out[], std::streamsize n_blocks) = 0;
+
+
+	int encrypt(const unsigned char in[], // async
+			    const unsigned char out[], std::streamsize n_blocks);
+	int decrypt(const unsigned char in[], // async
+			    const unsigned char out[], std::streamsize n_blocks);
 
 	void waitFinish();
 	bool checkFinish();
