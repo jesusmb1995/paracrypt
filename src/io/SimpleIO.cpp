@@ -39,13 +39,32 @@ paracrypt::SimpleIO::~SimpleIO() {}
 void paracrypt::SimpleIO::construct(rlim_t bufferSizeLimit) {
     // allocate buffer chunks
     rlim_t buffersTotalSize = this->getPinned()->getReasonablyBigChunkOfRam(bufferSizeLimit);
+
+    if(this->getEnd() != NO_RANDOM_ACCESS) {
+    	rlim_t maxRead = this->getMaxBlocksRead()*this->getBlockSize();
+    	// do not allocate memory we will not use
+    	buffersTotalSize = std::min(buffersTotalSize, maxRead);
+    }
+
+    // Align to block/nchunks size in excess
+    //  in this way we assure that we reserve
+    //  enough memory to process an entire file
+    //  delimited by bufferSizeLimit at once.
+    {
+		rlim_t remaining = buffersTotalSize % this->getBlockSize();
+		buffersTotalSize += remaining;
+    }
+
+    // at least one block
+    buffersTotalSize = std::max(buffersTotalSize,(rlim_t)this->getBlockSize());
+
     bool allocSuccess = false;
     std::streamsize bufferSizeBytes;
     do {
     	this->bufferSize = buffersTotalSize / this->getBlockSize();
 		if(this->bufferSize == 0) {
 			// exit with error
-			ERR("Couldn't allocate SharedIO internal buffer.\n");
+			ERR("Couldn't allocate SimpleIO internal buffer.\n");
 		}
     	// bufferSize aligned to chunk size
         bufferSizeBytes = this->getBufferSize()*this->getBlockSize();

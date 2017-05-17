@@ -146,6 +146,27 @@ void paracrypt::SharedIO::construct(unsigned int nChunks, rlim_t bufferSizeLimit
     // allocate buffer chunks
 	this->bufferSize = nChunks;
     rlim_t buffersTotalSize = this->getPinned()->getReasonablyBigChunkOfRam(bufferSizeLimit);
+
+    if(this->getEnd() != NO_RANDOM_ACCESS) {
+    	rlim_t maxRead = this->getMaxBlocksRead()*this->getBlockSize();
+    	// do not allocate memory we will not use
+    	buffersTotalSize = std::min(buffersTotalSize, maxRead);
+    }
+
+    // Align to block/nchunks size in excess
+    //  in this way we assure that we reserve
+    //  enough memory to process an entire file
+    //  delimited by bufferSizeLimit at once.
+    {
+		rlim_t remaining = buffersTotalSize % this->getBlockSize();
+		buffersTotalSize += remaining;
+		remaining = (buffersTotalSize/this->getBlockSize()) % nChunks;
+		buffersTotalSize += remaining*nChunks;
+    }
+
+    // at least one block per chunk
+    buffersTotalSize = std::max(buffersTotalSize, ((rlim_t)this->getBlockSize())*nChunks);
+
     bool allocSuccess = false;
     std::streamsize bufferSizeBytes;
     do {

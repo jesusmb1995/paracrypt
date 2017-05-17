@@ -50,13 +50,14 @@ BlockIO::BlockIO(
 	if(begin != NO_RANDOM_ACCESS) {
 		this->beginBlock = begin/blockSize;
 		this->begin = this->beginBlock*this->blockSize; // aligned to block
-		this->inFile.seekg(begin);
+		this->inFile.seekg(this->begin);
 		// TODO extra read blocks
 	}
 	else {
 		this->beginBlock = 0;
 		this->begin = 0;
 	}
+	this->end = end;
 	this->outFile.open(outFilename.c_str(),std::ifstream::binary | std::ifstream::trunc);
 	if(!outFile) {
 		ERR(boost::format("cannot open %s: %s") % outFilename % strerror(errno));
@@ -66,15 +67,15 @@ BlockIO::BlockIO(
 	if(end == NO_RANDOM_ACCESS) {
 		this->maxBlocksRead = NO_RANDOM_ACCESS;
 	} else {
-		if (begin > end) {
+		if (this->begin > this->end) {
 			LOG_WAR("Swapping begin-end random access positions.\n");
-			std::swap(begin,end);
+			std::swap(this->begin,this->begin);
 		}
-		maxBytesRead = end-begin;
+		maxBytesRead = this->end-this->begin;
 		this->maxBlocksRead = maxBytesRead / blockSize;
-		int halfBlock = maxBytesRead % blockSize;
-		if(halfBlock != 0) {
-			this->maxBlocksRead += 1;
+//		int halfBlock = maxBytesRead % blockSize;
+//		if(halfBlock != 0) {
+//			this->maxBlocksRead += 1;
 //			LOG_WAR(boost::format(
 //					"Aligning random access section to block size: "
 //					" Using %llu bytes instead of %llu bytes.\n")
@@ -82,10 +83,8 @@ BlockIO::BlockIO(
 //				% maxBytesRead
 //			);
 			// TODO extra read end blocks
-		}
+//		}
 	}
-	this->begin = begin;
-	this->end = end;
 	this->paddingType = APPEND_ZEROS_TO_INPUT; // default padding
 }
 
@@ -166,6 +165,12 @@ void paracrypt::BlockIO::outFileWrite(unsigned char* data, std::streampos nBlock
 		size = this->removePadding(data, size);
 	}
 	std::streampos byteOffset = blockOffset*this->blockSize;
+	if(this->begin != 0) {
+		// When random access we satart writing at
+		//  the begining of the output file.
+		byteOffset -= this->begin;
+		assert(byteOffset >= 0);
+	}
 	this->outFileWriteBytes(data, size, byteOffset);
 }
 
