@@ -34,11 +34,10 @@ int paracrypt::CudaAES16B::getThreadsPerCipherBlock() {
 	return 1;
 }
 
-int paracrypt::CudaAES16B::cuda_ecb_aes_encrypt(
+int paracrypt::CudaAES16B::cuda_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
-   		unsigned char * data,
-   		int n_blocks,
+   		unsigned int n_blocks,
    		uint32_t* key,
    		int rounds,
    		uint32_t* deviceTe0,
@@ -78,6 +77,7 @@ int paracrypt::CudaAES16B::cuda_ecb_aes_encrypt(
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),
 			n_blocks,
+			this->getCurrentBlockOffset(),
 			this->data,
 			key,
 			key_bits,
@@ -92,8 +92,7 @@ int paracrypt::CudaAES16B::cuda_ecb_aes_encrypt(
 int paracrypt::CudaAES16B::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
-   		unsigned char * data,
-   		int n_blocks,
+   		unsigned int n_blocks,
    		uint32_t* key,
    		int rounds,
    		uint32_t* deviceTd0,

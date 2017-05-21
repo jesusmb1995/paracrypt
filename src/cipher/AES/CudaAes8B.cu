@@ -21,14 +21,19 @@
 #include "CudaAes8B.cuh"
 
 __global__ void __cuda_ecb_aes_8b_encrypt__(
-		  int n,
-		  uint32_t* d,
-	  	  uint32_t* k,
-	  	  int key_bits,
-	  	  uint32_t* T0,
-	  	  uint32_t* T1,
-	  	  uint32_t* T2,
-	  	  uint32_t* T3
+		const paracrypt::BlockCipher::Mode m,
+		unsigned int n,
+		unsigned int offset,
+		const uint32_t* d,
+		const uint32_t* out,
+		uint32_t* neigh,
+		uint32_t* iv,
+		uint32_t* k,
+		const int key_bits,
+		uint32_t* T0,
+		uint32_t* T1,
+		uint32_t* T2,
+		uint32_t* T3
     )
 {
 	// Each block has its own shared memory
@@ -427,14 +432,19 @@ __global__ void __cuda_ecb_aes_8b_encrypt__(
 }
 
 __global__ void __cuda_ecb_aes_8b_decrypt__(
-		  int n,
-		  uint32_t* d,
-	  	  uint32_t* k,
-	  	  int key_bits,
-	  	  uint32_t* T0,
-	  	  uint32_t* T1,
-	  	  uint32_t* T2,
-	  	  uint32_t* T3,
+		const paracrypt::BlockCipher::Mode m,
+		unsigned int n,
+		unsigned int offset,
+		const uint32_t* d,
+		const uint32_t* out,
+		uint32_t* neigh,
+		uint32_t* iv,
+		uint32_t* k,
+		const int key_bits,
+		uint32_t* T0,
+		uint32_t* T1,
+		uint32_t* T2,
+		uint32_t* T3,
 	  	  uint8_t* T4
     )
 {
@@ -851,13 +861,17 @@ void cuda_ecb_aes_8b_encrypt(
 	int shared_memory = threadsPerBlock*4*sizeof(uint32_t);
 	__cuda_ecb_aes_8b_encrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(//*2>>>(
 			n_blocks,
-			(uint32_t*)data,
+			(uint32_t*)in,
+			(uint32_t*)out,
+			(uint32_t*)neigh,
+			(uint32_t*)iv,
 			expanded_key,
 			key_bits,
-	   		deviceTe0,
-	   		deviceTe1,
-	   		deviceTe2,
-	   		deviceTe3
+	   		deviceTd0,
+	   		deviceTd1,
+	   		deviceTd2,
+	   		deviceTd3,
+	   		deviceTd4
 	);
 }
 
@@ -879,7 +893,10 @@ void cuda_ecb_aes_8b_decrypt(
 	int shared_memory = threadsPerBlock*4*sizeof(uint32_t);
 	__cuda_ecb_aes_8b_decrypt__<<<gridSize,threadsPerBlock,shared_memory,stream>>>(
 			n_blocks,
-			(uint32_t*)data,
+			(uint32_t*)in,
+			(uint32_t*)out,
+			(uint32_t*)neigh,
+			(uint32_t*)iv,
 			expanded_key,
 			key_bits,
 	   		deviceTd0,

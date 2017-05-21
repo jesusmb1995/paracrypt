@@ -134,11 +134,11 @@ void paracrypt::CUDACipherDevice::free(void *data)
 
 
 // copyTo in the default stream
-void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, int size) {
+void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, size_t size) {
 	HANDLE_ERROR(cudaMemcpyAsync(dev, host, size, cudaMemcpyHostToDevice));
 }
 
-void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, int size,
+void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, size_t size,
 					   int stream_id)
 {
     cudaStream_t stream = this->acessStream(stream_id);
@@ -158,7 +158,7 @@ void paracrypt::CUDACipherDevice::memcpyTo(void *host, void *dev, int size,
 }
 
 void paracrypt::CUDACipherDevice::memcpyFrom(void *dev, void *host,
-					     int size, int stream_id)
+		size_t size, int stream_id)
 {
     cudaStream_t stream = this->acessStream(stream_id);
     HANDLE_ERROR(cudaMemcpyAsync(host, dev, size, cudaMemcpyDeviceToHost, stream));

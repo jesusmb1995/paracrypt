@@ -26,14 +26,36 @@ namespace paracrypt {
 
     class BlockCipher {
       public:
-	virtual ~BlockCipher() {}
+    BlockCipher();
+    BlockCipher(BlockCipher* cipher);
+	virtual ~BlockCipher();
 	virtual int encrypt(const unsigned char in[],
-			      const unsigned char out[], std::streamsize n_blocks) = 0;
+			      const unsigned char out[], std::streamsize n_blocks);
 	virtual int decrypt(const unsigned char in[],
-			    const unsigned char out[], std::streamsize n_blocks) = 0;
+			    const unsigned char out[], std::streamsize n_blocks);
 	virtual int setKey(const unsigned char key[], int bits) = 0;
 	virtual int setBlockSize(int bits) = 0;
 	virtual unsigned int getBlockSize() = 0;
-    };
 
+	virtual void setIV(const unsigned char iv[], int bits) = 0;
+	virtual unsigned char* getIV() = 0;
+
+	typedef enum Mode {
+		ECB = 0,
+		CBC = 1,
+		CFB = 2,
+		CTR = 3,
+		GCM = 4,
+    } Mode;
+	void setMode(Mode m);
+	Mode getMode();
+
+	std::streamoff getCurrentBlockOffset();
+	void setInitialBlockOffset(std::streamoff offset);
+
+	private:
+		Mode mode;
+		std::streamoff blockOffset;
+
+    };
 }

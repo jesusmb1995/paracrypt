@@ -120,3 +120,22 @@ AES_KEY *paracrypt::AES::getDecryptionExpandedKey()
 	}
 	return this->deRoundKeys;
 }
+
+int paracrypt::AES::getKeyBits(int rounds)
+{
+	int key_bits = 0;
+	switch(rounds) {
+		case 10:
+			key_bits = 128;
+			break;
+		case 12:
+			key_bits = 192;
+			break;
+		case 14:
+			key_bits = 256;
+			break;
+		default:
+			ERR("Invalid number of rounds. AES only support 10, 12, or 14 rounds.");
+	}
+	return key_bits;
+}

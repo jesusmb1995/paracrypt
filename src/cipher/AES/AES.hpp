@@ -68,6 +68,7 @@ namespace paracrypt {
 	int setDecryptionKey(AES_KEY * expandedKey);
 	AES_KEY *getEncryptionExpandedKey();
 	AES_KEY *getDecryptionExpandedKey();
+	int getKeyBits(int rounds);
 
     };
 }

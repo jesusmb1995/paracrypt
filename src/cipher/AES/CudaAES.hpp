@@ -23,6 +23,7 @@
 #include "AES.hpp"
 #include "device/CUDACipherDevice.hpp"
 #include "cipher/CUDABlockCipher.hpp"
+#include "io/CudaPinned.hpp"
 
 namespace paracrypt {
 
@@ -43,39 +44,19 @@ namespace paracrypt {
 	uint32_t* deviceTd2 = NULL;
 	uint32_t* deviceTd3 = NULL;
 	uint8_t* deviceTd4 = NULL;
+	unsigned char* deviceIV = NULL;
 	bool useConstantKey;
 	bool useConstantTables;
-      protected:
 
-	// Each level-of-parallelism version will implement these methods
-	  virtual int getThreadsPerCipherBlock() = 0;
-	  virtual int cuda_ecb_aes_encrypt(
-	  		int gridSize,
-	  		int threadsPerBlock,
-	  		unsigned char * data,
-	  		int n_blocks,
-	  		uint32_t* key,
-	  		int rounds,
-	  		uint32_t* deviceTe0,
-	  		uint32_t* deviceTe1,
-	  		uint32_t* deviceTe2,
-	  		uint32_t* deviceTe3
-	  		) = 0;
-	  virtual int cuda_ecb_aes_decrypt(
-	  		int gridSize,
-	  		int threadsPerBlock,
-	  		unsigned char * data,
-	  		int n_blocks,
-	  		uint32_t* key,
-	  		int rounds,
-	  		uint32_t* deviceTd0,
-	  		uint32_t* deviceTd1,
-	  		uint32_t* deviceTd2,
-	  		uint32_t* deviceTd3,
-	  		uint8_t* deviceTd4
-	  		) = 0;
-
+	bool inPlace;
 	unsigned char *data = NULL;
+	unsigned char *neighborsDev = NULL;
+	unsigned char *neighborsPin = NULL;
+	CudaPinned* pin;
+	unsigned int nNeighbors;
+	unsigned int cipherBlocksPerThreadBlock;
+	unsigned int neighSize;
+
 	uint32_t* getDeviceEKey();
 	uint32_t* getDeviceDKey();
 	uint32_t* getDeviceTe0();
@@ -90,6 +71,57 @@ namespace paracrypt {
 	bool enInstantiatedButInOtherDevice;
 	bool deInstantiatedButInOtherDevice;
 	int stream;
+
+	void transferNeighborsToGPU(
+			const unsigned char blocks[],
+			std::streamsize n_blocks);
+
+    protected:
+	// Each level-of-parallelism version will implement these methods
+	virtual int getThreadsPerCipherBlock() = 0;
+	virtual std::string getImplementationName() = 0;
+
+	typedef void(*ef)(
+			  paracrypt::BlockCipher::Mode, // m
+			  int, //gridSize
+			  int, //threadsPerBlock
+			  cudaStream_t, //stream
+			  unsigned int, //n_blocks
+			  unsigned int, //offset
+			  unsigned char*, //in[]
+			  unsigned char*, //out[]
+			  unsigned char*, //neigh[]
+			  unsigned char*, //iv[]
+			  uint32_t*, //expanded_key
+			  int, //key_bits
+			  uint32_t*, //deviceTe0
+			  uint32_t*, //deviceTe1
+			  uint32_t*, //deviceTe2
+			  uint32_t* //deviceTe3
+	);
+	typedef void(*df)(
+			  paracrypt::BlockCipher::Mode, // m
+			  int, //gridSize
+			  int, //threadsPerBlock
+			  cudaStream_t, //stream
+			  unsigned int, //n_blocks
+			  unsigned int, //offset
+			  unsigned char*, //in[]
+			  unsigned char*, //out[]
+			  unsigned char*, //neigh[]
+			  unsigned char*, //iv[]
+			  uint32_t*, //expanded_key
+			  int, //key_bits
+			  uint32_t*, //deviceTd0
+			  uint32_t*, //deviceTd1
+			  uint32_t*, //deviceTd2
+			  uint32_t*, //deviceTd3
+			  uint8_t* //deviceTd4
+	);
+
+	virtual ef getEncryptFunction() = 0;
+	virtual df getDecryptFunction() = 0;
+
       public:
 	CudaAES();
 	CudaAES(CudaAES* aes); // Shallow copy constructor
@@ -105,7 +137,7 @@ namespace paracrypt {
 	bool checkFinish();
 
 	void setDevice(CUDACipherDevice * device);
-	void malloc(unsigned int n_blocks);
+	void malloc(unsigned int n_blocks, bool isInplace = true);
 	// returns -1 if an error has occurred
 	CUDACipherDevice *getDevice();
 	void constantKey(bool val);
@@ -115,6 +147,10 @@ namespace paracrypt {
 	int setBlockSize(int bits);
 	unsigned int getBlockSize();
 	int setKey(const unsigned char key[], int bits);
+	void setIV(const unsigned char iv[], int bits);
+	unsigned char* getIV();
+	bool isInplace();
+	void setMode(Mode m);
 
 	void initDeviceEKey();
 	void initDeviceDKey();

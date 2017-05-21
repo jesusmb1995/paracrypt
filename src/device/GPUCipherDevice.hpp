@@ -54,9 +54,9 @@ namespace paracrypt {
 	virtual void set() = 0;	// must be called to set operations to this device
 	virtual void malloc(void **data, int size) = 0;
 	virtual void free(void *data) = 0;
-	virtual void memcpyTo(void *host, void *dev, int size, int stream_id) = 0;	// Async
-	void memcpyTo(void *host, void *dev, int size); // Async to default stream
-	virtual void memcpyFrom(void *dev, void *host, int size, int stream_id) = 0;	// Async
+	virtual void memcpyTo(void *host, void *dev, size_t size, int stream_id) = 0;	// Async
+	void memcpyTo(void *host, void *dev, size_t size); // Async to default stream
+	virtual void memcpyFrom(void *dev, void *host, size_t size, int stream_id) = 0;	// Async
 	virtual void waitMemcpyFrom(int stream_id) = 0;	//waits until mempcyFrom finishes
 	virtual int checkMemcpyFrom(int stream_id) = 0;	//checks if memcpyFrom has finished
 //	virtual void waitAnyGPUMemcpyFrom();

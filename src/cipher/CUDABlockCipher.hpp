@@ -20,16 +20,17 @@
 
 #pragma once
 
-#include "device/GPUCipherDevice.hpp"
+#include "device/CUDACipherDevice.hpp"
 #include "cipher/BlockCipher.hpp"
 
 namespace paracrypt {
 
     class CUDABlockCipher: public BlockCipher {
       public:
+    	CUDABlockCipher();
 		virtual ~CUDABlockCipher() {}
 		virtual void setDevice(CUDACipherDevice * device) = 0;
-		virtual void malloc(unsigned int n_blocks) = 0;	// Must be called to reserve enough space before encrypt/decrypt
+		virtual void malloc(unsigned int n_blocks, bool isInplace = true) = 0;	// Must be called to reserve enough space before encrypt/decrypt
 		// returns -1 if an error has occurred
 		virtual CUDACipherDevice *getDevice() = 0;
 		virtual void waitFinish() = 0; // Wait for an async operation to finish

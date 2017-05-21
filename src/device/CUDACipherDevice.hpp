@@ -55,9 +55,9 @@ namespace paracrypt {
 	void set();
 	void malloc(void **data, int size);
 	void free(void *data);
-	void memcpyTo(void *host, void *dev, int size, int stream_id);
-	void memcpyTo(void *host, void *dev, int size);
-	void memcpyFrom(void *dev, void *host, int size, int stream_id);
+	void memcpyTo(void *host, void *dev, size_t size, int stream_id);
+	void memcpyTo(void *host, void *dev, size_t size);
+	void memcpyFrom(void *dev, void *host, size_t size, int stream_id);
 	void waitMemcpyFrom(int stream_id);
 
 	static int getDevicesCount();

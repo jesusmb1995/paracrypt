@@ -34,17 +34,17 @@ int paracrypt::CudaAES4BPtr::getThreadsPerCipherBlock() {
 	return 4;
 }
 
-int paracrypt::CudaAES4BPtr::cuda_ecb_aes_encrypt(
+int paracrypt::CudaAES4BPtr::cuda_aes_encrypt(
    		int gridSize,
    		int threadsPerBlock,
-   		unsigned char * data,
-   		int n_blocks,
+   		unsigned int n_blocks,
    		uint32_t* key,
    		int rounds,
-   		uint32_t* deviceTe0,
-   		uint32_t* deviceTe1,
-   		uint32_t* deviceTe2,
-   		uint32_t* deviceTe3
+   		uint32_t* deviceTd0,
+   		uint32_t* deviceTd1,
+   		uint32_t* deviceTd2,
+   		uint32_t* deviceTd3,
+   		uint8_t* deviceTd4
    		){
 	int key_bits = 0;
 	switch(rounds) {
@@ -92,8 +92,7 @@ int paracrypt::CudaAES4BPtr::cuda_ecb_aes_encrypt(
 int paracrypt::CudaAES4BPtr::cuda_ecb_aes_decrypt(
    		int gridSize,
    		int threadsPerBlock,
-   		unsigned char * data,
-   		int n_blocks,
+   		unsigned int n_blocks,
    		uint32_t* key,
    		int rounds,
    		uint32_t* deviceTd0,

@@ -24,13 +24,7 @@
 #include "logging.hpp"
 #include "openssl/AES_key_schedule.h"
 #include "device/CUDACipherDevice.hpp"
-#include "cipher/AES/CudaAes16B.hpp"
-#include "cipher/AES/CudaAes16BPtr.hpp"
-#include "cipher/AES/CudaAes8B.hpp"
-#include "cipher/AES/CudaAes8BPtr.hpp"
-#include "cipher/AES/CudaAes4B.hpp"
-#include "cipher/AES/CudaAes4BPtr.hpp"
-#include "cipher/AES/CudaAes1B.hpp"
+#include "cipher/AES/CudaAesVersions.hpp"
 #include "endianess.h"
 #include "Timer.hpp"
 #include "assert.h"
@@ -46,6 +40,15 @@
 #include "io/Pinned.hpp"
 #include "Launcher.hpp"
 
+// some tests require openssl
+#ifdef OPENSSL_EXISTS
+	// OpenSLL
+	#include <openssl/conf.h>
+	#include <openssl/evp.h>
+	#include <openssl/err.h>
+	#include <string.h>
+#endif
+
 int random_data_n_blocks;
 unsigned char *random_data;
 
@@ -53,6 +56,11 @@ paracrypt::CUDACipherDevice* gpu;
 
 struct Setup {
 	Setup()   {
+		  /* Initialise the OpenSSL library */
+		  ERR_load_crypto_strings();
+		  OpenSSL_add_all_algorithms();
+		  OPENSSL_config(NULL);
+
 		// 500KiB to 1Mib
 	#define TRD_MIN 512*64
 	#define TRD_MAX 1024*64
@@ -74,25 +82,33 @@ struct Setup {
   ~Setup()  {
 	  free(random_data);
 	  delete gpu;
+
+	  /* Clean up OpenSSL */
+	  EVP_cleanup();
+	  ERR_free_strings();
   }
 };
 BOOST_GLOBAL_FIXTURE( Setup );
 
 // NIST-197 test vectors
 typedef struct tv {
+	paracrypt::BlockCipher::Mode m;
 	const unsigned char input[16];
+	const unsigned char iv[16];
 	const unsigned char key[256];
 	const unsigned char output[16];
 	const int key_bits;
 } tv;
 
 const tv aes_example = {
+		.m = paracrypt::BlockCipher::ECB,
 		.input = {
 				0x32U, 0x43U, 0xf6U, 0xa8U,
 				0x88U, 0x5aU, 0x30U, 0x8dU,
 				0x31U, 0x31U, 0x98U, 0xa2U,
 				0xe0U, 0x37U, 0x07U, 0x34U
 		},
+		.iv = {},
 		.key = {
 				0x2bU, 0x7eU, 0x15U, 0x16U,
 				0x28U, 0xaeU, 0xd2U, 0xa6U,
@@ -109,12 +125,14 @@ const tv aes_example = {
 };
 
 const tv aes_192_tv = {
+		.m = paracrypt::BlockCipher::ECB,
 		.input = {
 				0x00U, 0x11U, 0x22U, 0x33U,
 				0x44U, 0x55U, 0x66U, 0x77U,
 				0x88U, 0x99U, 0xaaU, 0xbbU,
 				0xccU, 0xddU, 0xeeU, 0xffU
 		},
+		.iv = {},
 		.key = {
 				0x00U, 0x01U, 0x02U, 0x03U,
 				0x04U, 0x05U, 0x06U, 0x07U,
@@ -133,12 +151,14 @@ const tv aes_192_tv = {
 };
 
 const tv aes_256_tv = {
+		.m = paracrypt::BlockCipher::ECB,
 		.input = {
 				0x00U, 0x11U, 0x22U, 0x33U,
 				0x44U, 0x55U, 0x66U, 0x77U,
 				0x88U, 0x99U, 0xaaU, 0xbbU,
 				0xccU, 0xddU, 0xeeU, 0xffU
 		},
+		.iv = {},
 		.key = {
 				0x00U, 0x01U, 0x02U, 0x03U,
 				0x04U, 0x05U, 0x06U, 0x07U,
@@ -156,6 +176,35 @@ const tv aes_256_tv = {
 				0x4bU, 0x49U, 0x60U, 0x89U
 		},
 		.key_bits = 256
+};
+
+const tv aes_128_cbc_tv = {
+		.m = paracrypt::BlockCipher::CBC,
+		.input = {
+				0x6bU, 0xc1U, 0xbeU, 0xe2U,
+				0x2eU, 0x40U, 0x9fU, 0x96U,
+				0xe9U, 0x3dU, 0x7eU, 0x11U,
+				0x73U, 0x93U, 0x17U, 0x2aU
+		},
+		.iv = {
+				0x00U, 0x01U, 0x02U, 0x03,
+				0x04U, 0x05U, 0x06U, 0x07,
+				0x08U, 0x09U, 0x0AU, 0x0B,
+				0x0CU, 0x0DU, 0x0EU, 0x0F
+		},
+		.key = {
+				0x2bU, 0x7eU, 0x15U, 0x16U,
+				0x28U, 0xaeU, 0xd2U, 0xa6U,
+				0xabU, 0xf7U, 0x15U, 0x88U,
+				0x09U, 0xcfU, 0x4fU, 0x3c
+		},
+		.output = {
+				0x76U, 0x49U, 0xabU, 0xacU,
+				0x81U, 0x19U, 0xb2U, 0x46U,
+				0xceU, 0xe9U, 0x8eU, 0x9bU,
+				0x12U, 0xe9U, 0x19U, 0x7dU
+		},
+		.key_bits = 128
 };
 
 tv get_aes_tv(unsigned int key_bits) {
@@ -179,6 +228,7 @@ tv get_aes_tv(unsigned int key_bits) {
  * and checks if the result is the same original
  * string.
  */
+// TODO remove key_bits argument not needed with tv
 void AES_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, int key_bits, bool constantKey, bool constantTables)
 {
 	int data_length = random_data_n_blocks*16;
@@ -209,7 +259,7 @@ void AES_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, par
     free(result);
 }
 
-void AES_VECTOR_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, int key_bits, bool constantKey, bool constantTables)
+void AES_VECTOR_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, bool constantKey, bool constantTables)
 {
 	int data_length = random_data_n_blocks*16;
 	unsigned char *result = (unsigned char*) malloc(data_length);
@@ -245,16 +295,19 @@ void AES_VECTOR_RDN_TEST(std::string title, tv vector_key, paracrypt::CudaAES* a
     free(result);
 }
 
-void AES_SB_ENCRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, bool constantKey, bool constantTables)
+void AES_SB_ENCRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, bool constantKey, bool constantTables, bool iv = false)
 {
 	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
     unsigned char data[16*n_blocks];
     for(int i=0; i < n_blocks; i++) {
-    	memcpy(data+(i*16),vector.input,16);
+    	memcpy(data+(i*16),random_data+(i*16),16);
     }
 
-    aes->setKey(vector.key,vector.key_bits);
     aes->setDevice(dev);
+    aes->setMode(vector.m);
+    if(iv)
+    	aes->setIV(vector.iv,128);
+    aes->setKey(vector.key,vector.key_bits);
     aes->constantKey(constantKey);
     aes->constantTables(constantTables);
     aes->malloc(n_blocks);
@@ -270,7 +323,7 @@ void AES_SB_ENCRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
     }
 }
 
-void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, bool constantKey, bool constantTables)
+void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::CudaAES* aes, paracrypt::CUDACipherDevice* dev, bool constantKey, bool constantTables, bool iv = false)
 {
 	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
     unsigned char data[16*n_blocks];
@@ -278,8 +331,11 @@ void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
     	memcpy(data+(i*16),vector.output,16);
     }
 
-    aes->setKey(vector.key,vector.key_bits);
     aes->setDevice(dev);
+    aes->setMode(vector.m);
+    if(iv)
+    	aes->setIV(vector.iv,128);
+    aes->setKey(vector.key,vector.key_bits);
     aes->constantKey(constantKey);
     aes->constantTables(constantTables);
     aes->malloc(n_blocks);
@@ -294,6 +350,109 @@ void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
     	BOOST_REQUIRE_EQUAL_COLLECTIONS(data+(i*16),data+(i*16)+16,vector.input,vector.input+16);
     }
 }
+
+#ifdef OPENSSL_EXISTS
+// from https://wiki.openssl.org/index.php/EVP_Symmetric_Encryption_and_Decryption
+void handleErrors(void)
+{
+  ERR_print_errors_fp(stderr);
+  abort();
+}
+int AES_encrypt(const EVP_CIPHER * cipher, unsigned char *plaintext, int plaintext_len, unsigned char *key,
+  unsigned char *iv, unsigned char *ciphertext)
+{
+  EVP_CIPHER_CTX *ctx;
+
+  int len;
+
+  int ciphertext_len;
+
+  /* Create and initialise the context */
+  if(!(ctx = EVP_CIPHER_CTX_new())) handleErrors();
+
+  /* Initialise the encryption operation. IMPORTANT - ensure you use a key
+   * and IV size appropriate for your cipher
+   * In this example we are using 256 bit AES (i.e. a 256 bit key). The
+   * IV size for *most* modes is the same as the block size. For AES this
+   * is 128 bits */
+  if(1 != EVP_EncryptInit_ex(ctx, cipher, NULL, key, iv))
+    handleErrors();
+
+  /* Provide the message to be encrypted, and obtain the encrypted output.
+   * EVP_EncryptUpdate can be called multiple times if necessary
+   */
+  if(1 != EVP_EncryptUpdate(ctx, ciphertext, &len, plaintext, plaintext_len))
+    handleErrors();
+  ciphertext_len = len;
+
+  /* Finalise the encryption. Further ciphertext bytes may be written at
+   * this stage.
+   */
+  if(1 != EVP_EncryptFinal_ex(ctx, ciphertext + len, &len)) handleErrors();
+  ciphertext_len += len;
+
+  /* Clean up */
+  EVP_CIPHER_CTX_free(ctx);
+
+  return ciphertext_len;
+}
+
+/////////////////////////////////////////////////////////////
+// - Uses OpenSSL to encrypt and paracrypt to decrypt.
+// - Checks that we obtain the same original message
+void AES_RANDOM_DECRYPT_TEST(std::string title,
+		tv vector_key,
+		const EVP_CIPHER * openSSLCipher,
+		paracrypt::CudaAES* aes,
+		paracrypt::CUDACipherDevice* dev,
+		bool constantKey,
+		bool constantTables,
+		int maxNBlocks = 10000000)
+{
+	/* OpenSSL Encryption *********************************************************/
+	unsigned char *key = (unsigned char*) vector_key.key;
+	unsigned char *iv = (unsigned char*) vector_key.iv;
+
+	int nBlocks = maxNBlocks < random_data_n_blocks ?
+			maxNBlocks : random_data_n_blocks;
+
+	int data_length = nBlocks*16;
+	unsigned char *plaintext = (unsigned char*) malloc(data_length);
+    for(int i=0; i < nBlocks; i++) {
+    	memcpy(plaintext+(i*16),random_data+(i*16),16);
+    }
+
+    unsigned char *result = (unsigned char*) malloc(data_length+16);
+    int ciphertext_len;
+
+    /* Encrypt the plaintext */
+    ciphertext_len = AES_encrypt (openSSLCipher, plaintext, data_length, key, iv, result);
+    BOOST_REQUIRE_EQUAL(ciphertext_len-16,data_length);
+	/******************************************************************************/
+
+    aes->setDevice(dev);
+    aes->setMode(vector_key.m);
+    if(iv)
+    	aes->setIV(vector_key.iv,128);
+    aes->setKey(vector_key.key,vector_key.key_bits);
+    aes->constantKey(constantKey);
+    aes->constantTables(constantTables);
+    aes->malloc(nBlocks);
+
+    Timer* t = new Timer();
+    t->tic();
+    aes->decrypt(result, result, nBlocks);
+    double sec = t->toc_seconds();
+    LOG_INF(boost::format("%s needs %f seconds to decrypt %d blocks\n") % title.c_str() % sec % nBlocks);
+
+    for(int i=0;i<nBlocks*4;i++) {
+    	//LOG_TRACE(boost::format("block %d") % i);
+    	BOOST_REQUIRE_EQUAL(((uint32_t*)result)[i], ((uint32_t*)plaintext)[i]);
+    }
+    free(plaintext);
+    free(result);
+}
+#endif
 
 #define AES_TEST_SUITE_KEYSIZE(id, testName, className, tv, keyBitsStr) \
 	BOOST_AUTO_TEST_SUITE(id) \
@@ -329,28 +488,28 @@ void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
 		{ \
 			paracrypt::CudaAES * aes = new className; \
 			AES_VECTOR_RDN_TEST( "AES"keyBitsStr"-ECB (" testName ") n blocks with and constant key and t-table", \
-					tv,aes,gpu,128,true,true); \
+					tv,aes,gpu,true,true); \
 			delete aes; \
 		} \
 		BOOST_AUTO_TEST_CASE(kc_nblocks) \
 		{ \
 			paracrypt::CudaAES * aes = new className; \
 			AES_VECTOR_RDN_TEST( "AES"keyBitsStr"-ECB (" testName ") n blocks with and constant key", \
-					tv,aes,gpu,128,true,false); \
+					tv,aes,gpu,true,false); \
 			delete aes; \
 		} \
 		BOOST_AUTO_TEST_CASE(tc_nblocks) \
 		{ \
 			paracrypt::CudaAES * aes = new className; \
 			AES_VECTOR_RDN_TEST( "AES"keyBitsStr"-ECB (" testName ") n blocks with and constant t-table", \
-					tv,aes,gpu,128,false,true); \
+					tv,aes,gpu,false,true); \
 			delete aes; \
 		} \
 		BOOST_AUTO_TEST_CASE(nblocks) \
 		{ \
 			paracrypt::CudaAES * aes = new className; \
 			AES_VECTOR_RDN_TEST( "AES"keyBitsStr"-ECB (" testName ") n blocks with and dynamic key and t-table", \
-					tv,aes,gpu,128,false,false); \
+					tv,aes,gpu,false,false); \
 			delete aes; \
 		} \
 		BOOST_AUTO_TEST_CASE(kc_tc_random) \
@@ -383,23 +542,86 @@ void AES_SB_DECRYPT_TEST(std::string title, tv vector, int n_blocks, paracrypt::
 		} \
 	BOOST_AUTO_TEST_SUITE_END()
 
+
+// to use with CBC and CFB
+#ifdef OPENSSL_EXISTS
+#define AES_CHAINMODE_TEST_SUITE_KEYSIZE(id, testName, className, tv, tipeStr) \
+		BOOST_AUTO_TEST_SUITE(id) \
+			BOOST_AUTO_TEST_CASE(kc_tc_single) \
+			{ \
+				paracrypt::CudaAES * aes = new className; \
+				AES_SB_DECRYPT_TEST("AES"tipeStr" example vector | " testName " with constant key and t-table", \
+						aes_128_cbc_tv,1,aes,gpu,true,true,true); \
+				delete aes; \
+			} \
+			BOOST_AUTO_TEST_CASE(random_decrypt_2blocks) \
+			{ \
+				paracrypt::CudaAES * aes = new className; \
+				AES_RANDOM_DECRYPT_TEST("AES"tipeStr" example vector | " \
+						testName " decryption with with random data and constant key and t-table", \
+						aes_128_cbc_tv,EVP_aes_128_cbc(),aes,gpu,true,true,2); \
+				delete aes; \
+			} \
+			BOOST_AUTO_TEST_CASE(random_decrypt_65blocks) \
+			{ \
+				paracrypt::CudaAES * aes = new className; \
+				AES_RANDOM_DECRYPT_TEST("AES"tipeStr" example vector | " \
+						testName " decryption with with random data and constant key and t-table", \
+						aes_128_cbc_tv,EVP_aes_128_cbc(),aes,gpu,true,true,65); \
+				delete aes; \
+			} \
+			BOOST_AUTO_TEST_CASE(random_decrypt) \
+			{ \
+				paracrypt::CudaAES * aes = new className; \
+				AES_RANDOM_DECRYPT_TEST("AES"tipeStr" example vector | " \
+						testName " decryption with with random data and constant key and t-table", \
+						aes_128_cbc_tv,EVP_aes_128_cbc(),aes,gpu,true,true); \
+				delete aes; \
+			} \
+		BOOST_AUTO_TEST_SUITE_END()
+#else
+#define AES_CHAINMODE_TEST_SUITE_KEYSIZE(id, testName, className, tv, tipeStr) \
+		BOOST_AUTO_TEST_SUITE(id) \
+			BOOST_AUTO_TEST_CASE(kc_tc_single) \
+			{ \
+				paracrypt::CudaAES * aes = new className; \
+				AES_SB_DECRYPT_TEST("AES"tipeStr" example vector | " testName " with constant key and t-table", \
+						aes_128_cbc_tv,1,aes,gpu,true,true,true); \
+				delete aes; \
+			} \
+		BOOST_AUTO_TEST_SUITE_END()
+#endif
+
+#ifdef OPENSSL_EXISTS
 #define AES_TEST_SUITE(id, testName, className) \
 	BOOST_AUTO_TEST_SUITE(id) \
-		AES_TEST_SUITE_KEYSIZE(AES128, testName, className, aes_example, "128"); \
-		AES_TEST_SUITE_KEYSIZE(AES192, testName, className, aes_192_tv, "192"); \
-		AES_TEST_SUITE_KEYSIZE(AES256, testName, className, aes_256_tv, "256"); \
+		AES_TEST_SUITE_KEYSIZE(AES_128_ECB, testName, className, aes_example, "128"); \
+		AES_TEST_SUITE_KEYSIZE(AES_192_ECB, testName, className, aes_192_tv, "192"); \
+		AES_TEST_SUITE_KEYSIZE(AES_256_ECB, testName, className, aes_256_tv, "256"); \
+		AES_CHAINMODE_TEST_SUITE_KEYSIZE(AES_128_CBC, testName, className, aes_128_cbc_tv, "128-CBC"); \
 	BOOST_AUTO_TEST_SUITE_END()
+#else
+#define AES_TEST_SUITE(id, testName, className) \
+	BOOST_AUTO_TEST_SUITE(id) \
+		AES_TEST_SUITE_KEYSIZE(AES_128_ECB, testName, className, aes_example, "128"); \
+		AES_TEST_SUITE_KEYSIZE(AES_192_ECB, testName, className, aes_192_tv, "192"); \
+		AES_TEST_SUITE_KEYSIZE(AES_256_ECB, testName, className, aes_256_tv, "256"); \
+	BOOST_AUTO_TEST_SUITE_END()
+#endif
 
 BOOST_AUTO_TEST_SUITE(CUDA_AES)
 	AES_TEST_SUITE(CUDA_AES_16B, "16B parallelism", paracrypt::CudaAES16B());
+/*  TODO TOREMOVE COMMENT
 	AES_TEST_SUITE(CUDA_AES_16B_PTR, "16B (ptr) parallelism", paracrypt::CudaAES16BPtr());
 	AES_TEST_SUITE(CUDA_AES_8B, "8B parallelism", paracrypt::CudaAES8B());
 	AES_TEST_SUITE(CUDA_AES_8B_PTR, "8B (ptr) parallelism", paracrypt::CudaAES8BPtr());
 	AES_TEST_SUITE(CUDA_AES_4B, "4B parallelism", paracrypt::CudaAES4B());
 	AES_TEST_SUITE(CUDA_AES_4B_PTR, "4B (ptr) parallelism", paracrypt::CudaAES4BPtr());
 	AES_TEST_SUITE(CUDA_AES_1B, "1B parallelism", paracrypt::CudaAES1B());
+*/
 BOOST_AUTO_TEST_SUITE_END()
 
+/*// TODO TOREMOVE COMMENT
 //
 // - Creates a input file where each (word) block value is its index except
 //   for the last block which can be half-empty. In this case each
@@ -1146,3 +1368,4 @@ BOOST_AUTO_TEST_SUITE(LAUNCHERS)
 		BOOST_AUTO_TEST_SUITE_END()
 	BOOST_AUTO_TEST_SUITE_END()
 BOOST_AUTO_TEST_SUITE_END()
+*/

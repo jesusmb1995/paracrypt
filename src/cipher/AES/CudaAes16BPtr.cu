@@ -21,14 +21,19 @@
 #include "CudaAes16BPtr.cuh"
 
 __global__ void __cuda_ecb_aes_16b_ptr_encrypt__(
-		  int n,
-		  uint32_t* d,
-	  	  uint32_t* k,
-	  	  int key_bits,
-	  	  uint32_t* T0,
-	  	  uint32_t* T1,
-	  	  uint32_t* T2,
-	  	  uint32_t* T3
+		const paracrypt::BlockCipher::Mode m,
+		unsigned int n,
+		unsigned int offset,
+		const uint32_t* d,
+		const uint32_t* out,
+		uint32_t* neigh,
+		uint32_t* iv,
+		uint32_t* k,
+		const int key_bits,
+		uint32_t* T0,
+		uint32_t* T1,
+		uint32_t* T2,
+		uint32_t* T3
     )
 {
 	int bi = ((blockIdx.x * blockDim.x) + threadIdx.x); // block index
@@ -187,14 +192,19 @@ __global__ void __cuda_ecb_aes_16b_ptr_encrypt__(
 }
 
 __global__ void __cuda_ecb_aes_16b_ptr_decrypt__(
-		  int n,
-		  uint32_t* d,
-	  	  uint32_t* k,
-	  	  int key_bits,
-	  	  uint32_t* T0,
-	  	  uint32_t* T1,
-	  	  uint32_t* T2,
-	  	  uint32_t* T3,
+		const paracrypt::BlockCipher::Mode m,
+		unsigned int n,
+		unsigned int offset,
+		const uint32_t* d,
+		const uint32_t* out,
+		uint32_t* neigh,
+		uint32_t* iv,
+		uint32_t* k,
+		const int key_bits,
+		uint32_t* T0,
+		uint32_t* T1,
+		uint32_t* T2,
+		uint32_t* T3,
 	  	  uint8_t* T4
     )
 {

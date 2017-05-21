@@ -20,9 +20,23 @@
 
 #include "CudaAES.hpp"
 #include "device/CUDACipherDevice.hpp"
+#include "cipher/CUDABlockCipher.hpp"
+#include "cipher/BlockCipher.hpp"
 #include "CudaConstant.cuh"
+#include "io/CudaPinned.hpp"
+
+#define TO_IMPLEMENT_OUT_OF_PLACE() \
+ERR("Only in-place encryption and decryption is supported in " \
+	" this release. Out-of-place algorithm would consume" \
+    " more GPU memory than the in-place version and thus" \
+    " it's not implemented yet. It could be implemented to " \
+    " empirically compare the performance." \
+    "\n" \
+    " This is a open-source project - you are more than welcome to" \
+    " implement the out-of-place version and prepare a benchmark :)");
 
 paracrypt::CudaAES::CudaAES()
+	: paracrypt::CUDABlockCipher::CUDABlockCipher()
 {
 	this->deviceEKeyConstant = false;
 	this->deviceDKeyConstant = false;
@@ -30,10 +44,12 @@ paracrypt::CudaAES::CudaAES()
 	this->useConstantTables = false;
 	this->enInstantiatedButInOtherDevice = false;
 	this->deInstantiatedButInOtherDevice = false;
+	this->inPlace = true; // use neighbours by default
+	this->pin = new CudaPinned();
 }
 
 paracrypt::CudaAES::CudaAES(CudaAES* aes)
-	: paracrypt::CudaAES::AES(aes)
+	: paracrypt::CudaAES::AES(aes), paracrypt::CUDABlockCipher::CUDABlockCipher()
 {
 	this->setDevice(aes->device);
 	this->deviceEKey = aes->deviceEKey;
@@ -54,6 +70,8 @@ paracrypt::CudaAES::CudaAES(CudaAES* aes)
 //	this->malloc(aes->n_blocks);
 	this->enInstantiatedButInOtherDevice = false;
 	this->deInstantiatedButInOtherDevice = false;
+	this->deviceIV = aes->deviceIV;
+	this->pin = aes->pin;
 }
 
 paracrypt::CudaAES::~CudaAES()
@@ -94,6 +112,15 @@ paracrypt::CudaAES::~CudaAES()
     }
     if (!this->isCopy && this->deviceTd4 != NULL) {
 	this->getDevice()->free(this->deviceTd4);
+    }
+    if (!this->isCopy && this->deviceIV != NULL) {
+	this->getDevice()->free(this->deviceIV);
+    }
+    if(this->neighborsDev != NULL) {
+    	this->getDevice()->free(this->neighborsDev);
+    }
+    if(this->neighborsPin != NULL) {
+    	this->pin->free((void*)this->neighborsPin);
     }
 }
 
@@ -149,6 +176,17 @@ void paracrypt::CudaAES::setDevice(CUDACipherDevice * device)
 		this->getDevice()->free(this->deviceTd4);
 		this->deviceTd4 = NULL;
 		}
+	    if (!this->isCopy && this->deviceIV != NULL) {
+		this->getDevice()->free(this->deviceIV);
+	    }
+	    if(this->neighborsDev != NULL) {
+	    	this->getDevice()->free(this->neighborsDev);
+	    	this->neighborsDev = NULL;
+	    }
+	    if(this->neighborsPin != NULL) {
+	    	this->pin->free((void*)this->neighborsPin);
+	    	this->neighborsPin = NULL;
+	    }
 		this->device = device;
 		this->stream = this->getDevice()->addStream();
 }
@@ -166,7 +204,7 @@ void paracrypt::CudaAES::initDeviceEKey(){
 			deviceEKeyConstant = true;
 		}
 		else {
-		int keySize =
+		size_t keySize =
 			(4 * (this->getEncryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
 		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
 		this->getDevice()->malloc((void **) &(this->deviceEKey), keySize);
@@ -186,7 +224,7 @@ void paracrypt::CudaAES::initDeviceDKey(){
 			deviceDKeyConstant = true;
 		}
 		else {
-		int keySize =
+		size_t keySize =
 		(4 * (this->getDecryptionExpandedKey()->rounds + 1)) * sizeof(uint32_t);
 		this->getDevice()->malloc((void **) &(this->deviceDKey), keySize);
 		this->getDevice()->malloc((void **) &(this->deviceDKey), keySize);
@@ -227,7 +265,7 @@ uint32_t* paracrypt::CudaAES::getDeviceDKey()
 //    return 0;
 //}
 
-void paracrypt::CudaAES::malloc(unsigned int n_blocks)
+void paracrypt::CudaAES::malloc(unsigned int n_blocks, bool isInplace)
 {
 //	this->n_blocks = n_blocks;
     if (this->data != NULL) {
@@ -235,7 +273,42 @@ void paracrypt::CudaAES::malloc(unsigned int n_blocks)
     }
     int dataSize = AES_BLOCK_SIZE_B * n_blocks;
     this->getDevice()->malloc((void **) &(this->data), dataSize);
+
+    if(this->neighborsDev != NULL) {
+    	this->getDevice()->free(this->neighborsDev);
+    }
+    if(this->neighborsPin != NULL) {
+    	this->pin->free((void*)this->neighborsPin);
+    }
+    this->inPlace = isInplace;
+    if(!isInplace) {
+    	TO_IMPLEMENT_OUT_OF_PLACE() // TODO allocate x2 mem.
+    }
+    if(this->inPlace && (this->getMode() == CBC || this->getMode() == CFB)) {
+		int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
+    	int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
+		this->cipherBlocksPerThreadBlock = threadsPerBlock / threadsPerCipherBlock;
+		assert(threadsPerBlock % threadsPerCipherBlock == 0);
+		this->nNeighbors = n_blocks / this->cipherBlocksPerThreadBlock;
+		if(this->nNeighbors > 0 && n_blocks % this->cipherBlocksPerThreadBlock == 0)
+			this->nNeighbors--;
+		LOG_TRACE(boost::format("I will use %u copies of input blocks in"
+				" addition to the %u original blocks.") % this->nNeighbors % n_blocks);
+		this->neighSize = this->nNeighbors * (this->getBlockSize()/8);
+		this->getDevice()->malloc((void **) &(this->neighborsDev), this->neighSize);
+		this->pin->alloc((void**)&neighborsPin,this->neighSize);
+    }
 }
+
+void paracrypt::CudaAES::setMode(Mode m)
+{
+	paracrypt::BlockCipher::setMode(m);
+    if(this->neighborsDev != NULL && (m != CBC || m != CFB)) {
+    	this->getDevice()->free(this->neighborsDev);
+    	this->neighborsDev = NULL;
+    }
+}
+
 
 /*-
 Te0[x] = S [x].[02, 01, 01, 03];
@@ -873,6 +946,22 @@ void paracrypt::CudaAES::initDeviceTd()
 	}
 }
 
+void paracrypt::CudaAES::setIV(const unsigned char iv[], int bits)
+{
+	if(bits != 128) {
+		ERR("Wrong IV size for AES (an 128 bit input vector is required).");
+	}
+	if (!this->isCopy && this->deviceIV == NULL) {
+		this->getDevice()->malloc((void **) &(this->deviceIV), 16);
+		this->getDevice()->memcpyTo((void*)iv,this->deviceIV, 16);
+	}
+}
+
+unsigned char* paracrypt::CudaAES::getIV()
+{
+	return this->deviceIV;
+}
+
 uint32_t*  paracrypt::CudaAES::getDeviceTe0()
 {
 	if(this->constantTables()) {
@@ -994,7 +1083,7 @@ unsigned int paracrypt::CudaAES::getBlockSize() {
 }
 
 int paracrypt::CudaAES::setKey(const unsigned char key[], int bits) {
-  return paracrypt::AES::setKey(key,bits);
+    return paracrypt::AES::setKey(key,bits);
 }
 
 void paracrypt::CudaAES::waitFinish() {
@@ -1005,43 +1094,103 @@ bool paracrypt::CudaAES::checkFinish() {
 	return this->getDevice()->checkMemcpyFrom(this->stream);
 }
 
+bool paracrypt::CudaAES::isInplace() {
+	return this->inPlace;
+}
+
+void paracrypt::CudaAES::transferNeighborsToGPU(
+		const unsigned char blocks[],
+		std::streamsize n_blocks)
+{
+	unsigned int blockSizeBytes = this->getBlockSize()/8;
+	for(unsigned int i = 0; i < this->nNeighbors; i++) {
+		unsigned int neighBlock = ((i+1)*this->cipherBlocksPerThreadBlock)-1;
+		DEV_TRACE(boost::format("Copying neighbor block %i") % neighBlock);
+		unsigned int despPin = i*blockSizeBytes;
+		unsigned int despBlocks = neighBlock*blockSizeBytes;
+		std::memcpy(neighborsPin+despPin,blocks+despBlocks,blockSizeBytes);
+	}
+	this->getDevice()->memcpyTo(this->neighborsPin, this->neighborsDev, this->neighSize, this->stream);
+}
+
 int paracrypt::CudaAES::encrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      std::streamsize n_blocks)
 {
+	if(this->getMode() == paracrypt::BlockCipher::CBC || this->getMode() == paracrypt::BlockCipher::CFB) {
+		ERR("CBC or CFB encryption is not supported due to their parallel limitations."
+			" Use OpenSSL instead. You can use the same key and input vector with "
+			" Paracrypt for faster CBC/CFB decryption.");
+	}
+
 	int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
     int gridSize = this->getDevice()->getGridSize(n_blocks, threadsPerCipherBlock);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
-    int dataSize = n_blocks * AES_BLOCK_SIZE_B;
+    size_t dataSize = n_blocks * AES_BLOCK_SIZE_B;
     uint32_t *key = this->getDeviceEKey();
     assert(key != NULL);
     int rounds = this->getEncryptionExpandedKey()->rounds;
 
-//    LOG_TRACE(boost::format("encryption key: %x") % key);
-//    LOG_TRACE(boost::format("encryption data ptr: %x") % (int*) in);
-//    LOG_TRACE(boost::format("encryption data size: %i") % dataSize);
-//    LOG_TRACE(boost::format("encryption Te0: %x") % this->getDeviceTe0());
-//    LOG_TRACE(boost::format("encryption Te1: %x") % this->getDeviceTe1());
-//    LOG_TRACE(boost::format("encryption Te2: %x") % this->getDeviceTe2());
-//    LOG_TRACE(boost::format("encryption Te3: %x") % this->getDeviceTe3());
+    if(this->inPlace) {
+    	if(in != out) {
+    		LOG_WAR("The cipher is configured to process data "
+    				"in-place but two different pointers are given.");
+    	}
+    	transferNeighborsToGPU(in,n_blocks);
+    } else {
+    	TO_IMPLEMENT_OUT_OF_PLACE() // TODO
+    	if(in == out) {
+    		ERR("The cipher is not configured to process data in-place.");
+    	}
+    }
+
+//    DEV_TRACE(boost::format("encryption key: %x") % key);
+//    DEV_TRACE(boost::format("encryption data ptr: %x") % (int*) in);
+//    DEV_TRACE(boost::format("encryption data size: %i") % dataSize);
+//    DEV_TRACE(boost::format("encryption Te0: %x") % this->getDeviceTe0());
+//    DEV_TRACE(boost::format("encryption Te1: %x") % this->getDeviceTe1());
+//    DEV_TRACE(boost::format("encryption Te2: %x") % this->getDeviceTe2());
+//    DEV_TRACE(boost::format("encryption Te3: %x") % this->getDeviceTe3());
 
     this->getDevice()->memcpyTo((void *) in, this->data, dataSize,
 				this->stream);
-	this->cuda_ecb_aes_encrypt
-			(
-					gridSize,
-					threadsPerBlock,
-					this->data,
-					n_blocks,
-					key,
-					rounds,
-					this->getDeviceTe0(),
-					this->getDeviceTe1(),
-					this->getDeviceTe2(),
-					this->getDeviceTe3()
-			);
+
+	DEV_TRACE(boost::format(this->getImplementationName()+"_encrypt("
+			"gridSize=%d"
+			", threadsPerBlock=%d"
+			", data=%x"
+			", n_blocks=%d"
+			", expanded_key=%x"
+			", rounds=%d)")
+		% gridSize
+		% threadsPerBlock
+		% (void*) (this->data)
+		% n_blocks
+		% key
+		% rounds);
+	this->getEncryptFunction()(
+			this->getMode(),
+			gridSize,
+			threadsPerBlock,
+			this->getDevice()->acessStream(this->stream),
+			n_blocks,
+			this->getCurrentBlockOffset(),
+			this->data,
+			this->data, // TODO implement out-of-place version
+			this->neighborsDev,
+			this->getIV(),
+			key,
+			this->getKeyBits(rounds),
+			this->getDeviceTe0(),
+			this->getDeviceTe1(),
+			this->getDeviceTe2(),
+			this->getDeviceTe3()
+	);
+
     this->getDevice()->memcpyFrom(this->data, (void *) out, dataSize,
 				  this->stream);
+
+	paracrypt::BlockCipher::encrypt(in,out,n_blocks); // increment block offset
     return 0;
 }
 
@@ -1052,38 +1201,72 @@ int paracrypt::CudaAES::decrypt(const unsigned char in[],
 	int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
     int gridSize = this->getDevice()->getGridSize(n_blocks, threadsPerCipherBlock);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
-    int dataSize = n_blocks * AES_BLOCK_SIZE_B;
+    size_t dataSize = n_blocks * AES_BLOCK_SIZE_B;
     uint32_t *key = this->getDeviceDKey();
     assert(key != NULL);
     int rounds = this->getDecryptionExpandedKey()->rounds;
 
-//    LOG_TRACE(boost::format("decryption key: %x") % key);
-//    LOG_TRACE(boost::format("decryption data ptr: %x") % (int*) in);
-//    LOG_TRACE(boost::format("decryption data size: %i") % dataSize);
-//    LOG_TRACE(boost::format("decryption Td0: %x") % this->getDeviceTd0());
-//    LOG_TRACE(boost::format("decryption Td1: %x") % this->getDeviceTd1());
-//    LOG_TRACE(boost::format("decryption Td2: %x") % this->getDeviceTd2());
-//    LOG_TRACE(boost::format("decryption Td3: %x") % this->getDeviceTd3());
-//    LOG_TRACE(boost::format("decryption Td4: %x") % (int*) this->getDeviceTd4());
+    if(this->inPlace) {
+    	if(in != out) {
+    		LOG_WAR("The cipher is configured to process data "
+    				"in-place but two different pointers are given.");
+    	}
+    	transferNeighborsToGPU(in,n_blocks);
+    } else {
+    	if(in == out) {
+    		ERR("The cipher is not configured to process data in-place.");
+    	}
+    }
+
+//    DEV_TRACE(boost::format("decryption key: %x") % key);
+//    DEV_TRACE(boost::format("decryption data ptr: %x") % (int*) in);
+//    DEV_TRACE(boost::format("decryption data size: %i") % dataSize);
+//    DEV_TRACE(boost::format("decryption Td0: %x") % this->getDeviceTd0());
+//    DEV_TRACE(boost::format("decryption Td1: %x") % this->getDeviceTd1());
+//    DEV_TRACE(boost::format("decryption Td2: %x") % this->getDeviceTd2());
+//    DEV_TRACE(boost::format("decryption Td3: %x") % this->getDeviceTd3());
+//    DEV_TRACE(boost::format("decryption Td4: %x") % (int*) this->getDeviceTd4());
 
     this->getDevice()->memcpyTo((void *) in, this->data, dataSize,
 				this->stream);
-	this->cuda_ecb_aes_decrypt
+
+	DEV_TRACE(boost::format(this->getImplementationName()+"_decrypt("
+			"gridSize=%d"
+			", threadsPerBlock=%d"
+			", data=%x"
+			", n_blocks=%d"
+			", expanded_key=%x"
+			", rounds=%d)")
+		% gridSize
+		% threadsPerBlock
+		% (void*) (this->data)
+		% n_blocks
+		% key
+		% rounds);
+	this->getDecryptFunction()
 			(
+					this->getMode(),
 					gridSize,
 					threadsPerBlock,
-					this->data,
+					this->getDevice()->acessStream(this->stream),
 					n_blocks,
+					this->getCurrentBlockOffset(),
+					this->data,
+					this->data, // TODO implement out-of-place version
+					this->neighborsDev,
+					this->getIV(),
 					key,
-					rounds,
+					this->getKeyBits(rounds),
 					this->getDeviceTd0(),
 					this->getDeviceTd1(),
 					this->getDeviceTd2(),
 					this->getDeviceTd3(),
 					this->getDeviceTd4()
 			);
+
     this->getDevice()->memcpyFrom(this->data, (void *) out, dataSize,
 				  this->stream);
 
+	paracrypt::BlockCipher::decrypt(in,out,n_blocks); // increment block offset
     return 0;
 }

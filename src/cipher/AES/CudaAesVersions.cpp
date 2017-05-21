@@ -18,44 +18,28 @@
  *
  */
 
-#pragma once
+#include "CudaAesVersions.hpp"
+#include "cipher/AES/CudaAes16B.cuh"
 
-#include "CudaAES.hpp"
+#define CONSTRUCTORS(className) \
+		paracrypt::className::className() {} \
+		paracrypt::className::className(className* aes) : CudaAES(aes) {} \
+		paracrypt::className::~className() {}
 
-namespace paracrypt {
+CONSTRUCTORS(CudaAES16B);
 
-    class CudaAES8B:public CudaAES {
-    public:
-    	CudaAES8B();
-    	CudaAES8B(CudaAES8B* aes);
-    	~CudaAES8B();
-    protected:
-  int getThreadsPerCipherBlock();
-  int cuda_aes_encrypt(
-   		int gridSize,
-   		int threadsPerBlock,
-   		unsigned int n_blocks,
-   		uint32_t* key,
-   		int rounds,
-   		uint32_t* deviceTd0,
-   		uint32_t* deviceTd1,
-   		uint32_t* deviceTd2,
-   		uint32_t* deviceTd3,
-   		uint8_t* deviceTd4
+int paracrypt::CudaAES16B::getThreadsPerCipherBlock() {
+	return 1;
+}
 
-  		);
-  int cuda_ecb_aes_decrypt(
-   		int gridSize,
-   		int threadsPerBlock,
-   		unsigned int n_blocks,
-   		uint32_t* key,
-   		int rounds,
-   		uint32_t* deviceTd0,
-   		uint32_t* deviceTd1,
-   		uint32_t* deviceTd2,
-   		uint32_t* deviceTd3,
-   		uint8_t* deviceTd4
-  		);
-    };
+std::string paracrypt::CudaAES16B::getImplementationName() {
+	return std::string("cuda_ecb_aes_16b");
+}
 
+paracrypt::CudaAES::ef paracrypt::CudaAES16B::getEncryptFunction() {
+	return &cuda_ecb_aes_16b_encrypt;
+}
+
+paracrypt::CudaAES::df paracrypt::CudaAES16B::getDecryptFunction() {
+	return &cuda_ecb_aes_16b_decrypt;
 }
