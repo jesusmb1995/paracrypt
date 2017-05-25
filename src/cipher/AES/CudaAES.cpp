@@ -1104,6 +1104,7 @@ void paracrypt::CudaAES::transferNeighborsToGPU(
 {
 	unsigned int blockSizeBytes = this->getBlockSize()/8;
 	for(unsigned int i = 0; i < this->nNeighbors; i++) {
+		// neighBlock calculation works for both CBC and CFB
 		unsigned int neighBlock = ((i+1)*this->cipherBlocksPerThreadBlock)-1;
 		DEV_TRACE(boost::format("Copying neighbor block %i") % neighBlock);
 		unsigned int despPin = i*blockSizeBytes;
@@ -1117,7 +1118,7 @@ int paracrypt::CudaAES::encrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      std::streamsize n_blocks)
 {
-	if(this->getMode() == paracrypt::BlockCipher::CBC || this->getMode() == paracrypt::BlockCipher::CFB) {
+	if(this->getMode() == paracrypt::BlockCipher::CBC) {
 		ERR("CBC or CFB encryption is not supported due to their parallel limitations."
 			" Use OpenSSL instead. You can use the same key and input vector with "
 			" Paracrypt for faster CBC/CFB decryption.");
@@ -1131,18 +1132,24 @@ int paracrypt::CudaAES::encrypt(const unsigned char in[],
     assert(key != NULL);
     int rounds = this->getEncryptionExpandedKey()->rounds;
 
-    if(this->inPlace) {
-    	if(in != out) {
-    		LOG_WAR("The cipher is configured to process data "
-    				"in-place but two different pointers are given.");
-    	}
-    	transferNeighborsToGPU(in,n_blocks);
-    } else {
-    	TO_IMPLEMENT_OUT_OF_PLACE() // TODO
-    	if(in == out) {
-    		ERR("The cipher is not configured to process data in-place.");
-    	}
-    }
+    // CFB does decryption and encryption is
+    //  performed with encrypt cipher function
+    //  so we have to include the neighbor transfer
+    //  here.
+	if(this->getMode() == paracrypt::BlockCipher::CFB) {
+		if(this->inPlace) {
+			if(in != out) {
+				LOG_WAR("The cipher is configured to process data "
+						"in-place but two different pointers are given.");
+			}
+			// only CBC and CFB use neighbors
+			transferNeighborsToGPU(in,n_blocks);
+		} else {
+			if(in == out) {
+				ERR("The cipher is not configured to process data in-place.");
+			}
+		}
+	}
 
 //    DEV_TRACE(boost::format("encryption key: %x") % key);
 //    DEV_TRACE(boost::format("encryption data ptr: %x") % (int*) in);
@@ -1159,12 +1166,14 @@ int paracrypt::CudaAES::encrypt(const unsigned char in[],
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
+			", blockOffset=%d"
 			", n_blocks=%d"
 			", expanded_key=%x"
 			", rounds=%d)")
 		% gridSize
 		% threadsPerBlock
 		% (void*) (this->data)
+		% this->getCurrentBlockOffset()
 		% n_blocks
 		% key
 		% rounds);
@@ -1174,7 +1183,7 @@ int paracrypt::CudaAES::encrypt(const unsigned char in[],
 			threadsPerBlock,
 			this->getDevice()->acessStream(this->stream),
 			n_blocks,
-			this->getCurrentBlockOffset(),
+			this->getEncryptBlockOffset(),
 			this->data,
 			this->data, // TODO implement out-of-place version
 			this->neighborsDev,
@@ -1198,6 +1207,16 @@ int paracrypt::CudaAES::decrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      std::streamsize n_blocks)
 {
+
+	if(this->getMode() == paracrypt::BlockCipher::CTR
+			|| this->getMode() == paracrypt::BlockCipher::GCM
+			|| this->getMode() == paracrypt::BlockCipher::CFB
+	) {
+		// CTR and CFB modes use the encryption function even for decryption
+		this->setInitialBlockOffset(this->getDecryptBlockOffset());
+		return encrypt(in, out, n_blocks);
+	}
+
 	int threadsPerCipherBlock = this->getThreadsPerCipherBlock();
     int gridSize = this->getDevice()->getGridSize(n_blocks, threadsPerCipherBlock);
     int threadsPerBlock = this->getDevice()->getThreadsPerThreadBlock();
@@ -1206,17 +1225,20 @@ int paracrypt::CudaAES::decrypt(const unsigned char in[],
     assert(key != NULL);
     int rounds = this->getDecryptionExpandedKey()->rounds;
 
-    if(this->inPlace) {
-    	if(in != out) {
-    		LOG_WAR("The cipher is configured to process data "
-    				"in-place but two different pointers are given.");
-    	}
-    	transferNeighborsToGPU(in,n_blocks);
-    } else {
-    	if(in == out) {
-    		ERR("The cipher is not configured to process data in-place.");
-    	}
-    }
+	if(this->getMode() == paracrypt::BlockCipher::CBC) {
+		if(this->inPlace) {
+			if(in != out) {
+				LOG_WAR("The cipher is configured to process data "
+						"in-place but two different pointers are given.");
+			}
+			// only CBC and CFB use neighbors
+			transferNeighborsToGPU(in,n_blocks);
+		} else {
+			if(in == out) {
+				ERR("The cipher is not configured to process data in-place.");
+			}
+		}
+	}
 
 //    DEV_TRACE(boost::format("decryption key: %x") % key);
 //    DEV_TRACE(boost::format("decryption data ptr: %x") % (int*) in);
@@ -1234,12 +1256,14 @@ int paracrypt::CudaAES::decrypt(const unsigned char in[],
 			"gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
+			", blockOffset=%d"
 			", n_blocks=%d"
 			", expanded_key=%x"
 			", rounds=%d)")
 		% gridSize
 		% threadsPerBlock
 		% (void*) (this->data)
+		% this->getCurrentBlockOffset()
 		% n_blocks
 		% key
 		% rounds);
@@ -1250,7 +1274,7 @@ int paracrypt::CudaAES::decrypt(const unsigned char in[],
 					threadsPerBlock,
 					this->getDevice()->acessStream(this->stream),
 					n_blocks,
-					this->getCurrentBlockOffset(),
+					this->getDecryptBlockOffset(),
 					this->data,
 					this->data, // TODO implement out-of-place version
 					this->neighborsDev,

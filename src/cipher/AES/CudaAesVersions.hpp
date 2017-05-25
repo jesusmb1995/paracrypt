@@ -21,6 +21,13 @@
 #pragma once
 
 #include "cipher/AES/CudaAES.hpp"
+#include "cipher/AES/CudaAes16B.cuh"
+#include "cipher/AES/CudaAes16BPtr.cuh"
+#include "cipher/AES/CudaAes8B.cuh"
+#include "cipher/AES/CudaAes8BPtr.cuh"
+#include "cipher/AES/CudaAes4B.cuh"
+#include "cipher/AES/CudaAes4BPtr.cuh"
+#include "cipher/AES/CudaAes1B.cuh"
 
 namespace paracrypt {
 
@@ -38,5 +45,11 @@ namespace paracrypt {
     }; \
 
 VERSION(CudaAES16B);
+VERSION(CudaAES16BPtr);
+VERSION(CudaAES8B);
+VERSION(CudaAES8BPtr);
+VERSION(CudaAES4B);
+VERSION(CudaAES4BPtr);
+VERSION(CudaAES1B);
 
 }

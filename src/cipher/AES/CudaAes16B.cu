@@ -18,14 +18,13 @@
  *
  */
 
-#include "cipher/BlockCipher.hpp"
 #include "CudaAes16B.cuh"
 #include "cuda_logging.cuh"
 
-__global__ void __cuda_ecb_aes_16b_encrypt__(
+__global__ void __cuda_aes_16b_encrypt__(
 		const paracrypt::BlockCipher::Mode m,
 		unsigned int n,
-		unsigned int offset,
+		uint32_t offset,
 		const uint32_t* d,
 		uint32_t* out,
 		uint32_t* neigh,
@@ -38,7 +37,7 @@ __global__ void __cuda_ecb_aes_16b_encrypt__(
 		uint32_t* T3
     )
 {
-	unsigned int bi = ((blockIdx.x * blockDim.x) + threadIdx.x); // block index
+	uint32_t bi = ((blockIdx.x * blockDim.x) + threadIdx.x); // block index
 	if(bi < n) {
 		unsigned int p = bi*4;
 		uint32_t s0,s1,s2,s3,t0,t1,t2,t3;
@@ -48,18 +47,72 @@ __global__ void __cuda_ecb_aes_16b_encrypt__(
 		 * map byte array block to cipher state
 		 * and add initial round key:
 		 */
-		__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
-		__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p+1]);
-		__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p+2]);
-		__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p+3]);
-		__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
-		__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
-		__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
-		__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
-		s0 = d[p]   ^ k[0];
-		s1 = d[p+1] ^ k[1];
-		s2 = d[p+2] ^ k[2];
-		s3 = d[p+3] ^ k[3];
+		if(m == paracrypt::BlockCipher::CTR || m == paracrypt::BlockCipher::GCM) {
+			// - The counter is the block index: offset+bi
+			// - For security the counter is combined with a noence: global_bi ^ iv
+            // - Initial round: ^k
+			uint32_t global_bi = offset+bi;
+			__LOG_TRACE__("p %d: global_bi => 0x%04x",p,global_bi);
+			__LOG_TRACE__("p %d: iv[0] => 0x%04x",p,iv[0]);
+			__LOG_TRACE__("p %d: iv[1] => 0x%04x",p,iv[1]);
+			__LOG_TRACE__("p %d: iv[2] => 0x%04x",p,iv[2]);
+			__LOG_TRACE__("p %d: iv[3] => 0x%04x",p,iv[3]);
+			__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
+			__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
+			__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
+			__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
+			s0 = global_bi ^ iv[0] ^ k[0];
+			s1 = global_bi ^ iv[1] ^ k[1];
+			s2 = global_bi ^ iv[2] ^ k[2];
+			s3 = global_bi ^ iv[3] ^ k[3];
+		}
+		else if(m == paracrypt::BlockCipher::CFB) {
+			if(bi == 0) {
+				__LOG_TRACE__("p %d: iv[0] => 0x%04x",p,iv[0]);
+				__LOG_TRACE__("p %d: iv[1] => 0x%04x",p,iv[1]);
+				__LOG_TRACE__("p %d: iv[2] => 0x%04x",p,iv[2]);
+				__LOG_TRACE__("p %d: iv[3] => 0x%04x",p,iv[3]);
+				s0 = iv[0] ^ k[0];
+				s1 = iv[1] ^ k[1];
+				s2 = iv[2] ^ k[2];
+				s3 = iv[3] ^ k[3];
+			}
+			else {
+				if(threadIdx.x == 0) { // && d == out) { TODO support for out-of-place
+					// previous cipher-block is in another
+					//  thread-block so we cannot __syncthreads()
+					// and we use this data to ensure the data
+					// we access is not overwritten
+					int np = (blockIdx.x*4)-4;
+					s0 = neigh[np  ] ^ k[0];
+					s1 = neigh[np+1] ^ k[1];
+					s2 = neigh[np+2] ^ k[2];
+					s3 = neigh[np+3] ^ k[3];
+					__LOG_TRACE__("p %d (bi %d): accessing neighbor at np %d.",p,bi,np);
+				}
+				else {
+					s0 = d[p-4] ^ k[0];
+					s1 = d[p-3] ^ k[1];
+					s2 = d[p-2] ^ k[2];
+					s3 = d[p-1] ^ k[3];
+					__LOG_TRACE__("p %d (bi %d): accessing prev. block.",p,bi);
+				}
+			}
+		}
+		else {
+			__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
+			__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p+1]);
+			__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p+2]);
+			__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p+3]);
+			__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
+			__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
+			__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
+			__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
+			s0 = d[p]   ^ k[0];
+			s1 = d[p+1] ^ k[1];
+			s2 = d[p+2] ^ k[2];
+			s3 = d[p+3] ^ k[3];
+		}
 		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0);
 		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
 		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2);
@@ -297,7 +350,7 @@ __global__ void __cuda_ecb_aes_16b_encrypt__(
 			(T1[(t3 >> 24)       ] & 0xff000000) ^
 			k[40+key_index_sum];
 		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0);
-		out[p] = s0;
+
 		s1 =
 			(T2[(t1      ) & 0xff] & 0x000000ff) ^
 			(T3[(t2 >>  8) & 0xff] & 0x0000ff00) ^
@@ -305,7 +358,6 @@ __global__ void __cuda_ecb_aes_16b_encrypt__(
 			(T1[(t0 >> 24)       ] & 0xff000000) ^
 			k[41+key_index_sum];
 		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
-		out[p+1] = s1;
 		s2 =
 			(T2[(t2      ) & 0xff] & 0x000000ff) ^
 			(T3[(t3 >>  8) & 0xff] & 0x0000ff00) ^
@@ -313,7 +365,6 @@ __global__ void __cuda_ecb_aes_16b_encrypt__(
 			(T1[(t1 >> 24)       ] & 0xff000000) ^
 			k[42+key_index_sum];
 		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2);
-		out[p+2] = s2;
 		s3 =
 			(T2[(t3      ) & 0xff] & 0x000000ff) ^
 			(T3[(t0 >>  8) & 0xff] & 0x0000ff00) ^
@@ -321,11 +372,33 @@ __global__ void __cuda_ecb_aes_16b_encrypt__(
 			(T2[(t2 >> 24)       ] & 0xff000000) ^
 			k[43+key_index_sum];
 		__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3);
+
+		if(		   m == paracrypt::BlockCipher::CTR
+				|| m == paracrypt::BlockCipher::GCM
+				|| m == paracrypt::BlockCipher::CFB
+		){
+					__LOG_TRACE__("p %d: d[p  ] => 0x%04x",p,d[p  ]);
+					__LOG_TRACE__("p %d: d[p+1] => 0x%04x",p,d[p+1]);
+					__LOG_TRACE__("p %d: d[p+2] => 0x%04x",p,d[p+2]);
+					__LOG_TRACE__("p %d: d[p+3] => 0x%04x",p,d[p+3]);
+					s0 ^= d[p  ];
+					s1 ^= d[p+1];
+					s2 ^= d[p+2];
+					s3 ^= d[p+3];
+					__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0);
+					__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
+					__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2);
+					__LOG_TRACE__("p %d: s3 => 0x%04x",p,s3);
+		}
+
+		out[p] = s0;
+		out[p+1] = s1;
+		out[p+2] = s2;
 		out[p+3] = s3;
 	}
 }
 
-__global__ void __cuda_ecb_aes_16b_decrypt__(
+__global__ void __cuda_aes_16b_decrypt__(
         const paracrypt::BlockCipher::Mode m,
 		unsigned int n,
 		unsigned int offset,
@@ -353,30 +426,18 @@ __global__ void __cuda_ecb_aes_16b_decrypt__(
 		 * map byte array block to cipher state
 		 * and add initial round key:
 		 */
-		if(m == paracrypt::BlockCipher::CFB || m == paracrypt::BlockCipher::GCM) {
-			// - The counter is the block index: offset+bi
-			// - For security the counter is combined with a noence: global_bi ^ iv
-            // - Initial round: ^k
-			unsigned int global_bi = offset+bi;
-			s0 = global_bi ^ iv[0] ^ k[0];
-			s1 = global_bi ^ iv[1] ^ k[1];
-			s2 = global_bi ^ iv[2] ^ k[2];
-			s3 = global_bi ^ iv[3] ^ k[3];
-		}
-		else {
-			__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
-			__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p+1]);
-			__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p+2]);
-			__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p+3]);
-			__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
-			__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
-			__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
-			__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
-			s0 = d[p]   ^ k[0];
-			s1 = d[p+1] ^ k[1];
-			s2 = d[p+2] ^ k[2];
-			s3 = d[p+3] ^ k[3];
-		}
+		__LOG_TRACE__("p %d: k[0] => 0x%04x",p,k[0]);
+		__LOG_TRACE__("p %d: k[1] => 0x%04x",p,k[1]);
+		__LOG_TRACE__("p %d: k[2] => 0x%04x",p,k[2]);
+		__LOG_TRACE__("p %d: k[3] => 0x%04x",p,k[3]);
+		__LOG_TRACE__("p %d: d[0] => 0x%04x",p,d[p]);
+		__LOG_TRACE__("p %d: d[1] => 0x%04x",p,d[p+1]);
+		__LOG_TRACE__("p %d: d[2] => 0x%04x",p,d[p+2]);
+		__LOG_TRACE__("p %d: d[3] => 0x%04x",p,d[p+3]);
+		s0 = d[p]   ^ k[0];
+		s1 = d[p+1] ^ k[1];
+		s2 = d[p+2] ^ k[2];
+		s3 = d[p+3] ^ k[3];
 		__LOG_TRACE__("p %d: s0 => 0x%04x",p,s0);
 		__LOG_TRACE__("p %d: s1 => 0x%04x",p,s1);
 		__LOG_TRACE__("p %d: s2 => 0x%04x",p,s2);
@@ -661,7 +722,7 @@ __global__ void __cuda_ecb_aes_16b_decrypt__(
 					c1 = neigh[np+1];
 					c2 = neigh[np+2];
 					c3 = neigh[np+3];
-					__LOG_TRACE__("p %d (bi %d): accesing neighbor at np %d.",p,bi,np);
+					__LOG_TRACE__("p %d (bi %d): accessing neighbor at np %d.",p,bi,np);
 				}
 				else {
 					c0 = d[p-4];
@@ -683,26 +744,8 @@ __global__ void __cuda_ecb_aes_16b_decrypt__(
 			s1 ^= c1;
 			s2 ^= c2;
 			s3 ^= c3;
-		}
-		else if(m == paracrypt::BlockCipher::CFB) {
-			// TODO
-		}
-		else if(m == paracrypt::BlockCipher::CFB || m == paracrypt::BlockCipher::GCM) {
-			s0 ^= d[p  ];
-			s1 ^= d[p+1];
-			s2 ^= d[p+2];
-			s3 ^= d[p+3];
-		}
-	}
-
-	// - Do not override saving results data before others
-	//  have finished working with this this block !!
-	// Note: __syncthreads() has to be placed outside conditional code ...
-	if(m == paracrypt::BlockCipher::CBC || m == paracrypt::BlockCipher::CFB) {
-		// ... except if all threads evaluate the same condition. In this
-		//  case all threads have the same mode m.
-		// if(d == out) //TODO support for out of place
 			__syncthreads();
+		}
 	}
 
 	if(bi < n) {
@@ -714,13 +757,13 @@ __global__ void __cuda_ecb_aes_16b_decrypt__(
 	}
 }
 
-void cuda_ecb_aes_16b_encrypt(
+void cuda_aes_16b_encrypt(
 			  paracrypt::BlockCipher::Mode m,
 	  	  	  int gridSize,
 	  	  	  int threadsPerBlock,
 	  	  	  cudaStream_t stream,
 	  	  	  unsigned int n_blocks,
-	  	  	  unsigned int offset,
+	  	  	  uint32_t offset,
 	  	  	  unsigned char* in,
 	  	  	  unsigned char* out,
 	  	  	  unsigned char* neigh,
@@ -733,7 +776,7 @@ void cuda_ecb_aes_16b_encrypt(
 	  	  	  uint32_t* deviceTe3
 	      )
 {
-	__cuda_ecb_aes_16b_encrypt__<<<gridSize,threadsPerBlock,0,stream>>>(
+	__cuda_aes_16b_encrypt__<<<gridSize,threadsPerBlock,0,stream>>>(
 			m,
 			n_blocks,
 			offset,
@@ -750,7 +793,7 @@ void cuda_ecb_aes_16b_encrypt(
 	);
 }
 
-void cuda_ecb_aes_16b_decrypt(
+void cuda_aes_16b_decrypt(
 			  paracrypt::BlockCipher::Mode m,
 	  	  	  int gridSize,
 	  	  	  int threadsPerBlock,
@@ -770,20 +813,20 @@ void cuda_ecb_aes_16b_decrypt(
 	  	  	  uint8_t* deviceTd4
 	      )
 {
-	__cuda_ecb_aes_16b_decrypt__<<<gridSize,threadsPerBlock,0,stream>>>(
-			m,
-			n_blocks,
-			offset,
-			(const uint32_t*)in,
-			(uint32_t*)out,
-			(uint32_t*)neigh,
-			(uint32_t*)iv,
-			expanded_key,
-			key_bits,
-	   		deviceTd0,
-	   		deviceTd1,
-	   		deviceTd2,
-	   		deviceTd3,
-	   		deviceTd4
-	);
+		__cuda_aes_16b_decrypt__<<<gridSize,threadsPerBlock,0,stream>>>(
+				m,
+				n_blocks,
+				offset,
+				(const uint32_t*)in,
+				(uint32_t*)out,
+				(uint32_t*)neigh,
+				(uint32_t*)iv,
+				expanded_key,
+				key_bits,
+				deviceTd0,
+				deviceTd1,
+				deviceTd2,
+				deviceTd3,
+				deviceTd4
+		);
 }

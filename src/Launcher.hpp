@@ -64,6 +64,10 @@ public:
 			int key_bits,
 			bool constantKey,
 			bool constantTables,
+			paracrypt::BlockCipher::Mode m,
+			const unsigned char iv[],
+			int ivBits,
+			bool outOfOrder,
 			std::streampos begin = NO_RANDOM_ACCESS,
 			std::streampos end = NO_RANDOM_ACCESS
 	);
@@ -113,6 +117,9 @@ private:
 			int keyBits,
 			bool constantKey,
 			bool constantTables,
+			paracrypt::BlockCipher::Mode m,
+			const unsigned char iv[],
+			int ivBits,
 			unsigned int *nCiphers);
 
 	template < class Cipher >
@@ -133,9 +140,58 @@ private:
 			 operation_t op,
 			 CUDABlockCipher* ciphers[],
 			 unsigned int n,
-			 SharedIO* io
+			 SharedIO* io,
+			 bool outOfOrder
 	 );
 
+	inline static void operation(
+		operation_t op,
+		CUDABlockCipher* cipher,
+		paracrypt::BlockIO::chunk c,
+		unsigned char* iv
+	){
+		if(iv != NULL) {
+			cipher->setIV(iv,cipher->getBlockSize());
+		}
+		cipher->setInitialBlockOffset(c.blockOffset);
+		switch(op) {
+			case paracrypt::Launcher::ENCRYPT:
+				cipher->encrypt(c.data,c.data,c.nBlocks);
+				break;
+			case paracrypt::Launcher::DECRYPT:
+				cipher->decrypt(c.data,c.data,c.nBlocks);
+				break;
+			default:
+				ERR("Unknown cipher operation.");
+		}
+	}
+
+	inline static bool isIVLinkable(CUDABlockCipher* cipher) {
+		return
+			cipher->getMode() == paracrypt::BlockCipher::CBC ||
+			cipher->getMode() == paracrypt::BlockCipher::CFB;
+	}
+
+	inline static void cpyLastBlock(
+			unsigned char* dest,
+			paracrypt::BlockIO::chunk c,
+			const unsigned int blockSizeBytes
+	){
+		std::streamoff lastBlockByteOffset = (c.nBlocks-1)*blockSizeBytes;
+		std::memcpy(dest,c.data+lastBlockByteOffset,blockSizeBytes);
+	}
+
+	inline static bool finished(CUDABlockCipher* cipher, bool outOfOrder)
+	{
+		bool finished;
+		if(outOfOrder) {
+			finished = cipher->checkFinish();
+		} else {
+			cipher->waitFinish();
+			finished = true;
+		}
+		return finished;
+	}
 };
 
 } /* namespace paracrypt */

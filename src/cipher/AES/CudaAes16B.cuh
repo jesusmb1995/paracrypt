@@ -18,9 +18,10 @@
  *
  */
 
+#include "cipher/BlockCipher.hpp"
 #include <stdint.h>
 
-void cuda_ecb_aes_16b_encrypt(
+void cuda_aes_16b_encrypt(
 			  paracrypt::BlockCipher::Mode m,
 			  int gridSize,
 			  int threadsPerBlock,
@@ -39,7 +40,7 @@ void cuda_ecb_aes_16b_encrypt(
 			  uint32_t* deviceTe3
 	      );
 
-void cuda_ecb_aes_16b_decrypt(
+void cuda_aes_16b_decrypt(
 			  paracrypt::BlockCipher::Mode m,
 			  int gridSize,
 			  int threadsPerBlock,

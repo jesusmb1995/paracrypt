@@ -12,7 +12,7 @@ void paracrypt::Launcher::freeCiphers(Cipher_t* ciphers[], unsigned int n)
     delete[] ciphers;	
 }
 
-// NOTE: Is the caller responsability to malloc desinred number of blocks
+// NOTE: Is the caller responsability to malloc desired number of blocks
 //        per each cipher
 template < class CudaAES_t >
 CudaAES_t** paracrypt::Launcher::linkAES(
@@ -23,6 +23,9 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 		int keyBits,
 		bool constantKey,
 		bool constantTables,
+		paracrypt::BlockCipher::Mode m,
+		const unsigned char iv[], 
+		int ivBits,
 		unsigned int *nCiphers // save result here
 ){
 	BOOST_STATIC_ASSERT((boost::is_base_of<paracrypt::CudaAES, CudaAES_t>::value));
@@ -35,6 +38,10 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 			if(d == 0 && i == 0) {
 				c = new CudaAES_t();
 				c->setDevice(devices[d]);
+				c->setMode(m);
+				if(m != paracrypt::BlockCipher::ECB) {
+					c->setIV(iv,ivBits);
+				}
 				c->constantKey(constantKey);
 				c->constantTables(constantTables);
 				c->setKey(key,keyBits);
@@ -54,6 +61,14 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 				// each new cipher within the same GPU uses 
 				//  its own stream
 				c = new CudaAES_t();
+				c->setMode(m);
+				if(m == paracrypt::BlockCipher::CTR) {
+					// All the CTR ciphers have the
+					// same noence. On the other hand,
+					// the IV is only set to the first
+					// cipher for CBC and CFB modes
+					c->setIV(iv,ivBits);
+				}
 				c->setDevice(devices[d]);
 				c->constantKey(constantKey);
 				c->constantTables(constantTables);
@@ -98,6 +113,10 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 		int key_bits,
 		bool constantKey,
 		bool constantTables,
+		paracrypt::BlockCipher::Mode m,
+		const unsigned char iv[], 
+		int ivBits,
+		bool outOfOrder,
 		std::streampos begin,
 		std::streampos end
  ){
@@ -118,6 +137,7 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 			devices, nDevices,
 			key, key_bits,
 			constantKey, constantTables,
+			m, iv, ivBits,
 			&nCiphers
 	);
 
@@ -129,7 +149,7 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 	delete[] ciphers;
 
 	LOG_TRACE("Launcher: starting encryption...");
-	operation(op,cudaBlockCiphers, nCiphers, io);
+	operation(op,cudaBlockCiphers, nCiphers, io, outOfOrder);
 	
 	LOG_TRACE("Launcher: freeying ciphers...");
 	paracrypt::Launcher::freeCiphers<CUDABlockCipher>(cudaBlockCiphers,nCiphers);

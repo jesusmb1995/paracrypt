@@ -71,19 +71,19 @@ BlockIO::BlockIO(
 			LOG_WAR("Swapping begin-end random access positions.\n");
 			std::swap(this->begin,this->begin);
 		}
-		maxBytesRead = this->end-this->begin;
+		maxBytesRead = this->end-this->begin+1; // +1 (end byte is read too)
 		this->maxBlocksRead = maxBytesRead / blockSize;
-//		int halfBlock = maxBytesRead % blockSize;
-//		if(halfBlock != 0) {
-//			this->maxBlocksRead += 1;
-//			LOG_WAR(boost::format(
-//					"Aligning random access section to block size: "
-//					" Using %llu bytes instead of %llu bytes.\n")
-//				% (this->maxBlocksRead * blockSize)
-//				% maxBytesRead
-//			);
+		unsigned int halfBlock = maxBytesRead % blockSize;
+		if(halfBlock != 0) {
+			this->maxBlocksRead += 1;
+			LOG_WAR(boost::format(
+					"Aligning random access section to block size: "
+					" Using %llu bytes instead of %llu bytes.\n")
+				% (this->maxBlocksRead * blockSize)
+				% maxBytesRead
+			);
 			// TODO extra read end blocks
-//		}
+		}
 	}
 	this->paddingType = APPEND_ZEROS_TO_INPUT; // default padding
 }
@@ -116,7 +116,12 @@ std::streamsize paracrypt::BlockIO::inFileRead(unsigned char* store, std::stream
 	std::streamsize nread = 0;
 	if(this->inFileReadStatus == OK) {
 		std::streamsize blocksToRead;
-		if(this->maxBlocksRead == NO_RANDOM_ACCESS || this->alreadyReadBlocks < this->maxBlocksRead) {
+		if(this->maxBlocksRead != NO_RANDOM_ACCESS && this->alreadyReadBlocks >= this->maxBlocksRead) {
+			// Enter here if for example we do random access to the end of the file
+			this->inFile.close();
+			this->inFileReadStatus = END;
+		}
+		else if(this->maxBlocksRead == NO_RANDOM_ACCESS || this->alreadyReadBlocks < this->maxBlocksRead) {
 			blocksToRead = this->maxBlocksRead == NO_RANDOM_ACCESS ?
 					                                                         nBlocks
 					: std::min((this->maxBlocksRead-this->alreadyReadBlocks),nBlocks);

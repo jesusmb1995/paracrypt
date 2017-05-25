@@ -87,7 +87,7 @@ namespace paracrypt {
 			  int, //threadsPerBlock
 			  cudaStream_t, //stream
 			  unsigned int, //n_blocks
-			  unsigned int, //offset
+			  uint32_t, //offset
 			  unsigned char*, //in[]
 			  unsigned char*, //out[]
 			  unsigned char*, //neigh[]

@@ -51,11 +51,19 @@ namespace paracrypt {
 	Mode getMode();
 
 	std::streamoff getCurrentBlockOffset();
+	std::streamoff getEncryptBlockOffset();
+	std::streamoff getDecryptBlockOffset();
 	void setInitialBlockOffset(std::streamoff offset);
 
 	private:
 		Mode mode;
-		std::streamoff blockOffset;
+		typedef enum LastOperation {
+			ENCRYPT = 0,
+			DECRYPT = 1,
+		} LastOperation;
+		LastOperation lastOp;
+		std::streamoff enBlockOffset;
+		std::streamoff deBlockOffset;
 
     };
 }

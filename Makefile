@@ -79,6 +79,24 @@ $(OBJ_DIR)/CudaAesVersions.o: $(SRC_DIR)/cipher/AES/CudaAesVersions.cpp
 $(OBJ_DIR)/CudaAes16B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes16B.cu
 	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
 #
+$(OBJ_DIR)/CudaAes16BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaAes8B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes8B.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaAes8BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaAes4B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes4B.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaAes4BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/CudaAes1B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
+	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+#
 $(OBJ_DIR)/CUDACipherDevice.o: $(SRC_DIR)/device/CUDACipherDevice.cpp
 	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
 #
@@ -200,9 +218,9 @@ ifeq ($(OPENSSL_EXISTS), 1)
 	LIBS_TESTS += -lcrypto
 	CXX_FLAGS_TESTS += -DOPENSSL_EXISTS
 endif
-tests: CXX_FLAGS_ += $(CXX_FLAGS_TESTS) -g -DDEBUG -DDEVEL
+tests: CXX_FLAGS_ += $(CXX_FLAGS_TESTS) -g -DDEBUG #-DDEVEL
 tests: LIBS += $(LIBS_TESTS)
-tests: NVCC_FLAGS_ += -g -DDEBUG -DDEVEL
+tests: NVCC_FLAGS_ += -g -DDEBUG #-DDEVEL
 tests: \
 $(OBJ_DIR)/tests.o \
 $(OBJ_DIR)/AES_key_schedule.o \
@@ -216,6 +234,12 @@ $(OBJ_DIR)/CudaAES.o \
 $(OBJ_DIR)/CudaAESConstant.cu.o \
 $(OBJ_DIR)/CudaAesVersions.o  \
 $(OBJ_DIR)/CudaAes16B.cu.o \
+$(OBJ_DIR)/CudaAes16BPtr.cu.o \
+$(OBJ_DIR)/CudaAes8B.cu.o \
+$(OBJ_DIR)/CudaAes8BPtr.cu.o \
+$(OBJ_DIR)/CudaAes4B.cu.o \
+$(OBJ_DIR)/CudaAes4BPtr.cu.o \
+$(OBJ_DIR)/CudaAes1B.cu.o \
 $(OBJ_DIR)/CUDACipherDevice.o \
 $(OBJ_DIR)/IO.o \
 $(OBJ_DIR)/BlockIO.o \
@@ -237,6 +261,12 @@ $(OBJ_DIR)/Launcher.o
 	 $(OBJ_DIR)/CudaAES.o \
 	 $(OBJ_DIR)/CudaAesVersions.o  \
 	 $(OBJ_DIR)/CudaAes16B.cu.o \
+	 $(OBJ_DIR)/CudaAes16BPtr.cu.o \
+	 $(OBJ_DIR)/CudaAes8B.cu.o \
+	 $(OBJ_DIR)/CudaAes8BPtr.cu.o \
+	 $(OBJ_DIR)/CudaAes4B.cu.o \
+	 $(OBJ_DIR)/CudaAes4BPtr.cu.o \
+	 $(OBJ_DIR)/CudaAes1B.cu.o \
 	 $(OBJ_DIR)/CUDACipherDevice.o \
 	 $(OBJ_DIR)/logging.o \
 	 $(OBJ_DIR)/Timer.o \

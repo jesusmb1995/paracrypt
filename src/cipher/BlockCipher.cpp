@@ -23,7 +23,8 @@
 paracrypt::BlockCipher::BlockCipher()
 {
 	this->mode = ECB;
-	this->blockOffset = 0;
+	this->enBlockOffset = 0;
+	this->deBlockOffset = 0;
 }
 
 paracrypt::BlockCipher::BlockCipher(BlockCipher* cipher)
@@ -37,14 +38,16 @@ paracrypt::BlockCipher::~BlockCipher()
 int paracrypt::BlockCipher::encrypt(const unsigned char in[],
 			      const unsigned char out[], std::streamsize n_blocks)
 {
-	this->blockOffset += n_blocks;
+	this->enBlockOffset += n_blocks;
+	this->lastOp = ENCRYPT;
 	return 0;
 }
 
 int paracrypt::BlockCipher::decrypt(const unsigned char in[],
 			    const unsigned char out[], std::streamsize n_blocks)
 {
-	this->blockOffset += n_blocks;
+	this->deBlockOffset += n_blocks;
+	this->lastOp = DECRYPT;
 	return 0;
 }
 
@@ -60,10 +63,30 @@ paracrypt::BlockCipher::Mode paracrypt::BlockCipher::getMode()
 
 std::streamoff paracrypt::BlockCipher::getCurrentBlockOffset()
 {
-	return this->blockOffset;
+	std::streamoff lastOff;
+	switch(this->lastOp) {
+	case ENCRYPT:
+		lastOff = this->enBlockOffset;
+		break;
+	case DECRYPT:
+		lastOff = this->deBlockOffset;
+		break;
+	}
+	return lastOff;
+}
+
+std::streamoff paracrypt::BlockCipher::getEncryptBlockOffset()
+{
+	return this->enBlockOffset;
+}
+
+std::streamoff paracrypt::BlockCipher::getDecryptBlockOffset()
+{
+	return this->deBlockOffset;
 }
 
 void paracrypt::BlockCipher::setInitialBlockOffset(std::streamoff offset)
 {
-	this->blockOffset = offset;
+	this->enBlockOffset = offset;
+	this->deBlockOffset = offset;
 }

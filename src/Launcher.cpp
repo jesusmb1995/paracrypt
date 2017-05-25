@@ -30,15 +30,15 @@
 //    return new T();
 //}
 
-// TODO templates that retreive total number o devices and create
+// TODO templates that retrieve total number o devices and create
 //  each type of object, one function for each type
 
 //TODO CUDACipherDevice.getDevices()
 
-// Calls SharedIO.construct() with limitted memory
+// Calls SharedIO.construct() with limited memory
 //  according to the devices maximum capacity
 //  and sets the number of chunks according to
-//  devices number of concurrent kernells.
+//  devices number of concurrent kernels.
 paracrypt::SharedIO* paracrypt::Launcher::newAdjustedSharedIO(
 		std::string inFilename,
 		std::string outFilename,
@@ -67,17 +67,18 @@ void paracrypt::Launcher::operation(
 		 operation_t op,
 		 CUDABlockCipher* ciphers[],
 		 unsigned int n,
-		 SharedIO* io
+		 SharedIO* io,
+		 bool outOfOrder
 ){
 		if(n == 0) return;
 
 		const std::streamsize chunkSizeBytes = io->getChunkSize()*io->getBlockSize();
 		paracrypt::BlockIO::chunk* chunks = new paracrypt::BlockIO::chunk[n];
 
-
+		const unsigned int blockSizeBytes = io->getBlockSize();
 		for(unsigned int i = 0; i < n; i++) {
 			// block sizes in bits
-			assert(io->getBlockSize()*8 == ciphers[i]->getBlockSize());
+			assert(blockSizeBytes*8 == ciphers[i]->getBlockSize());
 			ciphers[i]->malloc(chunkSizeBytes);
 		}
 
@@ -86,58 +87,65 @@ void paracrypt::Launcher::operation(
 		paracrypt::BlockIO::chunk c;
 		c.status = paracrypt::BlockIO::OK;
 
-		#define operate(i) \
-			switch(op) { \
-			case paracrypt::Launcher::ENCRYPT: \
-				ciphers[i]->encrypt(c.data,c.data,c.nBlocks); \
-				break; \
-			case paracrypt::Launcher::DECRYPT: \
-				ciphers[i]->decrypt(c.data,c.data,c.nBlocks); \
-				break; \
-			default: \
-				ERR("Unknown cipher operation."); \
-			}
+		unsigned char* nextIV = NULL;
+		if(isIVLinkable(ciphers[0])){
+			nextIV = new unsigned char[blockSizeBytes];
+		}
+// TODO almacenar
+//
+// 				if(m != paracrypt::BlockCipher::ECB) {
+//					c->setIV(iv,ivBits);
+//				}
 
 		// launch first kernels
 		for(unsigned int i = 0; c.status == paracrypt::BlockIO::OK && i < n; i++) {
 				c = chunks[i];
 				c = io->read();
-//				// TODO toremove
 //				if(i < 5) {
 //					hexdump("readed block sample", c.data, c.nBlocks);
 //				}
 				chunks[i] = c;
+				// In CBC and CFB modes the next cipher-IV
+				//  will be the last block of this cipher
+				unsigned char* iv = nextIV;
+				if(isIVLinkable(ciphers[i])) {
+					cpyLastBlock(nextIV,c,blockSizeBytes);
+				}
 				DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
 					% c.blockOffset % i);
-				operate(i);
+				operation(op,ciphers[i],c,iv);
 				executingKernells.push_back(i);
 		}
 
 		while(c.status == paracrypt::BlockIO::OK) {
 			for(unsigned int i = 0; c.status == paracrypt::BlockIO::OK && i < n; i++) {
-				if(ciphers[i]->checkFinish()) {
+				if(finished(ciphers[i],outOfOrder)) {
 					DEV_TRACE(boost::format("Launcher: chunk starting at block %llu in stream %u has finished encryption.\n")
 						% c.blockOffset % i);
 					c = chunks[i];
-//					// TODO toremove
 //					if(i < 5) {
 //						hexdump("to output block sample", c.data, c.nBlocks);
 //					}
 					io->dump(c);
 					c = io->read();
-//					// TODO toremove
 //					if(i < 5) {
 //						hexdump("readed block sample", c.data, c.nBlocks);
 //					}
 					chunks[i] = c;
+					unsigned char* iv = nextIV;
+					if(isIVLinkable(ciphers[i])) {
+						cpyLastBlock(nextIV,c,blockSizeBytes);
+					}
 					DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
 						% c.blockOffset % i);
-					operate(i);
+					operation(op,ciphers[i],c,iv);
 				}
 			}
 		}
 
-
+		if(nextIV != NULL){
+			delete[] nextIV;
+		}
 		DEV_TRACE(boost::format("Launcher: Let's wait for %i chunks to finish... \n") % executingKernells.size() );
 
 		// One of the kernels has reached EOF: make
@@ -148,14 +156,13 @@ void paracrypt::Launcher::operation(
 		while(executingKernells.size() > 0) {
 			it = executingKernells.begin();
 			while(it != executingKernells.end()) {
-				if(ciphers[*it]->checkFinish()) {
+				if(finished(ciphers[*it],outOfOrder)) {
 					DEV_TRACE(boost::format("Launcher: chunk starting at block %llu in stream "
 							"%u has finished. Waiting for another %%i chunks... \n")
 						% executingKernells.size()
 						% *it
 					);
 					c = chunks[*it];
-//					// TODO toremove
 //					if(*it < 5) {
 //						hexdump("to output block sample", c.data, c.nBlocks);
 //					}
