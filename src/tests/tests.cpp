@@ -1017,9 +1017,7 @@ BOOST_AUTO_TEST_SUITE(CUDA_AES)
 	AES_TEST_SUITE(CUDA_AES_8B_PTR, "8B (ptr) parallelism", paracrypt::CudaAES8BPtr());
 	AES_TEST_SUITE(CUDA_AES_4B, "4B parallelism", paracrypt::CudaAES4B());
 	AES_TEST_SUITE(CUDA_AES_4B_PTR, "4B (ptr) parallelism", paracrypt::CudaAES4BPtr());
-	/*  TODO TOREMOVE COMMENT
 	AES_TEST_SUITE(CUDA_AES_1B, "1B parallelism", paracrypt::CudaAES1B());
-*/
 BOOST_AUTO_TEST_SUITE_END()
 
 //
@@ -1097,7 +1095,7 @@ void OUT_FILE_128BPB_CORRECTNESS_TEST(
 	char nameBuffer [L_tmpnam];
 	std::tmpnam (nameBuffer); // dummy file
 	paracrypt::SimpleIO *io = new paracrypt::SimpleCudaIO(outFilename,nameBuffer,16,AUTO_IO_BUFFER_LIMIT,0,size);
-	io->setPadding(paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT);
+	io->setPadding(paracrypt::BlockIO::UNPADDED);
 	paracrypt::BlockIO::chunk c;
 	c.status = paracrypt::BlockIO::OK;
 	uint32_t check[4];
@@ -1188,7 +1186,7 @@ void FILE_128BPB_IO_TEST(std::fstream *inFile, std::fstream *outFile, paracrypt:
 				// verify padding correctness
 				for(uint8_t i = remainingBytes; i < 16; i++) {
 					byteIndex = (c.nBlocks-1)*16 + i;
-					if(p == paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT) {
+					if(p == paracrypt::BlockIO::UNPADDED) {
 						BOOST_REQUIRE_EQUAL(0,c.data[byteIndex]);
 					} else if(p == paracrypt::BlockIO::PKCS7)  {
 						BOOST_REQUIRE_EQUAL(paddingSize,c.data[byteIndex]);
@@ -1213,17 +1211,13 @@ void FILE_128BPB_IO_TEST(std::fstream *inFile, std::fstream *outFile, paracrypt:
 		std::streamsize expectedSize = 0;
 		if(totalBlocksRead != 0) {
 			if(remainingBytes > 0 && p == paracrypt::BlockIO::PKCS7) {
-				expectedSize = (totalBlocksRead-1)*16+remainingBytes;
+//				expectedSize = (totalBlocksRead-1)*16+remainingBytes;
+				expectedSize = end == NO_RANDOM_ACCESS ? (totalBlocksRead-1)*16+remainingBytes : std::min((totalBlocksRead-1)*16+remainingBytes,end-begin+1);
 			}
 			else {
-				expectedSize = totalBlocksRead*16;
+//				expectedSize = totalBlocksRead*16;
+				expectedSize = end == NO_RANDOM_ACCESS ? totalBlocksRead*16 : std::min(totalBlocksRead*16,end-begin+1);
 			}
-
-//			if(p == paracrypt::BlockIO::PKCS7) {
-//				expectedSize = end != NO_RANDOM_ACCESS && end < inFSize ? (std::streamsize) end : inFSize;
-//			} else if(p == paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT) {
-//				expectedSize = begin != NO_RANDOM_ACCESS ? ((std::streamsize)begin)+totalBlocksRead*16 : totalBlocksRead*16;
-//			}
 		}
 		BOOST_REQUIRE_EQUAL(expectedSize,outFSize);
 
@@ -1238,7 +1232,7 @@ void FILE_128BPB_IO_TEST(std::fstream *inFile, std::fstream *outFile, paracrypt:
 }
 void FILE_128BPB_SIMPLEIO_TEST(
 		std::streampos totalNBytes,
-		paracrypt::BlockIO::paddingScheme p = paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+		paracrypt::BlockIO::paddingScheme p = paracrypt::BlockIO::UNPADDED,
 		std::streampos begin = NO_RANDOM_ACCESS,
 		std::streampos end = NO_RANDOM_ACCESS,
 		rlim_t bufferSizeLimit = AUTO_IO_BUFFER_LIMIT,
@@ -1269,7 +1263,7 @@ void FILE_128BPB_SIMPLEIO_TEST(
 void FILE_128BPB_SHAREDIO_TEST(
 		std::streampos totalNBytes,
 		unsigned int nChunks,
-		paracrypt::BlockIO::paddingScheme p = paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+		paracrypt::BlockIO::paddingScheme p = paracrypt::BlockIO::UNPADDED,
 		std::streampos begin = NO_RANDOM_ACCESS,
 		std::streampos end = NO_RANDOM_ACCESS,
 		rlim_t bufferSizeLimit = AUTO_IO_BUFFER_LIMIT,
@@ -1302,12 +1296,20 @@ BOOST_AUTO_TEST_SUITE(IO)
 	BOOST_AUTO_TEST_SUITE(simple_CUDA_IO)
 		BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_unlimited)
 			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3); }
-			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::UNPADDED); }
 			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7); }
 			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7); }
 			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0); }
-			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,32-1); }
-			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,19); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,16,32-1); }
+
+// TODO OUT_FILE_128BPB_CORRECTNESS_TEST is not yet prepared for these tests (these random access tests are tested in the launcher tests)
+//			BOOST_AUTO_TEST_CASE(random_access_first_byte) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,16,16); }
+//			BOOST_AUTO_TEST_CASE(random_access_first_2bytes) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,16,17); }
+//			BOOST_AUTO_TEST_CASE(random_access_center_8bytes) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,16+4,32-1-4); }
+//			BOOST_AUTO_TEST_CASE(random_access_last_2bytes) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,32-2,32-1); }
+//			BOOST_AUTO_TEST_CASE(random_access_last_byte) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,32-1,32-1); }
+
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::UNPADDED,16,19); }
 			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19); }
 			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32); }
 			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
@@ -1315,18 +1317,18 @@ BOOST_AUTO_TEST_SUITE(IO)
 			}
 		BOOST_AUTO_TEST_SUITE_END()
 		BOOST_AUTO_TEST_SUITE(simple_CUDA_IO_1block_buffer)
-			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::UNPADDED,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
 			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16*2+3,paracrypt::BlockIO::PKCS7,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
 			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(1,paracrypt::BlockIO::PKCS7,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SIMPLEIO_TEST(0,paracrypt::BlockIO::UNPADDED,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16); }
-			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,32-1,16); }
-			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,19,16); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SIMPLEIO_TEST(16*3,paracrypt::BlockIO::UNPADDED,16,32-1,16); }
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::UNPADDED,16,19,16); }
 			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SIMPLEIO_TEST(16+3,paracrypt::BlockIO::PKCS7,16,19,16); }
 			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SIMPLEIO_TEST(16,paracrypt::BlockIO::PKCS7,16,32,16); }
 			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
@@ -1348,12 +1350,19 @@ BOOST_AUTO_TEST_SUITE(IO)
 	BOOST_AUTO_TEST_SUITE(shared_CUDA_IO)
 		BOOST_AUTO_TEST_SUITE(shared_CUDA_IO_unlimited)
 			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SHAREDIO_TEST(16*3,4); }
-			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT); }
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::UNPADDED); }
 			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::PKCS7); }
 			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(1,4,paracrypt::BlockIO::PKCS7); }
 			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SHAREDIO_TEST(0,4); }
-			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,32-1); }
-			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,19); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,16,32-1); }
+
+// TODO OUT_FILE_128BPB_CORRECTNESS_TEST is not yet prepared for these tests (these random access tests are tested in the launcher tests)//			BOOST_AUTO_TEST_CASE(random_access_first_byte) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,16,16); }
+//			BOOST_AUTO_TEST_CASE(random_access_first_2bytes) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,16,17); }
+//			BOOST_AUTO_TEST_CASE(random_access_center_8bytes) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,16+4,32-1-4); }
+//			BOOST_AUTO_TEST_CASE(random_access_last_2bytes) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,32-2,32-1); }
+//			BOOST_AUTO_TEST_CASE(random_access_last_byte) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,32-1,32-1); }
+
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::UNPADDED,16,19); }
 			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::PKCS7,16,19); }
 			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SHAREDIO_TEST(16,4,paracrypt::BlockIO::PKCS7,16,32); }
 			BOOST_AUTO_TEST_CASE(PKCS7_padding_50MBFile) {
@@ -1361,18 +1370,18 @@ BOOST_AUTO_TEST_SUITE(IO)
 			}
 		BOOST_AUTO_TEST_SUITE_END()
 		BOOST_AUTO_TEST_SUITE(shared_CUDA_IO_4block_buffer)
-			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+			BOOST_AUTO_TEST_CASE(just_three_blocks) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
-			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+			BOOST_AUTO_TEST_CASE(two_blocks_and_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::UNPADDED,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
 			BOOST_AUTO_TEST_CASE(two_blocks_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16*2+3,4,paracrypt::BlockIO::PKCS7,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
 			BOOST_AUTO_TEST_CASE(byte_and_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(1,4,paracrypt::BlockIO::PKCS7,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
-			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SHAREDIO_TEST(0,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,
+			BOOST_AUTO_TEST_CASE(nothing) { FILE_128BPB_SHAREDIO_TEST(0,4,paracrypt::BlockIO::UNPADDED,
 					NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,16*4); }
-			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,32-1,16*4); }
-			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::APPEND_ZEROS_TO_INPUT,16,19,16*4); }
+			BOOST_AUTO_TEST_CASE(random_access_second_of_three) { FILE_128BPB_SHAREDIO_TEST(16*3,4,paracrypt::BlockIO::UNPADDED,16,32-1,16*4); }
+			BOOST_AUTO_TEST_CASE(random_access_zero_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::UNPADDED,16,19,16*4); }
 			BOOST_AUTO_TEST_CASE(random_access_PKCS7_padding) { FILE_128BPB_SHAREDIO_TEST(16+3,4,paracrypt::BlockIO::PKCS7,16,19,16*4); }
 			BOOST_AUTO_TEST_CASE(random_access_eof) { FILE_128BPB_SHAREDIO_TEST(16,4,paracrypt::BlockIO::PKCS7,16,32,16*4); }
 		BOOST_AUTO_TEST_SUITE_END()
@@ -1661,6 +1670,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST(
 	std::ifstream* upadatedRaccFile = new std::ifstream(raccFileName.c_str(),std::fstream::in | std::fstream::binary);
 	std::streamsize raccFileSize = paracrypt::IO::fileSize(upadatedRaccFile);
 	BOOST_REQUIRE_EQUAL(raccFileSize,nBlocks*16);
+
 	unsigned char buffer[16];
 	for(int i = 0; i < nBlocks; i++) {
 		upadatedRaccFile->read((char*)buffer,16);
@@ -1689,13 +1699,12 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST(
     delete raccFile;
 }
 
-
-void GEN_AES_RANDOM_TEST_FILE(
+int GEN_AES_RANDOM_TEST_FILE(
 		std::string *fileName,
 		std::fstream **file, // WARNING: Must be closed by the caller
-		unsigned int maxNBlocks,
+		int maxNBlocks,
 		tv vector_key,
-		const EVP_CIPHER * openSSLCipher = NULL, // generate an encrypted file
+		const EVP_CIPHER * openSSLCipher = NULL // generate an encrypted file
 ){
 	{
 		char nameBuffer [L_tmpnam];
@@ -1710,18 +1719,35 @@ void GEN_AES_RANDOM_TEST_FILE(
 
 	int nBlocks = std::min(maxNBlocks,random_data_n_blocks);
 	int paddingBytes = rand() % 15 + 1; // 1-15
-
-	int data_length = nBlocks*16 - paddingBytes;
+	int data_length = openSSLCipher == NULL ? nBlocks*16-paddingBytes : nBlocks*16;
 	unsigned char *plaintext = (unsigned char*) malloc(data_length);
+    if(plaintext == NULL) {
+    	FATAL("Error allocating memory for the encryption plantext buffer\n");
+    }
     memcpy(plaintext,random_data,data_length);
-    unsigned char *result = plaintext;
+    if(openSSLCipher != NULL) {
+		// PKCS7
+		uint8_t n = (uint8_t) paddingBytes;
+		int paddingOffset = data_length-paddingBytes;
+		assert(paddingOffset+n <= data_length);
+		unsigned char *paddingStart = plaintext+paddingOffset;
+		memset(paddingStart, n, paddingBytes);
+    }
+	unsigned char *result = plaintext;
+
+	if(maxNBlocks <= 65) {
+		hexdump("random data",result,data_length);
+	}
 
     if(openSSLCipher != NULL) {
     	// OpenSSL Encryption /////////////////////////////////////////////////////////////
 #ifdef OPENSSL_EXISTS
     	unsigned char *key = (unsigned char*) vector_key.key;
     	unsigned char *iv = (unsigned char*) vector_key.iv;
-        *result = (unsigned char*) malloc(data_length);
+        result = (unsigned char*) malloc(data_length+16);
+        if(result == NULL) {
+        	FATAL("Error allocating memory for the encryption result buffer\n");
+        }
         int ciphertext_len;
 
         // Encrypt the plaintext
@@ -1734,8 +1760,22 @@ void GEN_AES_RANDOM_TEST_FILE(
         ////////////////////////////////////////////////////////////////////////////////////
     }
 
-    (*file)->write(testData,data_length);
+    (*file)->write((const char*) result,data_length);
+    if(!(*file)){
+    	FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
+    }
     (*file)->flush();
+    free(result);
+    if(openSSLCipher != NULL)
+    	free(plaintext);
+
+	if(openSSLCipher != NULL && maxNBlocks <= 65) {
+		fdump("encrypted random data",(*fileName));
+	} else if(maxNBlocks <= 65) {
+		fdump("random data file",(*fileName));
+	}
+
+    return paddingBytes;
 }
 
 template < class CudaAES_t >
@@ -1747,7 +1787,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 		bool constantTables,
 		std::streampos begin,
 		std::streampos end,
-		unsigned  int maxNBlocks = 10000000,
+		int maxNBlocks = 10000000,
 		bool outOfOrder = false
 ){
 	assert(end >= begin);
@@ -1755,7 +1795,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 
 	std::string inFileName;
 	std::fstream *inFile;
-	GEN_AES_RANDOM_TEST_FILE(&inFileName,&inFile,maxNBlocks,vector,openSSLCipher);
+	int paddingBytes = GEN_AES_RANDOM_TEST_FILE(&inFileName,&inFile,maxNBlocks,vector,openSSLCipher);
 
 	std::string raccFileName;
 	{
@@ -1780,23 +1820,39 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 	std::streamsize raccFileSize = paracrypt::IO::fileSize(upadatedRaccFile);
 	std::streamsize inFileSize = paracrypt::IO::fileSize(inFile);
 
-	std::streamsize = end < inFileSize ? end-begin+1 :inFileSize-end;
+	if(maxNBlocks <= 65) {
+		fdump("Resultant file after decryption with Paracrypt",raccFileName);
+	}
 
-	BOOST_REQUIRE_EQUAL(raccFileSize,nBlocks*16);
+	if(begin == NO_RANDOM_ACCESS)
+		begin = 0;
+	std::streamsize stimatedSize;
+	if(end != NO_RANDOM_ACCESS && end < inFileSize) {
+		stimatedSize = end-begin+1;
+	}
+	else  {
+		stimatedSize = inFileSize-begin-paddingBytes;
+	}
+
+	BOOST_REQUIRE_EQUAL(raccFileSize,stimatedSize);
 	unsigned char buffer[16];
+	int nBlocks = std::min(random_data_n_blocks,maxNBlocks);
 	for(int i = 0; i < nBlocks; i++) {
 		upadatedRaccFile->read((char*)buffer,16);
 		bool err = upadatedRaccFile;
 	    BOOST_CHECK(err); // check no err
+	    std::streamsize readBytes = 16;
 		if(upadatedRaccFile->fail()){
 			if(upadatedRaccFile->eof()) {
-				std::streamsize readBytes = upadatedRaccFile->gcount();
-				BOOST_REQUIRE_EQUAL(readBytes, 16); // the files only contain full blocks
+				readBytes = upadatedRaccFile->gcount();
+				BOOST_REQUIRE_EQUAL(readBytes, stimatedSize%16);
 			} else {
 				FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
 			}
 		}
-    	BOOST_REQUIRE_EQUAL_COLLECTIONS(buffer,buffer+16,vector.input,vector.input+16);
+		unsigned char* begin_random_data = random_data+begin+(16*i);
+		unsigned char* end_random_data = begin_random_data+readBytes;
+    	BOOST_REQUIRE_EQUAL_COLLECTIONS(buffer,buffer+readBytes,begin_random_data,end_random_data);
 	}
 	upadatedRaccFile->close();
 	delete upadatedRaccFile;
@@ -1804,8 +1860,111 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
     inFile->close();
     delete inFile;
 
-    outFile->close();
-    delete outFile;
+    raccFile->close();
+    delete raccFile;
+}
+
+template < class CudaAES_t >
+void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST(
+		std::string title,
+		tv vector, // iv, key, and mode (we dont need input-output)
+		bool constantKey,
+		bool constantTables,
+		std::streampos begin,
+		std::streampos end,
+		int maxNBlocks = 10000000,
+		bool outOfOrder = false
+){
+	assert(end >= begin);
+	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
+
+	std::string inFileName;
+	std::fstream *inFile;
+	//int paddingBytes =
+	GEN_AES_RANDOM_TEST_FILE(&inFileName,&inFile,maxNBlocks,vector);
+
+	std::string outFileName;
+	std::string raccFileName;
+	{
+		char nameBuffer [L_tmpnam];
+		std::tmpnam (nameBuffer);
+		outFileName = std::string(nameBuffer);
+		std::tmpnam (nameBuffer);
+		raccFileName = std::string(nameBuffer);
+	}
+	std::ofstream* outFile = new std::ofstream(outFileName.c_str(),std::fstream::out | std::fstream::binary);
+	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
+
+    paracrypt::Launcher::launchSharedIOCudaAES<CudaAES_t>(
+    		paracrypt::Launcher::ENCRYPT,
+    		inFileName, outFileName,
+    		vector.key, vector.key_bits,
+    		constantKey, constantTables,
+    		vector.m, vector.iv, sizeof(vector.iv)*8,
+    		outOfOrder
+    );
+
+	if(maxNBlocks <= 65) {
+		fdump("Resultant file after encryption with Paracrypt",outFileName);
+	}
+
+    paracrypt::Launcher::launchSharedIOCudaAES<CudaAES_t>(
+    		paracrypt::Launcher::DECRYPT,
+    		outFileName, raccFileName,
+    		vector.key, vector.key_bits,
+    		constantKey, constantTables,
+    		vector.m, vector.iv, sizeof(vector.iv)*8,
+    		outOfOrder,
+    		begin, end
+    );
+
+	// Verify output blocks are correct
+	std::ifstream* upadatedRaccFile = new std::ifstream(raccFileName.c_str(),std::fstream::in | std::fstream::binary);
+	std::streamsize raccFileSize = paracrypt::IO::fileSize(upadatedRaccFile);
+	std::streamsize inFileSize = paracrypt::IO::fileSize(inFileName);
+
+	if(maxNBlocks <= 65) {
+		fdump("Resultant file after decryption with Paracrypt",raccFileName);
+	}
+
+	if(begin == NO_RANDOM_ACCESS)
+		begin = 0;
+	std::streamsize stimatedSize;
+	if(end != NO_RANDOM_ACCESS && end < inFileSize) {
+		stimatedSize = end-begin+1;
+	}
+	else  {
+		stimatedSize = inFileSize-begin;//-paddingBytes;
+	}
+
+	BOOST_REQUIRE_EQUAL(raccFileSize,stimatedSize);
+	unsigned char buffer[16];
+	int nBlocks = std::min(random_data_n_blocks,maxNBlocks);
+	for(int i = 0; i < nBlocks; i++) {
+		upadatedRaccFile->read((char*)buffer,16);
+		bool err = upadatedRaccFile;
+	    BOOST_CHECK(err); // check no err
+	    std::streamsize readBytes = 16;
+		if(upadatedRaccFile->fail()){
+			if(upadatedRaccFile->eof()) {
+				readBytes = upadatedRaccFile->gcount();
+				BOOST_REQUIRE_EQUAL(readBytes, stimatedSize%16);
+			} else {
+				FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
+			}
+		}
+		unsigned char* begin_random_data = random_data+begin+(16*i);
+		unsigned char* end_random_data = begin_random_data+readBytes;
+    	BOOST_REQUIRE_EQUAL_COLLECTIONS(buffer,buffer+readBytes,begin_random_data,end_random_data);
+	}
+	upadatedRaccFile->close();
+	delete upadatedRaccFile;
+
+	outFile->close();
+	delete outFile;
+
+    inFile->close();
+    delete inFile;
 
     raccFile->close();
     delete raccFile;
@@ -1835,13 +1994,17 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 \
 				BOOST_AUTO_TEST_CASE(constant_key_and_tables_racc) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST<className>( \
-						"Multistream encryption and random access decryption using " testName " CUDA AES-"keySizeStr" with constant key and tables.", iv,1000,true, true, 16*100,16*200, outOfOrder);} \
+						"Multistream encryption and random access decryption using " testName " CUDA AES-"keySizeStr" with constant key and tables.", iv,1000,true, true, 16*100,16*200-1, outOfOrder);} \
 				BOOST_AUTO_TEST_CASE(constant_key_decrypt_racc) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST<className>( \
-						"Multistream encryption and random access decryption using " testName " CUDA AES-"keySizeStr" with constant key.", iv,1000,true, false, 16*100,16*200, outOfOrder);} \
+						"Multistream encryption and random access decryption using " testName " CUDA AES-"keySizeStr" with constant key.", iv,1000,true, false, 16*100,16*200-1, outOfOrder);} \
 				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables_racc) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST<className>( \
-						"Multistream encryption and random access decryption using " testName " CUDA AES-"keySizeStr".", iv,1000,false, false, 16*100,16*200, outOfOrder);} \
+						"Multistream encryption and random access decryption using " testName " CUDA AES-"keySizeStr".", iv,1000,false, false, 16*100,16*200-1, outOfOrder);} \
+		BOOST_AUTO_TEST_SUITE_END()
+
+// TODO tests not prepared for this
+/*
 \
 				BOOST_AUTO_TEST_CASE(constant_key_and_tables_racc_unalig) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST<className>( \
@@ -1852,7 +2015,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 				BOOST_AUTO_TEST_CASE(dynamic_key_and_tables_racc_unalig) { \
 					CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST<className>( \
 						"Multistream encryption and random access (unaligned to block) decryption using " testName " CUDA AES-"keySizeStr".", iv,1000,false, false, 16*99+8,16*200-8, outOfOrder);} \
-		BOOST_AUTO_TEST_SUITE_END()
+*/
 
 #define AES_LAUNCHER_KEYSIZE_TEST_SUITE(id, testName, className, keySizeStr, iv) \
 		BOOST_AUTO_TEST_SUITE(id) \
@@ -1860,12 +2023,134 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 			AES_LAUNCHER_KEYSIZE_TEST_SUITE_ORDER(OUT_OF_ORDER, testName, className, keySizeStr, iv, true); \
 		BOOST_AUTO_TEST_SUITE_END()
 
+#define AES_LAUNCHER_DECRYPT_TEST_SUITE_(id, testName, className, openSSLCipher, keySizeStr, iv, begin, end, maxNBlocks) \
+BOOST_AUTO_TEST_SUITE(id) \
+	BOOST_AUTO_TEST_CASE(in_order_constant_key_and_tables) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant key and tables.", iv, openSSLCipher, \
+				true, true, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_constant_key_and_tables) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant key and tables.", iv, openSSLCipher, \
+				true, true, begin, end, maxNBlocks, true); \
+	} \
+	BOOST_AUTO_TEST_CASE(in_order_constant_key) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+					"Multistream " testName " CUDA AES-"keySizeStr" with constant key.", iv, openSSLCipher, \
+					true, false, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_constant_key) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant key .", iv, openSSLCipher, \
+					true, false, begin, end, maxNBlocks, true); \
+	} \
+	BOOST_AUTO_TEST_CASE(in_order_constant_tables) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+					"Multistream " testName " CUDA AES-"keySizeStr" with constant tables.", iv, openSSLCipher, \
+					false, true, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_constant_tables) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant tables .", iv, openSSLCipher, \
+					false, true, begin, end, maxNBlocks, true); \
+	} \
+	BOOST_AUTO_TEST_CASE(in_order_dynamic_key_and_tables) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with dynamic key and tables.", iv, openSSLCipher, \
+				true, true, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_dynamic_key_and_tables) { \
+			CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with dynamic key and tables.", iv, openSSLCipher, \
+				true, true, begin, end, maxNBlocks, true); \
+	} \
+BOOST_AUTO_TEST_SUITE_END()
+
+#ifdef OPENSSL_EXISTS
+#define AES_LAUNCHER_DECRYPT_TEST_SUITE(id, testName, className, openSSLCipher, keySizeStr, iv) \
+BOOST_AUTO_TEST_SUITE(id) \
+	AES_LAUNCHER_DECRYPT_TEST_SUITE_(just_one_entire_block,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,1) \
+	AES_LAUNCHER_DECRYPT_TEST_SUITE_(two_entire_blocks,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,2) \
+	AES_LAUNCHER_DECRYPT_TEST_SUITE_(sixtyfive_blocks,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,65) \
+	AES_LAUNCHER_DECRYPT_TEST_SUITE_(n_blocks,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,10000000) \
+BOOST_AUTO_TEST_SUITE_END()
+#else
+#define AES_LAUNCHER_DECRYPT_TEST_SUITE(id, testName, className, openSSLCipher, keySizeStr, iv)
+#endif
+
+#define AES_LAUNCHER_RANDOM_TEST_SUITE_(id, testName, className, keySizeStr, iv, begin, end, maxNBlocks) \
+BOOST_AUTO_TEST_SUITE(id) \
+	BOOST_AUTO_TEST_CASE(in_order_constant_key_and_tables) { \
+	CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant key and tables.", iv, \
+				true, true, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_constant_key_and_tables) { \
+		CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant key and tables.", iv, \
+				true, true, begin, end, maxNBlocks, true); \
+	} \
+	BOOST_AUTO_TEST_CASE(in_order_constant_key) { \
+		CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant key.", iv, \
+				true, false, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_constant_key) { \
+		CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant key .", iv, \
+				true, false, begin, end, maxNBlocks, true); \
+	} \
+	BOOST_AUTO_TEST_CASE(in_order_constant_tables) { \
+		CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant tables.", iv, \
+				false, true, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_constant_tables) { \
+		CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with constant tables .", iv, \
+				false, true, begin, end, maxNBlocks, true); \
+	} \
+	BOOST_AUTO_TEST_CASE(in_order_dynamic_key_and_tables) { \
+		CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with dynamic key and tables.", iv, \
+				true, true, begin, end, maxNBlocks, false); \
+	} \
+	BOOST_AUTO_TEST_CASE(out_of_order_dynamic_key_and_tables) { \
+		CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST<className>( \
+				"Multistream " testName " CUDA AES-"keySizeStr" with dynamic key and tables.", iv, \
+				true, true, begin, end, maxNBlocks, true); \
+	} \
+BOOST_AUTO_TEST_SUITE_END()
+
+#define AES_LAUNCHER_RANDOM_TEST_SUITE(id, testName, className,  keySizeStr, iv) \
+BOOST_AUTO_TEST_SUITE(id) \
+	AES_LAUNCHER_RANDOM_TEST_SUITE_(just_one_entire_block,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,1) \
+	AES_LAUNCHER_RANDOM_TEST_SUITE_(two_entire_blocks,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,2) \
+	AES_LAUNCHER_RANDOM_TEST_SUITE_(sixtyfive_entire_blocks,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,65) \
+	AES_LAUNCHER_RANDOM_TEST_SUITE_(n_entire_blocks,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,10000000) \
+BOOST_AUTO_TEST_SUITE_END()
+
+
 #define AES_LAUNCHER_TEST_SUITE(id, testName, className) \
 		BOOST_AUTO_TEST_SUITE(id) \
 			AES_LAUNCHER_KEYSIZE_TEST_SUITE(ECB_128, testName, className, "ECB-128", aes_example); \
 			AES_LAUNCHER_KEYSIZE_TEST_SUITE(ECB_192, testName, className, "ECB-192", aes_192_tv); \
 			AES_LAUNCHER_KEYSIZE_TEST_SUITE(ECB_256, testName, className, "ECB-256", aes_256_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_ECB_128, testName, className, EVP_aes_128_ecb(), "ECB-128", aes_example); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_ECB_192, testName, className, EVP_aes_192_ecb(), "ECB-192", aes_192_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_ECB_256, testName, className, EVP_aes_256_ecb(), "ECB-256", aes_256_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_CBC_128, testName, className, EVP_aes_128_cbc(), "CBC-128", aes_128_cbc_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_CBC_192, testName, className, EVP_aes_192_cbc(), "CBC-192", aes_192_cbc_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_CBC_256, testName, className, EVP_aes_256_cbc(), "CBC-256", aes_256_cbc_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_CFB_128, testName, className, EVP_aes_128_cfb(), "CFB-128", aes_128_cfb_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_CFB_192, testName, className, EVP_aes_192_cfb(), "CFB-192", aes_192_cfb_tv); \
+			AES_LAUNCHER_DECRYPT_TEST_SUITE(RANDOM_DECRYPT_CFB_256, testName, className, EVP_aes_256_cfb(), "CFB-256", aes_256_cfb_tv); \
+			AES_LAUNCHER_RANDOM_TEST_SUITE(RANDOM_CTR_128, testName, className, "CTR-128", aes_128_ctr_dummy_tv); \
+			AES_LAUNCHER_RANDOM_TEST_SUITE(RANDOM_CTR_192, testName, className, "CTR-192", aes_192_ctr_dummy_tv); \
+			AES_LAUNCHER_RANDOM_TEST_SUITE(RANDOM_CTR_256, testName, className, "CTR-256", aes_256_ctr_dummy_tv); \
 		BOOST_AUTO_TEST_SUITE_END()
+/*  */
 // TODO random encrypt and decrypt
 // TODO random decrypt (OpenSSL encrypt)
 // TODO random padding tests.

@@ -28,6 +28,7 @@ namespace paracrypt {
     class CUDABlockCipher: public BlockCipher {
       public:
     	CUDABlockCipher();
+    	CUDABlockCipher(CUDABlockCipher* cipher);
 		virtual ~CUDABlockCipher() {}
 		virtual void setDevice(CUDACipherDevice * device) = 0;
 		virtual void malloc(unsigned int n_blocks, bool isInplace = true) = 0;	// Must be called to reserve enough space before encrypt/decrypt

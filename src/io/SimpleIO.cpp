@@ -80,7 +80,7 @@ void paracrypt::SimpleIO::construct(rlim_t bufferSizeLimit) {
     while(!allocSuccess);
 
     LOG_INF(boost::format(
-    		"A new SharedIO object uses %llu bytes"
+    		"A new SimpleIO object uses %llu bytes"
     		" (%u blocks of %u bytes) "
     		" of pinned memory for its internal buffer."
     		"\n")
@@ -99,7 +99,7 @@ const std::streamsize paracrypt::SimpleIO::getBufferSize() {
 
 paracrypt::BlockIO::chunk paracrypt::SimpleIO::read()
 {
-	this->buffer.nBlocks = this->inFileRead(this->buffer.data,this->getBufferSize(),&this->buffer.status,&this->buffer.blockOffset);
+	this->buffer.nBlocks = this->inFileRead(this->buffer.data,this->getBufferSize(),&this->buffer.status,&this->buffer.blockOffset,&this->buffer.padding);
 	return this->buffer;
 }
 void paracrypt::SimpleIO::dump(chunk c)
@@ -107,5 +107,6 @@ void paracrypt::SimpleIO::dump(chunk c)
 	this->outFileWrite(
 			c.data,
 			c.nBlocks,
-			c.blockOffset);
+			c.blockOffset,
+			c.padding);
 }

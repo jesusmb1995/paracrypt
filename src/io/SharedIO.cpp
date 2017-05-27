@@ -42,7 +42,7 @@ void paracrypt::SharedIO::reading() {
 			c = this->emptyChunks->dequeue();
 		lock.unlock();
 
-		c.nBlocks = this->inFileRead(c.data,this->getChunkSize(),&c.status,&c.blockOffset);
+		c.nBlocks = this->inFileRead(c.data,this->getChunkSize(),&c.status,&c.blockOffset,&c.padding);
 
 		lock.lock();
 			readyToReadChunks->enqueue(c);
@@ -112,7 +112,7 @@ void paracrypt::SharedIO::writing() {
 			c = this->outputChunks->dequeue();
 		lock.unlock();
 
-		this->outFileWrite(c.data,c.nBlocks,c.blockOffset);
+		this->outFileWrite(c.data,c.nBlocks,c.blockOffset,c.padding);
 		DEV_TRACE(boost::format("SharedIO writer: %llu block chunk beginning at block"
 				" %llu has been written to the output file.") % c.nBlocks % c.blockOffset);
 

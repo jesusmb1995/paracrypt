@@ -107,14 +107,29 @@ void paracrypt::Launcher::operation(
 				chunks[i] = c;
 				// In CBC and CFB modes the next cipher-IV
 				//  will be the last block of this cipher
-				unsigned char* iv = nextIV;
-				if(isIVLinkable(ciphers[i])) {
-					cpyLastBlock(nextIV,c,blockSizeBytes);
-				}
 				DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
 					% c.blockOffset % i);
-				operation(op,ciphers[i],c,iv);
-				executingKernells.push_back(i);
+				if(c.nBlocks > 0) {
+#ifdef DEVEL
+					if(c.nBlocks <= 65) {
+						hexdump("operating",c.data,c.nBlocks*16);
+					}
+#endif
+					// First cipher already has set the user intoduced IV
+					//  operation won't overwrite the IV when the iv pointer
+					//  is NULL
+					unsigned char* iv = i == 0 ? NULL : nextIV;
+#ifdef DEVEL
+					if(iv != NULL) {
+						hexdump("...with a previous block as input vector",iv,16);
+					}
+#endif
+					operation(op,ciphers[i],c,iv);
+					if(isIVLinkable(ciphers[i])) {
+						cpyLastBlock(nextIV,c,blockSizeBytes);
+					}
+					executingKernells.push_back(i);
+				}
 		}
 
 		while(c.status == paracrypt::BlockIO::OK) {
@@ -126,19 +141,35 @@ void paracrypt::Launcher::operation(
 //					if(i < 5) {
 //						hexdump("to output block sample", c.data, c.nBlocks);
 //					}
+#ifdef DEVEL
+					if(c.nBlocks <= 65) {
+						hexdump("writing...",c.data,c.nBlocks*16);
+					}
+#endif
 					io->dump(c);
 					c = io->read();
 //					if(i < 5) {
 //						hexdump("readed block sample", c.data, c.nBlocks);
 //					}
 					chunks[i] = c;
-					unsigned char* iv = nextIV;
-					if(isIVLinkable(ciphers[i])) {
-						cpyLastBlock(nextIV,c,blockSizeBytes);
-					}
 					DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
 						% c.blockOffset % i);
-					operation(op,ciphers[i],c,iv);
+					if(c.nBlocks > 0) {
+#ifdef DEVEL
+					if(c.nBlocks <= 65) {
+						hexdump("operating...",c.data,c.nBlocks*16);
+					}
+#endif
+#ifdef DEVEL
+						if(nextIV != NULL) {
+							hexdump("...with a previous block as input vector",nextIV,16);
+						}
+#endif
+						operation(op,ciphers[i],c,nextIV);
+						if(isIVLinkable(ciphers[i])) {
+							cpyLastBlock(nextIV,c,blockSizeBytes);
+						}
+					}
 				}
 			}
 		}
@@ -166,6 +197,11 @@ void paracrypt::Launcher::operation(
 //					if(*it < 5) {
 //						hexdump("to output block sample", c.data, c.nBlocks);
 //					}
+#ifdef DEVEL
+					if(c.nBlocks <= 65) {
+						hexdump("writing...",c.data,c.nBlocks*16);
+					}
+#endif
 					io->dump(c);
 					it = executingKernells.erase(it);
 					DEV_TRACE(boost::format("Launcher: I'm yet waiting for another %i chunks... \n") % executingKernells.size());

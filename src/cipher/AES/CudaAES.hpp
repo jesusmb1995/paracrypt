@@ -45,6 +45,7 @@ namespace paracrypt {
 	uint32_t* deviceTd3 = NULL;
 	uint8_t* deviceTd4 = NULL;
 	unsigned char* deviceIV = NULL;
+	bool ivIsCopy;
 	bool useConstantKey;
 	bool useConstantTables;
 
@@ -148,6 +149,8 @@ namespace paracrypt {
 	unsigned int getBlockSize();
 	int setKey(const unsigned char key[], int bits);
 	void setIV(const unsigned char iv[], int bits);
+	AES_KEY *getDecryptionExpandedKey();
+	int setDecryptionKey(AES_KEY * expandedKey);
 	unsigned char* getIV();
 	bool isInplace();
 	void setMode(Mode m);

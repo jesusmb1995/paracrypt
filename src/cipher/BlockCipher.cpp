@@ -25,11 +25,15 @@ paracrypt::BlockCipher::BlockCipher()
 	this->mode = ECB;
 	this->enBlockOffset = 0;
 	this->deBlockOffset = 0;
+	this->lastOp = ENCRYPT;
 }
 
 paracrypt::BlockCipher::BlockCipher(BlockCipher* cipher)
 {
 	this->mode = cipher->mode;
+	this->lastOp = cipher->lastOp;
+	this->enBlockOffset = cipher->enBlockOffset;
+	this->deBlockOffset = cipher->deBlockOffset;
 }
 
 paracrypt::BlockCipher::~BlockCipher()

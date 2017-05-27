@@ -49,27 +49,29 @@ BlockIO::BlockIO(
 
 	if(begin != NO_RANDOM_ACCESS) {
 		this->beginBlock = begin/blockSize;
+		this->randomAccessBeginOffset = begin%blockSize;
 		this->begin = this->beginBlock*this->blockSize; // aligned to block
 		this->inFile.seekg(this->begin);
-		// TODO extra read blocks
 	}
 	else {
 		this->beginBlock = 0;
 		this->begin = 0;
+		this->randomAccessBeginOffset = 0;
 	}
-	this->end = end;
+	this->end = end == NO_RANDOM_ACCESS ? end : std::min(end,(std::streampos)(inFileSize-1));
 	this->outFile.open(outFilename.c_str(),std::ifstream::binary | std::ifstream::trunc);
 	if(!outFile) {
 		ERR(boost::format("cannot open %s: %s") % outFilename % strerror(errno));
 	}
 	this->alreadyReadBlocks = 0;
 	std::streamsize maxBytesRead;
-	if(end == NO_RANDOM_ACCESS) {
+	if(this->end == NO_RANDOM_ACCESS) {
 		this->maxBlocksRead = NO_RANDOM_ACCESS;
+		this->randomAccessNBytes = NO_RANDOM_ACCESS;
 	} else {
 		if (this->begin > this->end) {
 			LOG_WAR("Swapping begin-end random access positions.\n");
-			std::swap(this->begin,this->begin);
+			std::swap(this->begin,this->end);
 		}
 		maxBytesRead = this->end-this->begin+1; // +1 (end byte is read too)
 		this->maxBlocksRead = maxBytesRead / blockSize;
@@ -82,10 +84,10 @@ BlockIO::BlockIO(
 				% (this->maxBlocksRead * blockSize)
 				% maxBytesRead
 			);
-			// TODO extra read end blocks
 		}
+		this->randomAccessNBytes = this->end - (this->begin+this->randomAccessBeginOffset) + 1;
 	}
-	this->paddingType = APPEND_ZEROS_TO_INPUT; // default padding
+	this->paddingType = UNPADDED; // unpadded data by default: the read and wrote messages have the same length
 }
 
 BlockIO::~BlockIO() {
@@ -111,9 +113,10 @@ paracrypt::BlockIO::paddingScheme paracrypt::BlockIO::getPadding() {
 	return this->paddingType;
 }
 
-std::streamsize paracrypt::BlockIO::inFileRead(unsigned char* store, std::streamsize nBlocks, readStatus *status, std::streampos* blockOffset)
+std::streamsize paracrypt::BlockIO::inFileRead(unsigned char* store, std::streamsize nBlocks, readStatus *status, std::streampos* blockOffset, std::streamsize* paddingSize)
 {
 	std::streamsize nread = 0;
+	(*paddingSize) = 0;
 	if(this->inFileReadStatus == OK) {
 		std::streamsize blocksToRead;
 		if(this->maxBlocksRead != NO_RANDOM_ACCESS && this->alreadyReadBlocks >= this->maxBlocksRead) {
@@ -131,7 +134,7 @@ std::streamsize paracrypt::BlockIO::inFileRead(unsigned char* store, std::stream
 					std::streamsize readBytes = this->inFile.gcount();
 					nread = (readBytes/(std::streamsize)this->blockSize); // entire blocks read
 					if(readBytes%this->blockSize != 0) {
-						applyPadding(store, readBytes, (nread+1)*this->getBlockSize());
+						(*paddingSize) = applyPadding(store, readBytes, (nread+1)*this->getBlockSize());
 						nread++; // padding block
 					}
 					this->inFile.close();
@@ -163,11 +166,15 @@ void paracrypt::BlockIO::outFileWriteBytes(unsigned char* data, std::streampos n
 	}
 }
 
-void paracrypt::BlockIO::outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset)
+void paracrypt::BlockIO::outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset, std::streamsize cutBytes)
 {
 	std::streamsize size = nBlocks*this->blockSize;
 	if(blockOffset+nBlocks >= this->inNBlocks) {
-		size = this->removePadding(data, size);
+		size = this->removePadding(data, size, cutBytes);
+		if(this->randomAccessNBytes != NO_RANDOM_ACCESS) {
+			// Only write selected random access bytes
+			size = this->randomAccessNBytes-((blockOffset-this->beginBlock)*this->blockSize);
+		}
 	}
 	std::streampos byteOffset = blockOffset*this->blockSize;
 	if(this->begin != 0) {
@@ -175,16 +182,18 @@ void paracrypt::BlockIO::outFileWrite(unsigned char* data, std::streampos nBlock
 		//  the begining of the output file.
 		byteOffset -= this->begin;
 		assert(byteOffset >= 0);
+		// Only write selected random access bytes
+		data += this->randomAccessBeginOffset;
 	}
 	this->outFileWriteBytes(data, size, byteOffset);
 }
 
-void paracrypt::BlockIO::applyPadding(unsigned char* data, std::streamsize dataSize, std::streamsize desiredSize)
+std::streamsize paracrypt::BlockIO::applyPadding(unsigned char* data, std::streamsize dataSize, std::streamsize desiredSize)
 {
 	std::streamsize paddingSize = desiredSize-dataSize;
 	unsigned char* padding = data+dataSize;
 	switch(this->paddingType) {
-		case APPEND_ZEROS_TO_INPUT:
+		case UNPADDED:
 			memset(padding, 0, paddingSize);
 			break;
 		case PKCS7:
@@ -195,20 +204,17 @@ void paracrypt::BlockIO::applyPadding(unsigned char* data, std::streamsize dataS
 			// the unsigned char conversion of this value.
 			break;
 	}
+	return paddingSize;
 }
 
-std::streamsize paracrypt::BlockIO::removePadding(unsigned char* data, std::streamsize dataSize)
+std::streamsize paracrypt::BlockIO::removePadding(unsigned char* data, std::streamsize dataSize, std::streamsize cutBytes)
 {
 	std::streamsize unpaddedSize = dataSize;
 	if(dataSize > 0) {
 		unsigned char* ptr = data+(dataSize-1);
 		switch(this->paddingType) {
-			case APPEND_ZEROS_TO_INPUT:
-	// case APPEND_ZEROS:
-	//			while(*ptr == 0) {
-	//				unpaddedSize--;
-	//				ptr--;
-	//			}
+			case UNPADDED:
+				unpaddedSize -= cutBytes;
 				break;
 			case PKCS7:
 				unsigned char n = *ptr;
@@ -262,6 +268,16 @@ std::streamsize paracrypt::BlockIO::getInFileSize()
 std::streamsize paracrypt::BlockIO::getInNBlocks()
 {
 	return this->inNBlocks;
+}
+
+std::streamoff paracrypt::BlockIO::getRandomAccessBeginOffset()
+{
+	return this->randomAccessBeginOffset;
+}
+
+std::streamsize paracrypt::BlockIO::getRandomAccessNBytes()
+{
+	return this->randomAccessNBytes;
 }
 
 } /* namespace paracrypt */

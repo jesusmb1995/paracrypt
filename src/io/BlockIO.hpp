@@ -35,6 +35,7 @@ public:
 	} readStatus;
 	typedef struct chunk {
 		std::streamsize nBlocks; //number of blocks
+		std::streamsize padding; //number of padded bytes
 		std::streampos blockOffset;
 		unsigned char* data;
 		readStatus status;
@@ -43,7 +44,7 @@ public:
 	virtual void dump(chunk c) = 0;
 
 	typedef enum {
-		APPEND_ZEROS_TO_INPUT = 0, // Only to the input
+		UNPADDED = 0, // Append zeros when reading and remove number padding bytes at writing
 		PKCS7 = 1,
 	} paddingScheme;
 	BlockIO(
@@ -56,8 +57,8 @@ public:
 	);
 	virtual ~BlockIO();
 
-	std::streamsize inFileRead(unsigned char* store, std::streamsize nBlocks, readStatus *status, std::streampos* blockOffset);
-	void outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset);
+	std::streamsize inFileRead(unsigned char* store, std::streamsize nBlocks, readStatus *status, std::streampos* blockOffset,  std::streamsize* paddingSize);
+	void outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset, std::streamsize cutBytes = 0);
 	void outFileWriteBytes(unsigned char* data, std::streampos nBytes, std::streampos byteOffset);
 	void setPadding(paddingScheme p);
 	paddingScheme getPadding();
@@ -69,6 +70,9 @@ public:
 	std::streampos getBegin();
 	std::streampos getEnd();
 	std::streamsize getMaxBlocksRead();
+
+	std::streamoff getRandomAccessBeginOffset();
+	std::streamsize getRandomAccessNBytes();
 
 private:
 	std::ifstream inFile;
@@ -82,12 +86,16 @@ private:
 	std::streamsize maxBlocksRead;
 	std::streamsize alreadyReadBlocks;
 	paddingScheme paddingType;
-	void applyPadding(unsigned char* data, std::streamsize dataSize, std::streamsize desiredSize);
-	// return the padded size
-	std::streamsize removePadding(unsigned char* data, std::streamsize dataSize);
+	// return the padding size (only the number of bytes added to the original data size "dataSize")
+	std::streamsize applyPadding(unsigned char* data, std::streamsize dataSize, std::streamsize desiredSize);
+	// return the unpadded size, total data size without padding
+	std::streamsize removePadding(unsigned char* data, std::streamsize dataSize, std::streamsize cutBytes = 0);
 	std::streampos begin;
 	std::streampos beginBlock;
 	std::streampos end;
+
+	std::streamsize randomAccessNBytes;
+	std::streamoff randomAccessBeginOffset;
 };
 
 } /* namespace paracrypt */

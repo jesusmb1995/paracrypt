@@ -82,8 +82,8 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 					break;
 				case paracrypt::Launcher::DECRYPT:
 					c->setDecryptionKey(ciphers.at(0)->getDecryptionExpandedKey());
-					c->initDeviceEKey();
-					c->initDeviceTe();
+					c->initDeviceDKey();
+					c->initDeviceTd();
 					break;
 				default:
 					ERR("Unknown cipher operation.");
@@ -130,6 +130,18 @@ void paracrypt::Launcher::launchSharedIOCudaAES(
 			devices, nDevices,
 			begin, end
 	);
+	switch(m) {
+		case paracrypt::BlockCipher::ECB:
+		case paracrypt::BlockCipher::CBC:
+		case paracrypt::BlockCipher::CFB:
+			io->setPadding(paracrypt::BlockIO::PKCS7);
+			break;
+		// CTR mode does NOT require padding
+		case paracrypt::BlockCipher::CTR:
+		case paracrypt::BlockCipher::GCM:
+			io->setPadding(paracrypt::BlockIO::UNPADDED);
+			break;
+	}
 
 	unsigned int nCiphers;
 	CudaAES_t** ciphers = paracrypt::Launcher::linkAES<CudaAES_t>(

@@ -46,10 +46,11 @@ paracrypt::CudaAES::CudaAES()
 	this->deInstantiatedButInOtherDevice = false;
 	this->inPlace = true; // use neighbours by default
 	this->pin = new CudaPinned();
+	this->ivIsCopy = false;
 }
 
 paracrypt::CudaAES::CudaAES(CudaAES* aes)
-	: paracrypt::CudaAES::AES(aes), paracrypt::CUDABlockCipher::CUDABlockCipher()
+	: paracrypt::CudaAES::AES(aes), paracrypt::CUDABlockCipher::CUDABlockCipher(aes)
 {
 	this->setDevice(aes->device);
 	this->deviceEKey = aes->deviceEKey;
@@ -71,6 +72,7 @@ paracrypt::CudaAES::CudaAES(CudaAES* aes)
 	this->enInstantiatedButInOtherDevice = false;
 	this->deInstantiatedButInOtherDevice = false;
 	this->deviceIV = aes->deviceIV;
+	this->ivIsCopy = true;
 	this->pin = aes->pin;
 }
 
@@ -113,7 +115,8 @@ paracrypt::CudaAES::~CudaAES()
     if (!this->isCopy && this->deviceTd4 != NULL) {
 	this->getDevice()->free(this->deviceTd4);
     }
-    if (!this->isCopy && this->deviceIV != NULL) {
+    if (!this->ivIsCopy && this->deviceIV != NULL) {
+    DEV_TRACE(boost::format("Freeing IV %x") % (void*) this->deviceIV);
 	this->getDevice()->free(this->deviceIV);
     }
     if(this->neighborsDev != NULL) {
@@ -176,7 +179,8 @@ void paracrypt::CudaAES::setDevice(CUDACipherDevice * device)
 		this->getDevice()->free(this->deviceTd4);
 		this->deviceTd4 = NULL;
 		}
-	    if (!this->isCopy && this->deviceIV != NULL) {
+	    if (!this->ivIsCopy && this->deviceIV != NULL) {
+		DEV_TRACE(boost::format("Freeing IV %x") % (void*) this->deviceIV);
 		this->getDevice()->free(this->deviceIV);
 	    }
 	    if(this->neighborsDev != NULL) {
@@ -196,7 +200,7 @@ paracrypt::CUDACipherDevice * paracrypt::CudaAES::getDevice()
     return this->device;
 }
 
-void paracrypt::CudaAES::initDeviceEKey(){
+void paracrypt::CudaAES::initDeviceEKey() {
 	if(this->deInstantiatedButInOtherDevice || (!this->isCopy && this->deviceEKey == NULL)) {
 		if(this->constantKey()) {
 			int nKeyWords = (4 * (this->getEncryptionExpandedKey()->rounds + 1));
@@ -216,8 +220,15 @@ void paracrypt::CudaAES::initDeviceEKey(){
 	}
 }
 
-void paracrypt::CudaAES::initDeviceDKey(){
-	if(this->deInstantiatedButInOtherDevice || (!this->isCopy &&  this->deviceDKey == NULL)) {
+void paracrypt::CudaAES::initDeviceDKey() {
+	if(this->getMode() == paracrypt::BlockCipher::CTR
+			|| this->getMode() == paracrypt::BlockCipher::GCM
+			|| this->getMode() == paracrypt::BlockCipher::CFB
+	) {
+		// CTR and CFB modes use the encryption function even for decryption
+		initDeviceEKey();
+	}
+	else if(this->deInstantiatedButInOtherDevice || (!this->isCopy &&  this->deviceDKey == NULL)) {
 		if(this->constantKey()) {
 			int nKeyWords = (4 * (this->getDecryptionExpandedKey()->rounds + 1));
 			this->deviceDKey = __setAesKey__(this->getDecryptionExpandedKey()->rd_key,nKeyWords);
@@ -267,7 +278,6 @@ uint32_t* paracrypt::CudaAES::getDeviceDKey()
 
 void paracrypt::CudaAES::malloc(unsigned int n_blocks, bool isInplace)
 {
-//	this->n_blocks = n_blocks;
     if (this->data != NULL) {
     	this->getDevice()->free(this->data);
     }
@@ -323,6 +333,7 @@ Td3[x] = Si[x].[09, 0d, 0b, 0e];
 Td4[x] = Si[x].[01];
 */
 
+// TODO change to unsigned char* array !!!
 static const uint32_t Te0[256] = {
      0xa56363c6U, 0x847c7cf8U, 0x997777eeU, 0x8d7b7bf6U,
      0x0df2f2ffU, 0xbd6b6bd6U, 0xb16f6fdeU, 0x54c5c591U,
@@ -917,7 +928,14 @@ void paracrypt::CudaAES::initDeviceTe()
 
 void paracrypt::CudaAES::initDeviceTd()
 {
-	if(!this->constantTables()) {
+	if(this->getMode() == paracrypt::BlockCipher::CTR
+			|| this->getMode() == paracrypt::BlockCipher::GCM
+			|| this->getMode() == paracrypt::BlockCipher::CFB
+	) {
+		// CTR and CFB modes use the encryption function even for decryption
+		initDeviceTe();
+	}
+	else if(!this->constantTables()) {
 		if (!this->isCopy && this->deviceTd0 == NULL)
 		{
 			this->getDevice()->malloc((void **) &(this->deviceTd0), TTABLE_SIZE);
@@ -946,14 +964,48 @@ void paracrypt::CudaAES::initDeviceTd()
 	}
 }
 
+AES_KEY *paracrypt::CudaAES::getDecryptionExpandedKey()
+{
+	AES_KEY* k;
+	if(this->getMode() == paracrypt::BlockCipher::CTR
+			|| this->getMode() == paracrypt::BlockCipher::GCM
+			|| this->getMode() == paracrypt::BlockCipher::CFB
+	){
+		k = paracrypt::AES::getEncryptionExpandedKey();
+	}
+	else {
+		k = paracrypt::AES::getDecryptionExpandedKey();
+	}
+	return k;
+}
+
+int paracrypt::CudaAES::setDecryptionKey(AES_KEY * expandedKey) {
+	if(this->getMode() == paracrypt::BlockCipher::CTR
+			|| this->getMode() == paracrypt::BlockCipher::GCM
+			|| this->getMode() == paracrypt::BlockCipher::CFB
+	){
+		paracrypt::AES::setEncryptionKey(expandedKey);
+	}
+	else {
+		paracrypt::AES::setDecryptionKey(expandedKey);
+	}
+	return 0;
+}
+
 void paracrypt::CudaAES::setIV(const unsigned char iv[], int bits)
 {
 	if(bits != 128) {
 		ERR("Wrong IV size for AES (an 128 bit input vector is required).");
 	}
-	if (!this->isCopy && this->deviceIV == NULL) {
-		this->getDevice()->malloc((void **) &(this->deviceIV), 16);
-		this->getDevice()->memcpyTo((void*)iv,this->deviceIV, 16);
+   if ((!this->ivIsCopy && this->deviceIV == NULL) || this->isCopy) {
+	   this->deviceIV = NULL;
+	   this->getDevice()->malloc((void **) &(this->deviceIV), 16);
+	   this->ivIsCopy = false;
+	   DEV_TRACE(boost::format("Malloc 16 device bytes at IV %x") % (void*) this->deviceIV);
+    }
+	if (!this->ivIsCopy && this->deviceIV != NULL) {
+		DEV_TRACE(boost::format("Memcpy 16 bytes to IV %x") % (void*) this->deviceIV);
+		this->getDevice()->memcpyTo((void*)iv,(void*)this->deviceIV, 16);
 	}
 }
 
@@ -1163,18 +1215,22 @@ int paracrypt::CudaAES::encrypt(const unsigned char in[],
 				this->stream);
 
 	DEV_TRACE(boost::format(this->getImplementationName()+"_encrypt("
-			"gridSize=%d"
+			"mode=%d"
+			", gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
 			", blockOffset=%d"
 			", n_blocks=%d"
+			", iv=%x"
 			", expanded_key=%x"
 			", rounds=%d)")
+	    % this->getMode()
 		% gridSize
 		% threadsPerBlock
 		% (void*) (this->data)
 		% this->getCurrentBlockOffset()
 		% n_blocks
+		% (void*) this->getIV()
 		% key
 		% rounds);
 	this->getEncryptFunction()(
@@ -1207,7 +1263,6 @@ int paracrypt::CudaAES::decrypt(const unsigned char in[],
 				      const unsigned char out[],
 				      std::streamsize n_blocks)
 {
-
 	if(this->getMode() == paracrypt::BlockCipher::CTR
 			|| this->getMode() == paracrypt::BlockCipher::GCM
 			|| this->getMode() == paracrypt::BlockCipher::CFB
@@ -1253,18 +1308,22 @@ int paracrypt::CudaAES::decrypt(const unsigned char in[],
 				this->stream);
 
 	DEV_TRACE(boost::format(this->getImplementationName()+"_decrypt("
-			"gridSize=%d"
+			"mode=%d"
+			", gridSize=%d"
 			", threadsPerBlock=%d"
 			", data=%x"
 			", blockOffset=%d"
 			", n_blocks=%d"
+			", iv=%x"
 			", expanded_key=%x"
 			", rounds=%d)")
+		% this->getMode()
 		% gridSize
 		% threadsPerBlock
 		% (void*) (this->data)
 		% this->getCurrentBlockOffset()
 		% n_blocks
+		% (void*) this->getIV()
 		% key
 		% rounds);
 	this->getDecryptFunction()

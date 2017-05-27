@@ -85,7 +85,7 @@
 { \
 	if(valid_thread && ti == 4*(n_state)+0) { \
 			if(bi == (n_state)*4+0) { \
-				__LOG_TRACE__("p %d: iv[%d].0 => 0x%04x",p,iv[4*(n_state)+0]); \
+				__LOG_TRACE__("p %d: iv[%d].0 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+0,iv[4*(n_state)+0]); \
 				(state_pointer)[0] = iv[4*(n_state)+0] ^ k[4*(n_state)+0]; \
 			} \
 			else { \
@@ -102,7 +102,7 @@
 	} \
 	else if(valid_thread && ti == 4*(n_state)+1) { \
 			if(bi == (n_state)*4+1) { \
-				__LOG_TRACE__("p %d: iv[%d].1 => 0x%04x",p,iv[4*(n_state)+1]); \
+				__LOG_TRACE__("p %d: iv[%d].1 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+1,iv[4*(n_state)+1]); \
 				(state_pointer)[1] = iv[4*(n_state)+1] ^ k[4*(n_state)+1]; \
 			} \
 			else { \
@@ -119,7 +119,7 @@
 	} \
 	else if(valid_thread && ti == 4*(n_state)+2) { \
 			if(bi == (n_state)*4+2) { \
-				__LOG_TRACE__("p %d: iv[%d].2 => 0x%04x",p,iv[4*(n_state)+2]); \
+				__LOG_TRACE__("p %d: iv[%d].2 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+2,iv[4*(n_state)+2]); \
 				(state_pointer)[2] = iv[4*(n_state)+2] ^ k[4*(n_state)+2]; \
 			} \
 			else { \
@@ -136,7 +136,7 @@
 	} \
 	else if(valid_thread && ti == 4*(n_state)+3) { \
 			if(bi == (n_state)*4+3) { \
-				__LOG_TRACE__("p %d: iv[%d].3 => 0x%04x",p,iv[4*(n_state)+3]); \
+			__LOG_TRACE__("p %d: iv[%d].3 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+3,iv[4*(n_state)+3]); \
 				(state_pointer)[3] = iv[4*(n_state)+3] ^ k[4*(n_state)+3]; \
 			} \
 			else { \
@@ -158,8 +158,8 @@
 	if(valid_thread && ti == 4*(n_state)+0) { \
 			uint8_t cb0; \
 			if(bi == (n_state)*4+0) { \
-				__LOG_TRACE__("p %d: iv[%d].0 => 0x%04x",p,iv[4*(n_state)+0]); \
-				cb0 = iv[4*(n_state)+0] ^ k[4*(n_state)+0]; \
+				__LOG_TRACE__("p %d: iv[%d].0 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+0,iv[4*(n_state)+0]); \
+				cb0 = iv[4*(n_state)+0]; \
 			} \
 			else { \
 				if(sti == 0) { \
@@ -172,13 +172,13 @@
 					__LOG_TRACE__("p %d (bi %d): accessing prev. block.",p,bi); \
 				} \
 			} \
-			(state_pointer)[0] = cb0; \
+			(state_pointer)[0] ^= cb0; \
 	} \
 	else if(valid_thread && ti == 4*(n_state)+1) { \
 		uint8_t cb1; \
 		if(bi == (n_state)*4+1) { \
-			__LOG_TRACE__("p %d: iv[%d].1=> 0x%04x",p,iv[4*(n_state)+1]); \
-			cb1 = iv[4*(n_state)+1] ^ k[4*(n_state)+1]; \
+			__LOG_TRACE__("p %d: iv[%d].1 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+1,iv[4*(n_state)+1]); \
+			cb1 = iv[4*(n_state)+1]; \
 		} \
 		else { \
 			if(sti == 0) { \
@@ -191,13 +191,13 @@
 				__LOG_TRACE__("p %d (bi %d): accessing prev. block.",p,bi); \
 			} \
 		} \
-		(state_pointer)[1] = cb1; \
+		(state_pointer)[1] ^= cb1; \
 	} \
 	else if(valid_thread && ti == 4*(n_state)+2) { \
 		uint8_t cb2; \
 		if(bi == (n_state)*4+2) { \
-			__LOG_TRACE__("p %d: iv[%d].2 => 0x%04x",p,iv[4*(n_state)+2]); \
-			cb2 = iv[4*(n_state)+2] ^ k[4*(n_state)+2]; \
+			__LOG_TRACE__("p %d: iv[%d].2 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+2,iv[4*(n_state)+2]); \
+			cb2 = iv[4*(n_state)+2]; \
 		} \
 		else { \
 			if(sti == 0) { \
@@ -210,13 +210,13 @@
 				__LOG_TRACE__("p %d (bi %d): accessing prev. block.",p,bi); \
 			} \
 		} \
-		(state_pointer)[2] = cb2; \
+		(state_pointer)[2] ^= cb2; \
 	} \
 	else if(valid_thread && ti == 4*(n_state)+3) { \
 		uint8_t cb3; \
 		if(bi == (n_state)*4+3) { \
-			__LOG_TRACE__("p %d: iv[%d].3 => 0x%04x",p,iv[4*(n_state)+3]); \
-			cb3 = iv[4*(n_state)+3] ^ k[4*(n_state)+3]; \
+			__LOG_TRACE__("p %d: iv[%d].3 (iv[%d]) => 0x%02x",p,bi,4*(n_state)+3,iv[4*(n_state)+3]); \
+			cb3 = iv[4*(n_state)+3]; \
 		} \
 		else { \
 			if(sti == 0) { \
@@ -229,7 +229,7 @@
 				__LOG_TRACE__("p %d (bi %d): accessing prev. block.",p,bi); \
 			} \
 		} \
-		(state_pointer)[3] = cb3; \
+		(state_pointer)[3] ^= cb3; \
 	} \
 }
 
