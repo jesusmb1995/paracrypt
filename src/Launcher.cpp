@@ -143,12 +143,13 @@ void paracrypt::Launcher::operation(
 						hexdump("...with a previous block as input vector",iv,16);
 					}
 #endif
-					operation(op,ciphers[i],c,iv);
+					if(iv != NULL) {
+						ciphers[i]->setIV(iv,ciphers[i]->getBlockSize());
+					}
 					if(isIVLinkable(ciphers[i])) {
-						// TODO RACE CONDITION !! c is being operated asynchronously with operation and will be changed !!!
-						// can't safely use c after operation has been launched !!
 						cpyLastBlock(nextIV,c,blockSizeBytes);
 					}
+					operation(op,ciphers[i],c,iv);
 					executingKernells.push_back(i);
 				}
 		}
@@ -188,12 +189,13 @@ void paracrypt::Launcher::operation(
 							hexdump("...with a previous block as input vector",nextIV,16);
 						}
 #endif
-						operation(op,ciphers[i],c,nextIV);
+						if(nextIV != NULL) {
+							ciphers[i]->setIV(nextIV,ciphers[i]->getBlockSize());
+						}
 						if(isIVLinkable(ciphers[i])) {
-							// TODO RACE CONDITION !! c is being operated asynchronously with operation and will be changed !!!
-							// can't safely use c after operation has been launched !!
 							cpyLastBlock(nextIV,c,blockSizeBytes);
 						}
+						operation(op,ciphers[i],c,nextIV);
 					}
 				}
 			}

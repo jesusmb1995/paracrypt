@@ -150,9 +150,6 @@ private:
 		paracrypt::BlockIO::chunk c,
 		unsigned char* iv
 	){
-		if(iv != NULL) {
-			cipher->setIV(iv,cipher->getBlockSize());
-		}
 		cipher->setInitialBlockOffset(c.blockOffset);
 		switch(op) {
 			case paracrypt::Launcher::ENCRYPT:
