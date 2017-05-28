@@ -68,7 +68,9 @@ public:
 	std::streamsize getInNBlocks();
 	std::string getOutFileName();
 	std::streampos getBegin();
+	std::streampos getBeginBlock();
 	std::streampos getEnd();
+	std::streampos getEndBlock();
 	std::streamsize getMaxBlocksRead();
 
 	std::streamoff getRandomAccessBeginOffset();
@@ -93,6 +95,7 @@ private:
 	std::streampos begin;
 	std::streampos beginBlock;
 	std::streampos end;
+	std::streampos endBlock;
 
 	std::streamsize randomAccessNBytes;
 	std::streamoff randomAccessBeginOffset;

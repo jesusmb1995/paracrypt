@@ -1735,7 +1735,7 @@ int GEN_AES_RANDOM_TEST_FILE(
     }
 	unsigned char *result = plaintext;
 
-	if(maxNBlocks <= 65) {
+	if(maxNBlocks <= 66) {
 		hexdump("random data",result,data_length);
 	}
 
@@ -1769,9 +1769,9 @@ int GEN_AES_RANDOM_TEST_FILE(
     if(openSSLCipher != NULL)
     	free(plaintext);
 
-	if(openSSLCipher != NULL && maxNBlocks <= 65) {
+	if(openSSLCipher != NULL && maxNBlocks <= 66) {
 		fdump("encrypted random data",(*fileName));
-	} else if(maxNBlocks <= 65) {
+	} else if(maxNBlocks <= 66) {
 		fdump("random data file",(*fileName));
 	}
 
@@ -1790,7 +1790,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 		int maxNBlocks = 10000000,
 		bool outOfOrder = false
 ){
-	assert(end >= begin);
+	assert(end != NO_RANDOM_ACCESS && begin != NO_RANDOM_ACCESS ? end >= begin: true);
 	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
 
 	std::string inFileName;
@@ -1820,7 +1820,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 	std::streamsize raccFileSize = paracrypt::IO::fileSize(upadatedRaccFile);
 	std::streamsize inFileSize = paracrypt::IO::fileSize(inFile);
 
-	if(maxNBlocks <= 65) {
+	if(maxNBlocks <= 66) {
 		fdump("Resultant file after decryption with Paracrypt",raccFileName);
 	}
 
@@ -1845,6 +1845,8 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 		if(upadatedRaccFile->fail()){
 			if(upadatedRaccFile->eof()) {
 				readBytes = upadatedRaccFile->gcount();
+				if(readBytes == 0)
+					break;
 				BOOST_REQUIRE_EQUAL(readBytes, stimatedSize%16);
 			} else {
 				FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
@@ -1875,7 +1877,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST(
 		int maxNBlocks = 10000000,
 		bool outOfOrder = false
 ){
-	assert(end >= begin);
+	assert(end != NO_RANDOM_ACCESS && begin != NO_RANDOM_ACCESS ? end >= begin: true);
 	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
 
 	std::string inFileName;
@@ -1904,7 +1906,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST(
     		outOfOrder
     );
 
-	if(maxNBlocks <= 65) {
+	if(maxNBlocks <= 66) {
 		fdump("Resultant file after encryption with Paracrypt",outFileName);
 	}
 
@@ -1922,8 +1924,9 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST(
 	std::ifstream* upadatedRaccFile = new std::ifstream(raccFileName.c_str(),std::fstream::in | std::fstream::binary);
 	std::streamsize raccFileSize = paracrypt::IO::fileSize(upadatedRaccFile);
 	std::streamsize inFileSize = paracrypt::IO::fileSize(inFileName);
+	assert(inFileSize > end);
 
-	if(maxNBlocks <= 65) {
+	if(maxNBlocks <= 66) {
 		fdump("Resultant file after decryption with Paracrypt",raccFileName);
 	}
 
@@ -1948,6 +1951,8 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST(
 		if(upadatedRaccFile->fail()){
 			if(upadatedRaccFile->eof()) {
 				readBytes = upadatedRaccFile->gcount();
+				if(readBytes == 0)
+					break;
 				BOOST_REQUIRE_EQUAL(readBytes, stimatedSize%16);
 			} else {
 				FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
@@ -2074,10 +2079,15 @@ BOOST_AUTO_TEST_SUITE(id) \
 	AES_LAUNCHER_DECRYPT_TEST_SUITE_(two_entire_blocks,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,2) \
 	AES_LAUNCHER_DECRYPT_TEST_SUITE_(sixtyfive_blocks,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,65) \
 	AES_LAUNCHER_DECRYPT_TEST_SUITE_(n_blocks,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,10000000) \
+	AES_LAUNCHER_DECRYPT_TEST_SUITE_(random_offbeginning,testName,className,openSSLCipher,keySizeStr,iv,64*16+8,NO_RANDOM_ACCESS,66) \
+	AES_LAUNCHER_DECRYPT_TEST_SUITE_(random_offend,testName,className,openSSLCipher,keySizeStr,iv,NO_RANDOM_ACCESS,64*16+8,66) \
+	AES_LAUNCHER_DECRYPT_TEST_SUITE_(random_randomaccess,testName,className,openSSLCipher,keySizeStr,iv,63*16+8,64*16+8,66) \
 BOOST_AUTO_TEST_SUITE_END()
 #else
 #define AES_LAUNCHER_DECRYPT_TEST_SUITE(id, testName, className, openSSLCipher, keySizeStr, iv)
 #endif
+// TODO random access last block that has padding
+
 
 #define AES_LAUNCHER_RANDOM_TEST_SUITE_(id, testName, className, keySizeStr, iv, begin, end, maxNBlocks) \
 BOOST_AUTO_TEST_SUITE(id) \

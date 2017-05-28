@@ -178,6 +178,15 @@ private:
 			const unsigned int blockSizeBytes
 	){
 		std::streamoff lastBlockByteOffset = (c.nBlocks-1)*blockSizeBytes;
+#ifdef DEVEL
+			if(c.nBlocks <= 66) {
+				std::stringstream stream;
+				stream << boost::format("copying %ui bytes block from offset %llu (block offset: %llu) of this data to %x ")
+				 % blockSizeBytes % lastBlockByteOffset % (c.nBlocks-1) % (void*) dest;
+				hexdump(stream.str(), c.data,c.nBlocks*16);
+			}
+#endif
+		assert(lastBlockByteOffset >= 0);
 		std::memcpy(dest,c.data+lastBlockByteOffset,blockSizeBytes);
 	}
 

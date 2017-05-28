@@ -85,8 +85,9 @@ BlockIO::BlockIO(
 				% maxBytesRead
 			);
 		}
-		this->randomAccessNBytes = this->end - (this->begin+this->randomAccessBeginOffset) + 1;
+		this->randomAccessNBytes = (this->end - this->begin) + 1;
 	}
+	this->endBlock = this->end/blockSize;
 	this->paddingType = UNPADDED; // unpadded data by default: the read and wrote messages have the same length
 }
 
@@ -169,11 +170,21 @@ void paracrypt::BlockIO::outFileWriteBytes(unsigned char* data, std::streampos n
 void paracrypt::BlockIO::outFileWrite(unsigned char* data, std::streampos nBlocks, std::streampos blockOffset, std::streamsize cutBytes)
 {
 	std::streamsize size = nBlocks*this->blockSize;
-	if(blockOffset+nBlocks >= this->inNBlocks) {
+	std::streampos reach = blockOffset+nBlocks-((std::streampos)1);
+	if(reach >= this->inNBlocks-1) {
+		// this is the last block write (at the end of the file)
 		size = this->removePadding(data, size, cutBytes);
 		if(this->randomAccessNBytes != NO_RANDOM_ACCESS) {
 			// Only write selected random access bytes
 			size = this->randomAccessNBytes-((blockOffset-this->beginBlock)*this->blockSize);
+		}
+	} else if(reach >= this->getEndBlock()) {
+		// this is the last block write (limited by random access this->end)
+		if(this->randomAccessNBytes != NO_RANDOM_ACCESS) {
+			size = this->randomAccessNBytes-((blockOffset-this->beginBlock)*this->blockSize);
+			DEV_TRACE(boost::format("outFileWrite size reach random access endblock = %llu-((%llu-%llu)*%llu) = %llu")
+					% this->randomAccessNBytes % blockOffset % this->beginBlock % this->blockSize
+					% size);
 		}
 	}
 	std::streampos byteOffset = blockOffset*this->blockSize;
@@ -182,9 +193,22 @@ void paracrypt::BlockIO::outFileWrite(unsigned char* data, std::streampos nBlock
 		//  the begining of the output file.
 		byteOffset -= this->begin;
 		assert(byteOffset >= 0);
-		// Only write selected random access bytes
-		data += this->randomAccessBeginOffset;
+
+		if(blockOffset <= this->getBeginBlock()) {
+			assert(blockOffset == this->getBeginBlock());
+			// Only write selected random access bytes
+			data += this->randomAccessBeginOffset;
+			size -= this->randomAccessBeginOffset;
+		} else  {
+			byteOffset -= this->randomAccessBeginOffset;
+			assert(byteOffset >= 0);
+		}
 	}
+#ifdef DEVEL
+	std::stringstream stream;
+	stream << boost::format("outFileWriteBytes data (size: %llu, byteOffset: %llu)") % size % byteOffset;
+	hexdump(stream.str(),data,size);
+#endif
 	this->outFileWriteBytes(data, size, byteOffset);
 }
 
@@ -250,9 +274,19 @@ std::streampos paracrypt::BlockIO::getBegin()
 	return this->begin;
 }
 
+std::streampos paracrypt::BlockIO::getBeginBlock()
+{
+	return this->beginBlock;
+}
+
 std::streampos paracrypt::BlockIO::getEnd()
 {
 	return this->end;
+}
+
+std::streampos paracrypt::BlockIO::getEndBlock()
+{
+	return this->endBlock;
 }
 
 std::streamsize paracrypt::BlockIO::getMaxBlocksRead()

@@ -19,10 +19,11 @@
  */
 
 #include "Launcher.hpp"
-#include <vector>
-#include <algorithm>
 #include "io/IO.hpp"
 #include "io/CudaSharedIO.hpp"
+#include <vector>
+#include <algorithm>
+#include <fstream>
 
 //template <class T>
 //T *creatClass(){
@@ -90,6 +91,24 @@ void paracrypt::Launcher::operation(
 		unsigned char* nextIV = NULL;
 		if(isIVLinkable(ciphers[0])){
 			nextIV = new unsigned char[blockSizeBytes];
+			std::streampos b = io->getBeginBlock();
+			if(b > 0) {
+				// IV is prev. block
+				b -= 1;
+				// Read IV from prev. block
+				std::string inName = io->getInFileName();
+				std::ifstream in(inName.c_str(),std::ifstream::binary);
+				in.seekg(b*blockSizeBytes);
+				in.read((char*)nextIV,blockSizeBytes);
+				if(in.fail()){
+					ERR(boost::format("Error trying to retrieve IV "
+						"from random access previous block (%llu).")
+					% b);
+				}
+				in.close();
+				hexdump("IV retrieved from previous block",nextIV,blockSizeBytes);
+				ciphers[0]->setIV(nextIV,ciphers[0]->getBlockSize());
+			}
 		}
 // TODO almacenar
 //
@@ -111,7 +130,7 @@ void paracrypt::Launcher::operation(
 					% c.blockOffset % i);
 				if(c.nBlocks > 0) {
 #ifdef DEVEL
-					if(c.nBlocks <= 65) {
+					if(c.nBlocks <= 66) {
 						hexdump("operating",c.data,c.nBlocks*16);
 					}
 #endif
@@ -126,6 +145,8 @@ void paracrypt::Launcher::operation(
 #endif
 					operation(op,ciphers[i],c,iv);
 					if(isIVLinkable(ciphers[i])) {
+						// TODO RACE CONDITION !! c is being operated asynchronously with operation and will be changed !!!
+						// can't safely use c after operation has been launched !!
 						cpyLastBlock(nextIV,c,blockSizeBytes);
 					}
 					executingKernells.push_back(i);
@@ -142,8 +163,10 @@ void paracrypt::Launcher::operation(
 //						hexdump("to output block sample", c.data, c.nBlocks);
 //					}
 #ifdef DEVEL
-					if(c.nBlocks <= 65) {
-						hexdump("writing...",c.data,c.nBlocks*16);
+					if(c.nBlocks <= 66) {
+						std::stringstream stream;
+						stream << boost::format("writing (offset %llu)...") % c.blockOffset;
+						hexdump(stream.str(), c.data,c.nBlocks*16);
 					}
 #endif
 					io->dump(c);
@@ -156,7 +179,7 @@ void paracrypt::Launcher::operation(
 						% c.blockOffset % i);
 					if(c.nBlocks > 0) {
 #ifdef DEVEL
-					if(c.nBlocks <= 65) {
+					if(c.nBlocks <= 66) {
 						hexdump("operating...",c.data,c.nBlocks*16);
 					}
 #endif
@@ -167,6 +190,8 @@ void paracrypt::Launcher::operation(
 #endif
 						operation(op,ciphers[i],c,nextIV);
 						if(isIVLinkable(ciphers[i])) {
+							// TODO RACE CONDITION !! c is being operated asynchronously with operation and will be changed !!!
+							// can't safely use c after operation has been launched !!
 							cpyLastBlock(nextIV,c,blockSizeBytes);
 						}
 					}
@@ -198,8 +223,10 @@ void paracrypt::Launcher::operation(
 //						hexdump("to output block sample", c.data, c.nBlocks);
 //					}
 #ifdef DEVEL
-					if(c.nBlocks <= 65) {
-						hexdump("writing...",c.data,c.nBlocks*16);
+					if(c.nBlocks <= 66) {
+						std::stringstream stream;
+						stream << boost::format("writing (offset %llu)...") % c.blockOffset;
+						hexdump(stream.str(), c.data,c.nBlocks*16);
 					}
 #endif
 					io->dump(c);
