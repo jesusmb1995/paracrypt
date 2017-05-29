@@ -30,6 +30,7 @@ __host__ uint32_t* __setAesKey__(uint32_t* keyWords, int nWords)
 	return devPtr;
 }
 
+// CUDA devices are assured to be little-endian
 __device__ __constant__ uint32_t aes_Te0[256] = {
      0xa56363c6U, 0x847c7cf8U, 0x997777eeU, 0x8d7b7bf6U,
      0x0df2f2ffU, 0xbd6b6bd6U, 0xb16f6fdeU, 0x54c5c591U,

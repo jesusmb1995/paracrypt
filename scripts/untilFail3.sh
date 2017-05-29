@@ -12,7 +12,7 @@ RESULT=0
 until [ $RESULT != 0 ]
 do
 	echo $I
-	./bin/paracrypt_tests --run_test=CUDA_AES/CUDA_AES_16B/AES_128_CBC/random_decrypt > ./info/tryToForceFail.txt
+	../bin/paracrypt_tests --run_test=CUDA_AES/CUDA_AES_16B/AES_128_CBC/random_decrypt > ./info/tryToForceFail.txt
 	RESULT=$?	
 	I=$((I+1))
 done

@@ -110,19 +110,11 @@ void paracrypt::Launcher::operation(
 				ciphers[0]->setIV(nextIV,ciphers[0]->getBlockSize());
 			}
 		}
-// TODO almacenar
-//
-// 				if(m != paracrypt::BlockCipher::ECB) {
-//					c->setIV(iv,ivBits);
-//				}
 
 		// launch first kernels
 		for(unsigned int i = 0; c.status == paracrypt::BlockIO::OK && i < n; i++) {
 				c = chunks[i];
 				c = io->read();
-//				if(i < 5) {
-//					hexdump("readed block sample", c.data, c.nBlocks);
-//				}
 				chunks[i] = c;
 				// In CBC and CFB modes the next cipher-IV
 				//  will be the last block of this cipher
@@ -160,9 +152,6 @@ void paracrypt::Launcher::operation(
 					DEV_TRACE(boost::format("Launcher: chunk starting at block %llu in stream %u has finished encryption.\n")
 						% c.blockOffset % i);
 					c = chunks[i];
-//					if(i < 5) {
-//						hexdump("to output block sample", c.data, c.nBlocks);
-//					}
 #ifdef DEVEL
 					if(c.nBlocks <= 66) {
 						std::stringstream stream;
@@ -172,9 +161,6 @@ void paracrypt::Launcher::operation(
 #endif
 					io->dump(c);
 					c = io->read();
-//					if(i < 5) {
-//						hexdump("readed block sample", c.data, c.nBlocks);
-//					}
 					chunks[i] = c;
 					DEV_TRACE(boost::format("Launcher: encrypting chunk starting at block %llu in stream %u... \n")
 						% c.blockOffset % i);
@@ -221,9 +207,6 @@ void paracrypt::Launcher::operation(
 						% *it
 					);
 					c = chunks[*it];
-//					if(*it < 5) {
-//						hexdump("to output block sample", c.data, c.nBlocks);
-//					}
 #ifdef DEVEL
 					if(c.nBlocks <= 66) {
 						std::stringstream stream;
@@ -244,73 +227,3 @@ void paracrypt::Launcher::operation(
 
 		LOG_TRACE("Launcher: I'm finished dealing with the encryption.\n");
 }
-
-// TODO para la versión simple va a hacer falta version multibuffer
-//  para que cada GPU lea de su buffer.
-
-//void paracrypt::Launcher::encrypt(
-//			 CUDABlockCipher* ciphers[],
-////			 CUDACipherDevice* devices[], // cada device se obtiene del cipher->getCipherDevice()
-//			 unsigned int n,
-//			 SimpleIO* io // TODO SimpleIO configurado con maximo correcto y inFile e outFile
-//			              // TODO reusar este para version SharedIO solo cambiar pin
-//)
-//{
-//	if(n == 0) return;
-//
-//	// TODO calcular kernels totales disponibles
-//	const std::streamsize pin = io->getBufferSize()*io->getBlockSize();
-//	for(unsigned int i = 0; i < n; i++) {
-//		// block sizes in bits
-//		assert(io->getBlockSize()*8 == ciphers[i]->getBlockSize());
-//		ciphers[i]->malloc(pin);
-//		if(i == 0){
-//			ciphers[0]->getDevice()->genGlobalMemcpyFromEvent();
-//		} else {
-//			ciphers[i]->getDevice()->setGlobalMemcpyFromEvent(
-//					ciphers[0]->getDevice()->genGlobalMemcpyFromEvent());
-//		}
-//	}
-//
-//
-//	BlockIO::chunk c;
-//
-//	c = io->read(); // dividir bloques en los distintos kernels totales disponibles...
-//
-//	// dividir
-//
-//	// TODO version shared
-////	// launch first kernels
-////	for(unsigned int i = 0; c.status == OK && i < n; i++) {
-////		c = io->read();
-////		ciphers[i]->encrypt(c.data,c.data,c.nBlocks);
-////	}
-////
-////	while(c.status == OK) {
-////		// blocking call in order not to busy wait
-////		//  the global wait is in any device...
-////		ciphers[0]->getDevice()->waitAnyGPUMemcpyFrom();
-////		for(unsigned int i = 0; i < n; i++) {
-////			if(ciphers[0]) { // TODO check memcpyFrom
-////				// TODO write to output file
-////				c = io->read(); // TODO read another chunk
-////
-////			}
-////		}
-////	}
-//
-//	// if(c.status == END) synchronize and make
-//	//  sure we have recollect all the outputs
-//
-//
-//
-//	// CUDABlockCipher <-- set clone method
-//	//	devices[0]->
-//
-//
-//	// if(!finished)
-//	//   wait...
-//}
-
-// TODO set cuda callbacks...
-//   awake main thread if finished

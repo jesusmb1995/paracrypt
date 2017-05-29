@@ -34,22 +34,6 @@ public:
 	Launcher(){};
 	virtual ~Launcher();
 
-
-	// TODO set keys
-
-
-	// CUDA implementations
-
-//	static void encrypt(
-//			 CUDABlockCipher* ciphers[],
-////			 CUDACipherDevice* devices[], // cada device se obtiene del cipher->getCipherDevice()
-//			 unsigned int n,
-//			 SimpleIO* io
-//			 );
-
-
-
-
 	typedef enum {
 		ENCRYPT = 0,
 		DECRYPT = 1,

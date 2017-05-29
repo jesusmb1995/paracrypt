@@ -67,7 +67,7 @@ paracrypt::BlockCipher::Mode paracrypt::BlockCipher::getMode()
 
 std::streamoff paracrypt::BlockCipher::getCurrentBlockOffset()
 {
-	std::streamoff lastOff;
+	std::streamoff lastOff = 0;
 	switch(this->lastOp) {
 	case ENCRYPT:
 		lastOff = this->enBlockOffset;

@@ -587,16 +587,18 @@ static uint8_t Td4[256] = {
     0xe1U, 0x69U, 0x14U, 0x63U, 0x55U, 0x21U, 0x0cU, 0x7dU,
 };
 
-void print32(std::string header, uint32_t* array, int n)
+void print32(std::string header, uint8_t* array, int n)
 {
 	std::string start = header + std::string(" = {");
 	printf("%s",start.c_str());
 	int i;
 	for(i=0;i<n;i++){
-		if(i % 4 == 0) {
+		if(i % 16 == 0) {
 			printf("\n    ");
+		} else if(i % 4 == 0) {
+			printf("    ");
 		}
-		printf(" 0x%08xU,",array[i]);
+		printf(" 0x%02xU,",array[i]);
 	}
 	printf("};\n");
 }
@@ -612,14 +614,20 @@ int main()
 	big((uint32_t*)&Td1,(uint32_t*)&Td1,256);
 	big((uint32_t*)&Td2,(uint32_t*)&Td2,256);
 	big((uint32_t*)&Td3,(uint32_t*)&Td3,256);
-	//Td4
+	//Td4 is already in big-endian format
 
-	print32("static const uint32_t Te0[256]",(uint32_t*)&Te0,256);
-	print32("static const uint32_t Te1[256]",(uint32_t*)&Te1,256);
-	print32("static const uint32_t Te2[256]",(uint32_t*)&Te2,256);
-	print32("static const uint32_t Te3[256]",(uint32_t*)&Te3,256);
-	print32("static const uint32_t Td0[256]",(uint32_t*)&Td0,256);
-	print32("static const uint32_t Td1[256]",(uint32_t*)&Td1,256);
-	print32("static const uint32_t Td2[256]",(uint32_t*)&Td2,256);
-	print32("static const uint32_t Td3[256]",(uint32_t*)&Td3,256);
+	//
+	// Use uint8_t instead of uint32_t Te[256]
+	//  so that the tables are compatible in
+	//  both little-endian and big-endian host
+	//  machines.
+	//
+	print32("static const uint8_t Te0[256*4]",(uint8_t*)&Te0,256*4);
+	print32("static const uint8_t Te1[256*4]",(uint8_t*)&Te1,256*4);
+	print32("static const uint8_t Te2[256*4]",(uint8_t*)&Te2,256*4);
+	print32("static const uint8_t Te3[256*4]",(uint8_t*)&Te3,256*4);
+	print32("static const uint8_t Td0[256*4]",(uint8_t*)&Td0,256*4);
+	print32("static const uint8_t Td1[256*4]",(uint8_t*)&Td1,256*4);
+	print32("static const uint8_t Td2[256*4]",(uint8_t*)&Td2,256*4);
+	print32("static const uint8_t Td3[256*4]",(uint8_t*)&Td3,256*4);
 }
