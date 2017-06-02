@@ -3,7 +3,7 @@
 
 outputFolder="../info/"
 filesExt="_performance.txt"
-TIMEFORMAT=%R # measure real times
+#TIMEFORMAT='%7R' # measure real times (but not enough precission)
 
 # Keys and IV
 iv="000102030405060708090A0B0C0D0E0F"
@@ -11,16 +11,18 @@ key128="2b7e151628aed2a6abf7158809cf4f3c"
 key192="000102030405060708090a0b0c0d0e0f1011121314151617"
 key256="000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"
 
-# Generate input files filled with up to 128MB of random data
-size=$(( 128*1000*1000 ))
-nFiles=1 #8
+# Generate input files filled with up to 128MB (not MiB!) 
+#  of random data. With MB instead of MiB the generated 
+#  data will have to be padded ($size % 16 is not 0).
+size=$(( 1*1000*1000 )) # $(( 128*1000*1000 ))
+nFiles=1 #16
 stepSize=$(( $size/$nFiles ))
 declare -A files
 declare -A fileSizes
-for ((fi=1; fi<=nFiles; fi++))
+for ((fi=0; fi<nFiles; fi++))
 do
 	files[fi]=$(mktemp /tmp/paracrypt.XXXXXX)
-	fileSizes[fi]=$(( $stepSize*$fi ))
+	fileSizes[fi]=$(( $size/(2**$fi) ))
 	fiName=${files[fi]}
 	fiSize=${fileSizes[fi]}
 	trap "rm -f $file" 0 2 3 15
@@ -30,6 +32,10 @@ do
 	ls -la $fiName
 done
 
+function nanoTime {
+	ts=$(date +%s%N) ; $@ ; tt=$((($(date +%s%N) - $ts)/1000000)) ; echo "Time taken: $tt"
+}
+
 # Generate performance files where each row follow 
 #  the format: bytes_processed real_time
 openSSLTag="openssl-"
@@ -37,19 +43,20 @@ function openssl_test {
 	cipher=$1
 	key=$2
 	iv_option=
-	if ! [ -nz "$3" ]; then
+	if ! [ -z "$3" ]; then
 		iv_option="-iv $3"
 	fi
 
 	output="$outputFolder$openSSLTag$cipher$filesExt"
 	printf "\ngenerating $output\n"
 
-	for ((fi=1; fi<=nFiles; fi++))
+	for ((fi=0; fi<nFiles; fi++))
 	do
 		fiName=${files[fi]}
 		fiSize=${fileSizes[fi]}
-		printf   "openssl $cipher -e -K $key $iv_option -in size$fiSize > /dev/null ... "
-		real=time openssl $cipher -e -K $key $iv_option -in $fiName     > /dev/null
+		printf        "openssl $cipher -e -K $key $iv_option -in size$fiSize ... "
+		#A="$( { time ls -la > /dev/null; } 2>&1 )"
+		real=$( { time openssl $cipher -e -K $key $iv_option -in $fiName > /dev/null; } 2>&1 )
 		row="$fiSize $real\n"
 		printf " $row"
 		printf "$row" >> $fiName
@@ -70,7 +77,7 @@ openssl_test aes-128-cbc $key128 $iv
 #cmp --silent $old $new || echo "no match with original file after decryption"
 
 #TODO generate graphs with python
-for ((fi=1; fi<=nFiles; fi++))
+for ((fi=0; fi<nFiles; fi++))
 do
 	fiName=${files[fi]}
 	rm $fiName
