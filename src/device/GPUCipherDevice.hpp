@@ -23,6 +23,7 @@
 #include "GPUCipherDevice.hpp"
 #include <boost/unordered_map.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <fstream>
 
 namespace paracrypt {
 
@@ -52,7 +53,7 @@ namespace paracrypt {
 	int getConcurrentKernels();
 	int getGridSize(int n_blocks, int threadsPerCipherBlock);
 	virtual void set() = 0;	// must be called to set operations to this device
-	virtual void malloc(void **data, int size) = 0;
+	virtual void malloc(void **data, std::streamsize size) = 0;
 	virtual void free(void *data) = 0;
 	virtual void memcpyTo(void *host, void *dev, size_t size, int stream_id) = 0;	// Async
 	void memcpyTo(void *host, void *dev, size_t size); // Async to default stream

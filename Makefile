@@ -40,135 +40,141 @@ CXX_FLAGS ?= -Wall -DBOOST_LOG_DYN_LINK
 NVCC_FLAGS ?=
 CXX_FLAGS_ ?= $(FLAGS) $(CXX_FLAGS)
 NVCC_FLAGS_ ?= $(FLAGS) $(NVCC_FLAGS)
+CXX_FLAGS__ = # extra flags
+NVCC_FLAGS__ = # extra flags
 #
 SRC_DIR ?= src
 TST_DIR ?= $(SRC_DIR)/tests
 BIN_DIR ?= bin
 LIB_DIR ?= lib
 OBJ_DIR ?= obj
-INF_DIR = info
+INF_DIR ?= info
+INC_DIR ?= inc
 #
 LIBS ?= -L$(BOOST_LIB) -lboost_system -lboost_log -lboost_log_setup -lboost_thread \
         -lpthread -L$(CUDA_LIB) -lcuda -lcudart
 INCL ?= -I$(SRC_DIR) -I$(CUDA_INC)
 #
-OBJ_EXT =
 
 
 ###################################################################################
 # OBJECTS #########################################################################
 ###################################################################################
+$(OBJ_DIR)/Paracrypt.o: $(SRC_DIR)/Paracrypt.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/BlockCipher$(OBJ_EXT).o: $(SRC_DIR)/cipher/BlockCipher.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/BlockCipher.o: $(SRC_DIR)/cipher/BlockCipher.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CUDABlockCipher$(OBJ_EXT).o: $(SRC_DIR)/cipher/CUDABlockCipher.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CUDABlockCipher.o: $(SRC_DIR)/cipher/CUDABlockCipher.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/AES$(OBJ_EXT).o: $(SRC_DIR)/cipher/AES/AES.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/AES.o: $(SRC_DIR)/cipher/AES/AES.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAES$(OBJ_EXT).o: $(SRC_DIR)/cipher/AES/CudaAES.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAES.o: $(SRC_DIR)/cipher/AES/CudaAES.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAESConstant$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaConstant.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAESConstant.cu.o: $(SRC_DIR)/cipher/AES/CudaConstant.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAesVersions$(OBJ_EXT).o: $(SRC_DIR)/cipher/AES/CudaAesVersions.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAesVersions.o: $(SRC_DIR)/cipher/AES/CudaAesVersions.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAes16B$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaAes16B.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAes16B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes16B.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__) $(NVCC_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAes16BPtr$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAes16BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAes8B$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaAes8B.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAes8B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes8B.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__)  -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAes8BPtr$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAes8BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__)  -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAes4B$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaAes4B.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAes4B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes4B.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__)  -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAes4BPtr$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAes4BPtr.cu.o: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__)  -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaAes1B$(OBJ_EXT).cu.o: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
-	$(NVCC) $(NVCC_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaAes1B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
+	$(NVCC) $(NVCC_FLAGS_) $(NVCC_FLAGS__)  -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CUDACipherDevice$(OBJ_EXT).o: $(SRC_DIR)/device/CUDACipherDevice.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CUDACipherDevice.o: $(SRC_DIR)/device/CUDACipherDevice.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/logging$(OBJ_EXT).o: $(SRC_DIR)/logging.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/logging.o: $(SRC_DIR)/logging.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/AES_key_schedule$(OBJ_EXT).o: $(SRC_DIR)/openssl/AES_key_schedule.c
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/AES_key_schedule.o: $(SRC_DIR)/openssl/AES_key_schedule.c
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/endianess$(OBJ_EXT).o: $(SRC_DIR)/endianess.c
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/endianess.o: $(SRC_DIR)/endianess.c
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/Timer$(OBJ_EXT).o: $(SRC_DIR)/Timer.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/Timer.o: $(SRC_DIR)/Timer.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #	
-$(OBJ_DIR)/bin_endian_ttable_generator$(OBJ_EXT).o: $(SRC_DIR)/cipher/AES/big_endian_ttable_generator.cpp
+$(OBJ_DIR)/bin_endian_ttable_generator.o: $(SRC_DIR)/cipher/AES/big_endian_ttable_generator.cpp
 	$(CXX) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/IO$(OBJ_EXT).o: $(SRC_DIR)/io/IO.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/IO.o: $(SRC_DIR)/io/IO.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/BlockIO$(OBJ_EXT).o: $(SRC_DIR)/io/BlockIO.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/BlockIO.o: $(SRC_DIR)/io/BlockIO.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/SimpleIO$(OBJ_EXT).o: $(SRC_DIR)/io/SimpleIO.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/SimpleIO.o: $(SRC_DIR)/io/SimpleIO.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/SimpleCudaIO$(OBJ_EXT).o: $(SRC_DIR)/io/SimpleCudaIO.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/SimpleCudaIO.o: $(SRC_DIR)/io/SimpleCudaIO.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/SharedIO$(OBJ_EXT).o: $(SRC_DIR)/io/SharedIO.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/SharedIO.o: $(SRC_DIR)/io/SharedIO.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaSharedIO$(OBJ_EXT).o: $(SRC_DIR)/io/CudaSharedIO.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaSharedIO.o: $(SRC_DIR)/io/CudaSharedIO.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/Pinned$(OBJ_EXT).o: $(SRC_DIR)/io/Pinned.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/Pinned.o: $(SRC_DIR)/io/Pinned.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/CudaPinned$(OBJ_EXT).o: $(SRC_DIR)/io/CudaPinned.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/CudaPinned.o: $(SRC_DIR)/io/CudaPinned.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/Launcher$(OBJ_EXT).o: $(SRC_DIR)/Launcher.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+$(OBJ_DIR)/Launcher.o: $(SRC_DIR)/Launcher.cpp
+	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
 OBJECTS= \
-	$(OBJ_DIR)/AES_key_schedule$(OBJ_EXT).o \
-	$(OBJ_DIR)/endianess$(OBJ_EXT).o \
-	$(OBJ_DIR)/logging$(OBJ_EXT).o \
-	$(OBJ_DIR)/Timer$(OBJ_EXT).o \
-	$(OBJ_DIR)/BlockCipher$(OBJ_EXT).o \
-	$(OBJ_DIR)/CUDABlockCipher$(OBJ_EXT).o \
-	$(OBJ_DIR)/AES$(OBJ_EXT).o \
-	$(OBJ_DIR)/CudaAES$(OBJ_EXT).o \
-	$(OBJ_DIR)/CudaAESConstant$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CudaAesVersions$(OBJ_EXT).o  \
-	$(OBJ_DIR)/CudaAes16B$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CudaAes16BPtr$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CudaAes8B$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CudaAes8BPtr$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CudaAes4B$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CudaAes4BPtr$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CudaAes1B$(OBJ_EXT).cu.o \
-	$(OBJ_DIR)/CUDACipherDevice$(OBJ_EXT).o \
-	$(OBJ_DIR)/IO$(OBJ_EXT).o \
-	$(OBJ_DIR)/BlockIO$(OBJ_EXT).o \
-	$(OBJ_DIR)/SharedIO$(OBJ_EXT).o \
-	$(OBJ_DIR)/CudaSharedIO$(OBJ_EXT).o \
-	$(OBJ_DIR)/Pinned$(OBJ_EXT).o \
-	$(OBJ_DIR)/CudaPinned$(OBJ_EXT).o \
-	$(OBJ_DIR)/Launcher$(OBJ_EXT).o
+	$(OBJ_DIR)/Paracrypt.o \
+	$(OBJ_DIR)/AES_key_schedule.o \
+	$(OBJ_DIR)/endianess.o \
+	$(OBJ_DIR)/logging.o \
+	$(OBJ_DIR)/Timer.o \
+	$(OBJ_DIR)/BlockCipher.o \
+	$(OBJ_DIR)/CUDABlockCipher.o \
+	$(OBJ_DIR)/AES.o \
+	$(OBJ_DIR)/CudaAES.o \
+	$(OBJ_DIR)/CudaAESConstant.cu.o \
+	$(OBJ_DIR)/CudaAesVersions.o  \
+	$(OBJ_DIR)/CudaAes16B.cu.o \
+	$(OBJ_DIR)/CudaAes16BPtr.cu.o \
+	$(OBJ_DIR)/CudaAes8B.cu.o \
+	$(OBJ_DIR)/CudaAes8BPtr.cu.o \
+	$(OBJ_DIR)/CudaAes4B.cu.o \
+	$(OBJ_DIR)/CudaAes4BPtr.cu.o \
+	$(OBJ_DIR)/CudaAes1B.cu.o \
+	$(OBJ_DIR)/CUDACipherDevice.o \
+	$(OBJ_DIR)/IO.o \
+	$(OBJ_DIR)/BlockIO.o \
+	$(OBJ_DIR)/SharedIO.o \
+	$(OBJ_DIR)/CudaSharedIO.o \
+	$(OBJ_DIR)/Pinned.o \
+	$(OBJ_DIR)/CudaPinned.o \
+	$(OBJ_DIR)/Launcher.o
+
 
 ###################################################################################
 # PTX #############################################################################
@@ -177,64 +183,83 @@ OBJECTS= \
 # Generate PTX assembly code: Might be useful for fine 
 #  grain code inspection and optimization
 #
-$(OBJ_DIR)/CudaAes16B$(OBJ_EXT).ptx: $(SRC_DIR)/cipher/AES/CudaAes16B.cu
+$(OBJ_DIR)/CudaAes16B.ptx: $(SRC_DIR)/cipher/AES/CudaAes16B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaAes16BPtr$(OBJ_EXT).ptx: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cu
+$(OBJ_DIR)/CudaAes16BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaAes16BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaAes8B$(OBJ_EXT).ptx: $(SRC_DIR)/cipher/AES/CudaAes8B.cu
+$(OBJ_DIR)/CudaAes8B.ptx: $(SRC_DIR)/cipher/AES/CudaAes8B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaAes8BPtr$(OBJ_EXT).ptx: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cu
+$(OBJ_DIR)/CudaAes8BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaAes8BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaAes4B$(OBJ_EXT).ptx: $(SRC_DIR)/cipher/AES/CudaAes4B.cu
+$(OBJ_DIR)/CudaAes4B.ptx: $(SRC_DIR)/cipher/AES/CudaAes4B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaAes4BPtr$(OBJ_EXT).ptx: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cu
+$(OBJ_DIR)/CudaAes4BPtr.ptx: $(SRC_DIR)/cipher/AES/CudaAes4BPtr.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
-$(OBJ_DIR)/CudaAes1B$(OBJ_EXT).ptx: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
+$(OBJ_DIR)/CudaAes1B.ptx: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
 	$(NVCC) $(NVCC_FLAGS_) -ptx $< -o $@
 #
 ptx: \
-$(OBJ_DIR)/CudaAes16B$(OBJ_EXT).ptx \
-$(OBJ_DIR)/CudaAes16BPtr$(OBJ_EXT).ptx \
-$(OBJ_DIR)/CudaAes8B$(OBJ_EXT).ptx \
-$(OBJ_DIR)/CudaAes8BPtr$(OBJ_EXT).ptx \
-$(OBJ_DIR)/CudaAes4B$(OBJ_EXT).ptx \
-$(OBJ_DIR)/CudaAes4BPtr$(OBJ_EXT).ptx \
-$(OBJ_DIR)/CudaAes1B$(OBJ_EXT).ptx 
+$(OBJ_DIR)/CudaAes16B.ptx \
+$(OBJ_DIR)/CudaAes16BPtr.ptx \
+$(OBJ_DIR)/CudaAes8B.ptx \
+$(OBJ_DIR)/CudaAes8BPtr.ptx \
+$(OBJ_DIR)/CudaAes4B.ptx \
+$(OBJ_DIR)/CudaAes4BPtr.ptx \
+$(OBJ_DIR)/CudaAes1B.ptx 
 #
 
 
 ###################################################################################
 # TESTS ###########################################################################
 ###################################################################################
-#
-TESTS_BIN ?= paracrypt_tests
-#
-$(OBJ_DIR)/tests.o: $(TST_DIR)/tests.cpp
-	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
-#
 LIBS_TESTS =
 CXX_FLAGS_TESTS = 
 ifeq ($(OPENSSL_EXISTS), 1)
 	LIBS_TESTS += -lcrypto
 	CXX_FLAGS_TESTS += -DOPENSSL_EXISTS
 endif
+#
+# NOTE: Force to use -O0 to reduce overly long compiling times
+$(OBJ_DIR)/tests.o: $(TST_DIR)/tests.cpp
+	$(CXX) $(CXX_FLAGS) $(CXX_FLAGS_TESTS) -O0 -g -DDEBUG -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/openssl_aes.o: $(SRC_DIR)/openssl/aes_core.c
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+$(OBJ_DIR)/openssl_aes_test.o: $(TST_DIR)/openssl_aes_test.cpp
+	$(CXX) $(CXX_FLAGS_) -c $< -o $@ $(INCL)
+#
+openssl_aes_test: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
+openssl_aes_test: \
+$(OBJ_DIR)/cpu_AES_round_example.o \
+$(OBJ_DIR)/logging.o \
+$(OBJ_DIR)/openssl_aes.o \
+$(OBJ_DIR)/openssl_aes_test.o
+	 $(CXX) $(CXX_FLAGS_) \
+	 $(OBJ_DIR)/openssl_aes_test.o \
+	 $(OBJ_DIR)/logging.o \
+	 $(OBJ_DIR)/openssl_aes.o \
+	 -o $(BIN_DIR)/openssl_aes_test $(LIBS)
+#
 tests: LIBS += $(LIBS_TESTS)
 tests: CXX_FLAGS_ += $(CXX_FLAGS_TESTS)
 tests: \
 $(OBJECTS) \
-$(OBJ_DIR)/BlockIO$(OBJ_EXT).o \
-$(OBJ_DIR)/SimpleIO$(OBJ_EXT).o
+$(OBJ_DIR)/tests.o \
+$(OBJ_DIR)/SimpleIO.o \
+$(OBJ_DIR)/SimpleCudaIO.o
 	 $(CXX) $(CXX_FLAGS_) \
 	 $(OBJECTS) \
-	 $(OBJ_DIR)/BlockIO$(OBJ_EXT).o \
-	 $(OBJ_DIR)/SimpleIO$(OBJ_EXT).o
-	 -o $(BIN_DIR)/paracrypt_tests $(TESTS_BIN) $(LIBS)
+	 $(OBJ_DIR)/tests.o \
+	 $(OBJ_DIR)/SimpleIO.o \
+	 $(OBJ_DIR)/SimpleCudaIO.o \
+	 -o $(BIN_DIR)/paracrypt_tests$(OUT_TAG) $(LIBS)
 #
 
 
@@ -242,15 +267,33 @@ $(OBJ_DIR)/SimpleIO$(OBJ_EXT).o
 # BUILDS ##########################################################################
 ###################################################################################
 #
-bin_endian_ttable_generator: \
-$(OBJ_DIR)/bin_endian_ttable_generator$(OBJ_EXT).o \
-$(OBJ_DIR)/endianess$(OBJ_EXT).o
-	$(CXX) \
-	$(OBJ_DIR)/endianess$(OBJ_EXT).o \
-	$(OBJ_DIR)/bin_endian_ttable_generator$(OBJ_EXT).o \
-	-o $(BIN_DIR)/bin_endian_ttable_generator
+#bin_endian_ttable_generator: CXX_FLAGS__ =
+#bin_endian_ttable_generator: NVCC_FLAGS__ =
+#bin_endian_ttable_generator: \
+#$(OBJ_DIR)/bin_endian_ttable_generator.o \
+#$(OBJ_DIR)/endianess.o
+#	$(CXX) \
+#	$(OBJ_DIR)/endianess.o \
+#	$(OBJ_DIR)/bin_endian_ttable_generator.o \
+#	-o $(BIN_DIR)/bin_endian_ttable_generator
 #
-builds: tests #library tool #bin_endian_ttable_generator ptx
+library: CXX_FLAGS__ = -fPIC
+library: NVCC_FLAGS__ = --compiler-options '-fPIC'
+library: \
+$(OBJECTS)
+	 $(CXX) $(CXX_FLAGS_) \
+	 $(OBJECTS) \
+	 -shared -o $(LIB_DIR)/libparacrypt$(OUT_TAG).so
+#
+tool: CXX_FLAGS__ =
+tool: NVCC_FLAGS__ =
+tool: 
+	$(CXX) $(CXX_FLAGS_) -o $(BIN_DIR)/paracrypt$(OUT_TAG) $(SRC_DIR)/main.cpp \
+	-lparacrypt$(OUT_TAG) -L$(LIB_DIR) -lboost_program_options $(LIBS)
+
+#builds: bin_endian_ttable_generator
+#builds: tests clean
+builds: library tool #tests #library tool #bin_endian_ttable_generator ptx
 
 
 ###################################################################################
@@ -260,7 +303,7 @@ builds: tests #library tool #bin_endian_ttable_generator ptx
 clean: 
 	rm -f $(OBJ_DIR)/*.o
 	rm -f $(OBJ_DIR)/*.ptx
-	rm -f $(LIB_DIR)/*.a
+	rm -f $(LIB_DIR)/*.so
 	rm -f $(BIN_DIR)/*
 	rm -f $(BIN_DIR)/.fuse_hidden*
 	rm -f $(SRC_DIR)/*~
@@ -271,26 +314,29 @@ clean:
 	rm -f $(SRC_DIR)/cipher/*~
 	rm -f $(INF_DIR)/*
 #
-all: release debug devel
-TESTS_BIN_BASE=$(TESTS_BIN)
-OBJ_EXT_BASE=$(OBJ_EXT)
-CXX_FLAGS_BASE=$(CXX_FLAGS)
-NVCC_FLAGS_BASE=$(NVCC_FLAGS)
+all: 
+	make clean debug
+	make clean devel
+	make clean release
 #
-devel: TESTS_BIN=$(TESTS_BIN_BASE)_dev
-devel: OBJ_EXT=$(OBJ_EXT_BASE)_dev
-devel: CXX_FLAGS_ = $(CXX_FLAGS_BASE) -g -DDEBUG -DDEVEL
-devel: NVCC_FLAGS_ = $(NVCC_FLAGS_BASE) -g -DDEBUG -DDEVEL
+devel: OUT_TAG=_dev
+devel: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
+devel: NVCC_FLAGS_ += -g -DDEBUG -DDEVEL
 devel: builds
 #
-debug: TEST_BIN=$(TESTS_BIN_BASE)_dbg
-debug: OBJ_EXT=$(OBJ_EXT_BASE)_dbg
-debug: CXX_FLAGS_ = $(CXX_FLAGS_BASE) -g -DDEBUG
-debug: NVCC_FLAGS_ = $(NVCC_FLAGS_BASE) -g -DDEBUG
+debug: OUT_TAG=_dbg
+debug: CXX_FLAGS_ += -g -DDEBUG
+debug: NVCC_FLAGS_ += -g -DDEBUG
 debug: builds
 #
-release: CXX_FLAGS_ = $(CXX_FLAGS_BASE) -O4 -DNDEBUG
-release: NVCC_FLAGS_ = $(NVCC_FLAGS_BASE) -O4
+# NOTE: consider using -O2 that takes considerable 
+# less time to compile than -O4.
+#
+# -DNDEBUG removes asserts
+#
+release: OUT_TAG=
+release: CXX_FLAGS_ += -O4 -DNDEBUG
+release: NVCC_FLAGS_ += -O4
 release: builds
 
 

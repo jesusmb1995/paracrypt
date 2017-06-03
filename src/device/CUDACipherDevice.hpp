@@ -53,7 +53,7 @@ namespace paracrypt {
 	 CUDACipherDevice(int device);
 	const cudaDeviceProp *getDeviceProperties();
 	void set();
-	void malloc(void **data, int size);
+	void malloc(void **data, std::streamsize size);
 	void free(void *data);
 	void memcpyTo(void *host, void *dev, size_t size, int stream_id);
 	void memcpyTo(void *host, void *dev, size_t size);

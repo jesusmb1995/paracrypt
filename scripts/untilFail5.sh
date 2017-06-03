@@ -12,7 +12,7 @@ RESULT=0
 until [ $RESULT != 0 ]
 do
 	echo $I
-	../bin/paracrypt_tests --run_test=LAUNCHERS > ./info/tryToForceFail.txt
+	../bin/paracrypt_tests_dbg --run_test=LAUNCHERS > ../info/tryToForceFail.txt
 	RESULT=$?	
 	I=$((I+1))
 done

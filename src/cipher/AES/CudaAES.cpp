@@ -429,6 +429,9 @@ void paracrypt::CudaAES::setIV(const unsigned char iv[], int bits)
 	   DEV_TRACE(boost::format("Malloc 16 device bytes at IV %x") % (void*) this->deviceIV);
     }
 	if (!this->ivIsCopy && this->deviceIV != NULL) {
+		// TODO do not copy to device!! wait and copy at the same time
+		//  we copy data in one single transference. This will produce
+		//  a notable performance improvement in CBC and CFB modes.
 		DEV_TRACE(boost::format("Memcpy 16 bytes to IV %x") % (void*) this->deviceIV);
 		this->getDevice()->memcpyTo((void*)iv,(void*)this->deviceIV, 16);
 	}
@@ -575,6 +578,9 @@ bool paracrypt::CudaAES::isInplace() {
 	return this->inPlace;
 }
 
+// TODO do not copy to device!! wait and copy at the same time
+//  we copy data in one single transference. This will produce
+//  a notable performance improvement in CBC and CFB modes.
 void paracrypt::CudaAES::transferNeighborsToGPU(
 		const unsigned char blocks[],
 		std::streamsize n_blocks)

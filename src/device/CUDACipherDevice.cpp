@@ -122,8 +122,9 @@ void paracrypt::CUDACipherDevice::set()
     HANDLE_ERROR(cudaSetDevice(this->device));
 }
 
-void paracrypt::CUDACipherDevice::malloc(void **data, int size)
+void paracrypt::CUDACipherDevice::malloc(void **data, std::streamsize size)
 {
+	LOG_DEBUG(boost::format("cudaMalloc(%llu bytes)") % size);
     HANDLE_ERROR(cudaMalloc(data, size));
 }
 

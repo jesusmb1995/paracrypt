@@ -40,8 +40,14 @@
 #include "io/Pinned.hpp"
 #include "Launcher.hpp"
 #include <algorithm>
+#include "Paracrypt.hpp"
 
 // some tests require openssl
+//
+// TODO compilation without OpenSSL 
+//  does not work yet... ensure that
+//  if OpenSSL is not installed we can
+//  execute other tests.
 #ifdef OPENSSL_EXISTS
 	// OpenSLL
 	#include <openssl/conf.h>
@@ -1038,9 +1044,13 @@ void GEN_128BPB_IO_FILES(
 ){
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		(*inFileName) = std::string(nameBuffer);
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+			ERR("Error trying to generate the name of a temporary file");
+		}
 		(*outFileName) = std::string(nameBuffer);
 	}
 
@@ -1093,7 +1103,9 @@ void OUT_FILE_128BPB_CORRECTNESS_TEST(
 		const unsigned int remainingBytes
 ){
 	char nameBuffer [L_tmpnam];
-	std::tmpnam (nameBuffer); // dummy file
+	if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+} // dummy file
 	paracrypt::SimpleIO *io = new paracrypt::SimpleCudaIO(outFilename,nameBuffer,16,AUTO_IO_BUFFER_LIMIT,0,size);
 	io->setPadding(paracrypt::BlockIO::UNPADDED);
 	paracrypt::BlockIO::chunk c;
@@ -1403,7 +1415,9 @@ void GEN_AES_TEST_FILE(
 ){
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		(*fileName) = std::string(nameBuffer);
 	}
 
@@ -1467,7 +1481,9 @@ void CUDA_AES_SHARED_IO_LAUNCHER_SB_OPERATION_TEST(
 	std::string outFileName;
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		outFileName = std::string(nameBuffer);
 	}
 	std::ofstream* outFile = new std::ofstream(outFileName.c_str(),std::fstream::out | std::fstream::binary);
@@ -1568,7 +1584,9 @@ void GEN_AES_RACC_TEST_FILE(
 ){
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		(*fileName) = std::string(nameBuffer);
 	}
 
@@ -1639,9 +1657,13 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST(
 	std::string raccFileName;
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		outFileName = std::string(nameBuffer);
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		raccFileName = std::string(nameBuffer);
 	}
 	std::ofstream* outFile = new std::ofstream(outFileName.c_str(),std::fstream::out | std::fstream::binary);
@@ -1708,7 +1730,9 @@ int GEN_AES_RANDOM_TEST_FILE(
 ){
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		(*fileName) = std::string(nameBuffer);
 	}
 
@@ -1800,7 +1824,9 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_DECRYPT_TEST(
 	std::string raccFileName;
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		raccFileName = std::string(nameBuffer);
 	}
 	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
@@ -1889,9 +1915,13 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RANDOM_TEST(
 	std::string raccFileName;
 	{
 		char nameBuffer [L_tmpnam];
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		outFileName = std::string(nameBuffer);
-		std::tmpnam (nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
 		raccFileName = std::string(nameBuffer);
 	}
 	std::ofstream* outFile = new std::ofstream(outFileName.c_str(),std::fstream::out | std::fstream::binary);
@@ -2139,6 +2169,9 @@ BOOST_AUTO_TEST_SUITE(id) \
 	AES_LAUNCHER_RANDOM_TEST_SUITE_(two_entire_blocks,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,2) \
 	AES_LAUNCHER_RANDOM_TEST_SUITE_(sixtyfive_entire_blocks,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,65) \
 	AES_LAUNCHER_RANDOM_TEST_SUITE_(n_entire_blocks,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,NO_RANDOM_ACCESS,10000000) \
+	AES_LAUNCHER_RANDOM_TEST_SUITE_(random_offbeginning,testName,className,keySizeStr,iv,64*16+8,NO_RANDOM_ACCESS,66) \
+	AES_LAUNCHER_RANDOM_TEST_SUITE_(random_offend,testName,className,keySizeStr,iv,NO_RANDOM_ACCESS,64*16+8,66) \
+	AES_LAUNCHER_RANDOM_TEST_SUITE_(random_randomaccess,testName,className,keySizeStr,iv,63*16+8,64*16+8,66) \
 BOOST_AUTO_TEST_SUITE_END()
 
 
@@ -2167,19 +2200,6 @@ BOOST_AUTO_TEST_SUITE_END()
 // TODO random access tests
 // TODO unaligned random access tests
 
-/* TODO uncomment
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CBC_128, testName, className, "CBC-128", aes_128_cbc_tv); \
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CBC_192, testName, className, "CBC-192", aes_192_cbc_tv); \
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CBC_256, testName, className, "CBC-256", aes_256_cbc_tv); \
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CFB_128, testName, className, "CFB-128", aes_128_cfb_tv); \
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CFB_192, testName, className, "CFB-192", aes_192_cfb_tv); \
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CFB_256, testName, className, "CFB-256", aes_256_cfb_tv); \  TODO only random test */
-
-/*			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CTR_128, testName, className, "CTR-128", aes_128_cfb_tv); \
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CTR_192, testName, className, "CTR-192", aes_192_cfb_tv); \
-			AES_LAUNCHER_KEYSIZE_TEST_SUITE(CTR_256, testName, className, "CTR-256", aes_256_cfb_tv); \ TODO only random test */
-
-
 BOOST_AUTO_TEST_SUITE(LAUNCHERS)
 	BOOST_AUTO_TEST_SUITE(CUDA)
 		BOOST_AUTO_TEST_SUITE(SHAREDIO)
@@ -2194,4 +2214,406 @@ BOOST_AUTO_TEST_SUITE(LAUNCHERS)
 			BOOST_AUTO_TEST_SUITE_END()
 		BOOST_AUTO_TEST_SUITE_END()
 	BOOST_AUTO_TEST_SUITE_END()
+BOOST_AUTO_TEST_SUITE_END()
+
+int GEN_AES_TEST_FILE(
+		std::string *fileName,
+		std::fstream **file, // WARNING: Must be closed by the caller
+		uint8_t* filledWith,
+		int nBlocks,
+		tv vector_key,
+		const EVP_CIPHER * openSSLCipher = NULL // generate an encrypted file
+){
+	{
+		char nameBuffer [L_tmpnam];
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
+		(*fileName) = std::string(nameBuffer);
+	}
+
+	(*file) = new std::fstream(fileName->c_str(),std::fstream::out | std::fstream::binary);
+	if(!(*file)) {
+		FATAL(boost::format("Error creating test file: %s\n") % strerror(errno));
+	}
+
+	int paddingBytes = rand() % 15 + 1; // 1-15
+	int data_length = openSSLCipher == NULL ? nBlocks*16-paddingBytes : nBlocks*16;
+	unsigned char *plaintext = (unsigned char*) malloc(data_length);
+    if(plaintext == NULL) {
+    	FATAL("Error allocating memory for the encryption plantext buffer\n");
+    }
+    memset(plaintext,nBlocks,data_length);
+    (*filledWith) = plaintext[0];
+    if(openSSLCipher != NULL) {
+		// PKCS7
+		uint8_t n = (uint8_t) paddingBytes;
+		int paddingOffset = data_length-paddingBytes;
+		assert(paddingOffset+n <= data_length);
+		unsigned char *paddingStart = plaintext+paddingOffset;
+		memset(paddingStart, n, paddingBytes);
+    }
+	unsigned char *result = plaintext;
+
+	if(nBlocks <= 66) {
+		hexdump("random data",result,data_length);
+	}
+
+    if(openSSLCipher != NULL) {
+    	// OpenSSL Encryption /////////////////////////////////////////////////////////////
+#ifdef OPENSSL_EXISTS
+    	unsigned char *key = (unsigned char*) vector_key.key;
+    	unsigned char *iv = (unsigned char*) vector_key.iv;
+        result = (unsigned char*) malloc(data_length+16);
+        if(result == NULL) {
+        	FATAL("Error allocating memory for the encryption result buffer\n");
+        }
+        int ciphertext_len;
+
+        // Encrypt the plaintext
+        ciphertext_len = AES_encrypt (openSSLCipher, plaintext, data_length, key, iv, result);
+        if(ciphertext_len == data_length+16) {
+        	ciphertext_len -= 16;
+        }
+        BOOST_REQUIRE_EQUAL(ciphertext_len,data_length);
+#endif
+        ////////////////////////////////////////////////////////////////////////////////////
+    }
+
+    (*file)->write((const char*) result,data_length);
+    if(!(*file)){
+    	FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
+    }
+    (*file)->flush();
+    free(result);
+    if(openSSLCipher != NULL)
+    	free(plaintext);
+
+	if(openSSLCipher != NULL && nBlocks <= 66) {
+		fdump("encrypted random data",(*fileName));
+	} else if(nBlocks <= 66) {
+		fdump("random data file",(*fileName));
+	}
+
+    return paddingBytes;
+}
+
+void CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST(
+		std::string title,
+		paracrypt::cipher_t c,
+		tv vector, // iv, key, and mode (we dont need input-output)
+		const EVP_CIPHER * openSSLCipher,
+		bool constantKey,
+		bool constantTables,
+		std::streampos begin,
+		std::streampos end,
+		int nBlocks,
+		bool outOfOrder = false
+){
+	assert(end != NO_RANDOM_ACCESS && begin != NO_RANDOM_ACCESS ? end >= begin: true);
+	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
+
+	std::string inFileName;
+	std::fstream *inFile;
+	uint8_t filledWith;
+	int paddingBytes = GEN_AES_TEST_FILE(&inFileName,&inFile,&filledWith,nBlocks,vector,openSSLCipher);
+
+	std::string raccFileName;
+	{
+		char nameBuffer [L_tmpnam];
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
+		raccFileName = std::string(nameBuffer);
+	}
+	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
+
+	// Decrypt using the API
+	paracrypt::config conf(
+		c, paracrypt::DECRYPT,
+		inFileName, raccFileName,
+    		(unsigned char*) vector.key, vector.key_bits,
+		(paracrypt::mode_t) vector.m
+	);
+	conf.setIV((unsigned char*) vector.iv, sizeof(vector.iv)*8);
+	if(!constantKey) {
+		conf.disableConstantKey();
+	}
+	if(!constantTables) {
+		conf.disableConstantTables();
+	}
+	if(outOfOrder) {
+		conf.enableOutOfOrder();
+	}
+	conf.setRandomAccess(begin,end);
+	paracrypt::exec(conf);
+
+	LOG_INF("The test has finised the decryption of the file");
+
+	// Verify output blocks are correct
+	std::ifstream* upadatedRaccFile = new std::ifstream(raccFileName.c_str(),std::fstream::in | std::fstream::binary);
+	std::streamsize raccFileSize = paracrypt::IO::fileSize(upadatedRaccFile);
+	std::streamsize inFileSize = paracrypt::IO::fileSize(inFile);
+
+	if(nBlocks <= 66) {
+		fdump("Resultant file after decryption with Paracrypt",raccFileName);
+	}
+
+	if(begin == NO_RANDOM_ACCESS)
+		begin = 0;
+	std::streamsize stimatedSize;
+	if(end != NO_RANDOM_ACCESS && end < inFileSize) {
+		stimatedSize = end-begin+1;
+	}
+	else  {
+		stimatedSize = inFileSize-begin-paddingBytes;
+	}
+
+	BOOST_REQUIRE_EQUAL(raccFileSize,stimatedSize);
+
+	// if file is too large don't check it because
+        //  it will slow down the tests and the main
+        //  purpose if these tests is to serve as execution
+        //  for the profiling tool, we already have tests
+        //  that check correcteness of the Launcher.
+	if(nBlocks <= 66) {
+	unsigned char buffer[16];
+		for(int i = 0; i < nBlocks; i++) {
+			upadatedRaccFile->read((char*)buffer,16);
+			bool err = upadatedRaccFile;
+		    BOOST_CHECK(err); // check no err
+		    std::streamsize readBytes = 16;
+			if(upadatedRaccFile->fail()){
+				if(upadatedRaccFile->eof()) {
+					readBytes = upadatedRaccFile->gcount();
+					if(readBytes == 0)
+						break;
+					BOOST_REQUIRE_EQUAL(readBytes, stimatedSize%16);
+				} else {
+					FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
+				}
+			}
+			for(int i = 0; i < readBytes; i++) {
+				BOOST_REQUIRE_EQUAL(buffer[i],filledWith);
+			}
+		}
+	}
+	upadatedRaccFile->close();
+	delete upadatedRaccFile;
+
+    inFile->close();
+    delete inFile;
+
+    raccFile->close();
+    delete raccFile;
+}
+
+void CUDA_AES_SHARED_IO_API_RANDOM_TEST(
+		std::string title,
+		paracrypt::cipher_t c,
+		tv vector, // iv, key, and mode (we dont need input-output)
+		bool constantKey,
+		bool constantTables,
+		std::streampos begin,
+		std::streampos end,
+		int nBlocks,
+		bool outOfOrder = false
+){
+	assert(end != NO_RANDOM_ACCESS && begin != NO_RANDOM_ACCESS ? end >= begin: true);
+	LOG_TRACE(boost::format("Executing %s...") % title.c_str());
+
+	std::string inFileName;
+	std::fstream *inFile;
+
+	uint8_t filledWith;
+	GEN_AES_TEST_FILE(&inFileName,&inFile,&filledWith,nBlocks,vector);
+
+	std::string outFileName;
+	std::string raccFileName;
+	{
+		char nameBuffer [L_tmpnam];
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
+		outFileName = std::string(nameBuffer);
+		if(! std::tmpnam (nameBuffer)) {
+	ERR("Error trying to generate the name of a temporary file");
+}
+		raccFileName = std::string(nameBuffer);
+	}
+	std::ofstream* outFile = new std::ofstream(outFileName.c_str(),std::fstream::out | std::fstream::binary);
+	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
+
+	// Encrypt using the API
+	paracrypt::config enConf(
+		c, paracrypt::ENCRYPT,
+		inFileName, outFileName,
+    		(unsigned char*) vector.key, vector.key_bits,
+		(paracrypt::mode_t) vector.m
+	);
+	enConf.setIV((unsigned char*) vector.iv, sizeof(vector.iv)*8);
+	if(!constantKey) {
+		enConf.disableConstantKey();
+	}
+	if(!constantTables) {
+		enConf.disableConstantTables();
+	}
+	if(outOfOrder) {
+		enConf.enableOutOfOrder();
+	}
+	enConf.setRandomAccess(begin,end);
+	paracrypt::exec(enConf);
+
+
+	if(nBlocks <= 66) {
+		fdump("Resultant file after encryption with Paracrypt",outFileName);
+	}
+
+	// Decrypt using the API
+	paracrypt::config deConf(
+		c, paracrypt::DECRYPT,
+		outFileName, raccFileName,
+    		(unsigned char*) vector.key, vector.key_bits,
+		(paracrypt::mode_t) vector.m
+	);
+	deConf.setIV((unsigned char*) vector.iv, sizeof(vector.iv)*8);
+	if(!constantKey) {
+		deConf.disableConstantKey();
+	}
+	if(!constantTables) {
+		deConf.disableConstantTables();
+	}
+	if(outOfOrder) {
+		deConf.enableOutOfOrder();
+	}
+	deConf.setRandomAccess(begin,end);
+	paracrypt::exec(deConf);
+
+	LOG_INF("The test has finised the encryption and decryption of the file");
+
+	// Verify output blocks are correct
+	std::ifstream* upadatedRaccFile = new std::ifstream(raccFileName.c_str(),std::fstream::in | std::fstream::binary);
+	std::streamsize raccFileSize = paracrypt::IO::fileSize(upadatedRaccFile);
+	std::streamsize inFileSize = paracrypt::IO::fileSize(inFileName);
+	assert(inFileSize > end);
+
+	if(nBlocks <= 66) {
+		fdump("Resultant file after decryption with Paracrypt",raccFileName);
+	}
+
+	if(begin == NO_RANDOM_ACCESS)
+		begin = 0;
+	std::streamsize stimatedSize;
+	if(end != NO_RANDOM_ACCESS && end < inFileSize) {
+		stimatedSize = end-begin+1;
+	}
+	else  {
+		stimatedSize = inFileSize-begin;
+	}
+
+	BOOST_REQUIRE_EQUAL(raccFileSize,stimatedSize);
+	if(nBlocks <= 66) {
+		unsigned char buffer[16];
+		for(int i = 0; i < nBlocks; i++) {
+			upadatedRaccFile->read((char*)buffer,16);
+			bool err = upadatedRaccFile;
+		    BOOST_CHECK(err); // check no err
+		    std::streamsize readBytes = 16;
+			if(upadatedRaccFile->fail()){
+				if(upadatedRaccFile->eof()) {
+					readBytes = upadatedRaccFile->gcount();
+					if(readBytes == 0)
+						break;
+					BOOST_REQUIRE_EQUAL(readBytes, stimatedSize%16);
+				} else {
+					FATAL(boost::format("Error reading input file: %s\n") % strerror(errno));
+				}
+			}
+			for(int i = 0; i < readBytes; i++) {
+				BOOST_REQUIRE_EQUAL(buffer[i],filledWith);
+			}
+		}
+	}
+	upadatedRaccFile->close();
+	delete upadatedRaccFile;
+
+	outFile->close();
+	delete outFile;
+
+    inFile->close();
+    delete inFile;
+
+    raccFile->close();
+    delete raccFile;
+}
+
+// These are the executions profiled for the "GPU Accelerated AES" paper 
+//  tests can be profiled with NSight Eclipse Edition.
+BOOST_AUTO_TEST_SUITE(API)
+    // profile how well optimized the chains modes are compared to CTR mode
+BOOST_AUTO_TEST_CASE(cbc_65blocks) {
+	// chain modes vs...
+	CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST("CBC mode: tiny (65 blocks) file decryption",
+		paracrypt::AES16B, aes_128_cbc_tv, EVP_aes_128_cbc(),
+		true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 65, false);
+	}
+	BOOST_AUTO_TEST_CASE(cbc_small) {
+		CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST("CBC mode: small (1.6 KB) file decryption",
+			paracrypt::AES16B, aes_128_cbc_tv, EVP_aes_128_cbc(), 
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 100, false);
+	}
+	BOOST_AUTO_TEST_CASE(cbc_medium) {
+		CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST("CBC mode: medium (16 MB) file decryption",
+			paracrypt::AES16B, aes_128_cbc_tv, EVP_aes_128_cbc(), 
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 1000*1000, false);
+	}
+	BOOST_AUTO_TEST_CASE(cbc_big) {
+		CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST("CBC mode: big (160 MB) file decryption",
+			paracrypt::AES16B, aes_128_cbc_tv, EVP_aes_128_cbc(), 
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 10*1000*1000, false);
+	}
+
+	// ...ctr (and ecb) modes
+	BOOST_AUTO_TEST_CASE(ecb_small) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("ECB mode: small (1.6 KB) file encryption and decryption",
+			paracrypt::AES16B, aes_example,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 100, false);
+	}
+	BOOST_AUTO_TEST_CASE(ecb_medium) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("ECB mode: medium (16 MB) file encryption and decryption",
+			paracrypt::AES16B, aes_example,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 1000*1000, false);
+	}
+	BOOST_AUTO_TEST_CASE(ctr_65blocks) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: tiny (65 blocks) file encryption and decryption",
+			paracrypt::AES16B, aes_128_ctr_dummy_tv,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 65, false);
+	}
+	BOOST_AUTO_TEST_CASE(ctr_small) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: small (1.6 KB) file encryption and decryption",
+			paracrypt::AES16B, aes_128_ctr_dummy_tv,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 100, false);
+	}
+	BOOST_AUTO_TEST_CASE(ctr_medium) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: medium (16 MB) file encryption and decryption",
+			paracrypt::AES16B, aes_128_ctr_dummy_tv,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 1000*1000, false);
+	}
+	BOOST_AUTO_TEST_CASE(ctr_big) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: big (160 MB) file encryption and decryption",
+			paracrypt::AES16B, aes_128_ctr_dummy_tv,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 10*1000*1000, false);
+	}
+
+	// out of order has any impact in performance?
+	BOOST_AUTO_TEST_CASE(ctr_small) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: small (1.6 KB) file encryption and decryption",
+			paracrypt::AES16B, aes_128_ctr_dummy_tv,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 100, true);
+	}
+	BOOST_AUTO_TEST_CASE(ctr_big) {
+		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: big (160 MB) file encryption and decryption",
+			paracrypt::AES16B, aes_128_ctr_dummy_tv,
+			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 10*1000*1000, true);
+	}
 BOOST_AUTO_TEST_SUITE_END()

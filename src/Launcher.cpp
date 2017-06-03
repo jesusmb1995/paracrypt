@@ -73,7 +73,7 @@ void paracrypt::Launcher::operation(
 ){
 		if(n == 0) return;
 
-		const std::streamsize chunkSizeBytes = io->getChunkSize()*io->getBlockSize();
+		const std::streamsize chunkSizeBytes = io->getChunkSize();
 		paracrypt::BlockIO::chunk* chunks = new paracrypt::BlockIO::chunk[n];
 
 		const unsigned int blockSizeBytes = io->getBlockSize();
