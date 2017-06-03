@@ -144,6 +144,10 @@ paracrypt::SharedIO::~SharedIO() {}
 
 void paracrypt::SharedIO::construct(unsigned int nChunks, rlim_t bufferSizeLimit) {
     // allocate buffer chunks
+	// TODO when the program runs not all the chunks will be
+	//  used concurrently and we will waste both memory and
+	//  time at cudaHostMalloc(). For this reason we stablish
+	//  a hard-limit, a maximum number of chunks.
 	this->bufferSize = nChunks;
     rlim_t buffersTotalSize = this->getPinned()->getReasonablyBigChunkOfRam(bufferSizeLimit);
 

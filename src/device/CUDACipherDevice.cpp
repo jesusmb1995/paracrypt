@@ -45,7 +45,13 @@ paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
     this->nConcurrentKernels = 1;
     //this->memCpyFromCallback = NULL;
     this->device = device;
+
+    // start initializating run-time library as soon as possible
+    // https://devtalk.nvidia.com/default/topic/392429/first-cudamalloc-takes-long-time-/
+    // https://devtalk.nvidia.com/default/topic/394143/effects-on-performance-with-no-initialization-like-not-putting-cut_device_init-/
+    // https://raw.githubusercontent.com/kashif/cuda-workshop/master/cutil/inc/cutil.h
     cudaGetDeviceProperties(&(this->devProp), device);
+    this->set();
 
     // There is no CUDA API function for retrieving blocks per SM.
     // Manually set as described to fit CUDA documentation at table

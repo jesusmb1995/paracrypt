@@ -41,6 +41,7 @@
 #include "Launcher.hpp"
 #include <algorithm>
 #include "Paracrypt.hpp"
+#include "cuda_profiler_api.h"
 
 // some tests require openssl
 //
@@ -2329,6 +2330,7 @@ void CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST(
 	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
 
 	// Decrypt using the API
+	cudaProfilerStart();
 	paracrypt::config conf(
 		c, paracrypt::DECRYPT,
 		inFileName, raccFileName,
@@ -2347,6 +2349,7 @@ void CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST(
 	}
 	conf.setRandomAccess(begin,end);
 	paracrypt::exec(conf);
+	cudaProfilerStop();
 
 	LOG_INF("The test has finised the decryption of the file");
 
@@ -2445,6 +2448,7 @@ void CUDA_AES_SHARED_IO_API_RANDOM_TEST(
 	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
 
 	// Encrypt using the API
+	cudaProfilerStart();
 	paracrypt::config enConf(
 		c, paracrypt::ENCRYPT,
 		inFileName, outFileName,
@@ -2463,13 +2467,14 @@ void CUDA_AES_SHARED_IO_API_RANDOM_TEST(
 	}
 	enConf.setRandomAccess(begin,end);
 	paracrypt::exec(enConf);
-
+	cudaProfilerStop();
 
 	if(nBlocks <= 66) {
 		fdump("Resultant file after encryption with Paracrypt",outFileName);
 	}
 
 	// Decrypt using the API
+	cudaProfilerStart();
 	paracrypt::config deConf(
 		c, paracrypt::DECRYPT,
 		outFileName, raccFileName,
@@ -2488,6 +2493,7 @@ void CUDA_AES_SHARED_IO_API_RANDOM_TEST(
 	}
 	deConf.setRandomAccess(begin,end);
 	paracrypt::exec(deConf);
+	cudaProfilerStop();
 
 	LOG_INF("The test has finised the encryption and decryption of the file");
 
