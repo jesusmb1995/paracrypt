@@ -14,7 +14,7 @@ if [ -z $INC_DIR]; then
 fi
 
 if [ -z $BIN_DIR]; then 
-	INC_DIR=bin
+	BIN_DIR=bin
 fi
 
 # internal folders to cpy from

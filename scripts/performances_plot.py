@@ -83,7 +83,14 @@ def plotPerformance(title,filesPath):
 	plt.savefig(path+title+"_plot.png", bbox_inches='tight')
 	#plt.show()
 
-openssl_aes_128_cbc = path+"openssl-aes-128-cbc_performance.txt"
+# openssl_aes_128_cbc = path+"openssl-aes-128-cbc_performance.txt"
+openssl_aes_128_ecb = path+"paracrypt-aes-128-ecb_performance.txt"
+paracrypt_aes_128_ecb = path+"openssl-aes-128-ecb_performance.txt"
 
-plotPerformance("testing",[openssl_aes_128_cbc])
-	
+
+openssl_aes_128_ctr = path+"paracrypt-aes-128-ctr_performance.txt"
+paracrypt_aes_128_ctr = path+"openssl-aes-128-ctr_performance.txt"
+
+#plotPerformance("testing",[openssl_aes_128_cbc])
+#plotPerformance("testing",[paracrypt_aes_128_ecb, openssl_aes_128_ecb])
+plotPerformance("testing",[paracrypt_aes_128_ctr, openssl_aes_128_ctr])

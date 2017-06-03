@@ -50,15 +50,16 @@ std::vector<std::string> split(const std::string &s, char delim) {
 // WARNING: hexstring length has to be odd
 unsigned char* hexstring2array(string hexstring)
 {
-	int length = hexstring.size();
+	size_t length = hexstring.size();
 	assert(length % 2 == 0);
 	const char *pos = hexstring.c_str();
 
-	unsigned char* val = new unsigned char[length/2];
+	size_t bytes = length/2;
+	unsigned char* val = new unsigned char[bytes];
 	size_t count = 0;
 
 	/* WARNING: no sanitization or error-checking whatsoever */
-	for(count = 0; count < length/sizeof(val[0]); count++) {
+	for(count = 0; count < bytes; count++) {
 	     sscanf(pos, "%2hhx", &val[count]);
 	     pos += 2;
 	}
@@ -74,6 +75,7 @@ int main(int ac, char* av[])
 	unsigned char* key;
 	int key_bits;
 	paracrypt::mode_t m;
+	paracrypt::verbosity_t verbosity = paracrypt::WARNING;
 
     try {
 
@@ -102,11 +104,16 @@ int main(int ac, char* av[])
     			" (if different implementations are available):\n"
     			"\tAvailable options for AES: 16B (default), 8B, 4B, 1B";
 
+    	string verboseDecryption =
+    			"level of verbosity: warning (default), info, debug, trace";
+
 
         po::options_description desc(description.c_str());
         desc.add_options()
             ("help,h",                               "produce help message"                             )
             ("show",        po::value<string>(),     "show license warranty (w) or conditions (c)"      )
+            ("quiet,q",                         "disables logging engine and do not output any messages")
+            ("verbose,v",   po::value<string>(),     verboseDecryption.c_str()                          )
             ("cipher,c",    po::value<string>(),     cipherDecription.c_str()                           )
             ("encrypt,e",                            "encrypt input"                                    )
             ("decrypt,d",                            "decrypt input"                                    )
@@ -115,6 +122,7 @@ int main(int ac, char* av[])
             ("in",          po::value<string>(),     "specifies the input file"                         )
             ("out",         po::value<string>(),     "specifies the output file"                        )
             ("parallelism", po::value<string>(),     cipherDecription.c_str()                           )
+            // TODO logic vs ptr access
 
             // TODO change when add support to other ciphers
             ("disable-constant-key", "don't use GPU constant memory to store AES round keys")
@@ -137,6 +145,29 @@ int main(int ac, char* av[])
         );
         po::store(po::parse_command_line(ac, av, desc, opt_style), vm);
         po::notify(vm);
+
+        if (vm.count("verbose") && vm.count("quiet")) {
+    		cerr << "cannot be quiet and verbose at the same time\n";
+    		return 1;
+        }
+
+        if (vm.count("quiet")) {
+        	verbosity = paracrypt::QUIET;
+        } else if (vm.count("verbose")) {
+        	string logging_level = vm["verbose"].as<string>();
+        	if(logging_level == "warning") {
+        		verbosity = paracrypt::WARNING;
+        	} else if(logging_level == "info") {
+        		verbosity = paracrypt::INFO;
+        	} else if(logging_level == "debug") {
+        		verbosity = paracrypt::DBG;
+        	} else if(logging_level == "trace") {
+        		verbosity = paracrypt::TRACE;
+        	} else {
+        		cerr << "wrong argument for option verbose: use warning, info, debug, or trace\n";
+        		return 1;
+        	}
+        }
 
         if (vm.count("help")) {
             cout << desc << "\n";
@@ -161,14 +192,14 @@ int main(int ac, char* av[])
         if (vm.count("in")) {
         	inFile = vm["in"].as<string>();
         } else {
-    		cerr << "input file required";
+    		cerr << "input file required\n";
     		return 1;
         }
 
         if (vm.count("out")) {
         	outFile = vm["out"].as<string>();
         } else {
-    		cerr << "output file required";
+    		cerr << "output file required\n";
     		return 1;
         }
 
@@ -211,19 +242,19 @@ int main(int ac, char* av[])
         		string keyBitsStr = cipherSpecs.at(1);
 				if(keyBitsStr == "128") {
 	        		if(hexKey.length() != 16*2) {
-	            		cerr << "incorrect AES key length.";
+	            		cerr << "incorrect AES key length\n";
 	            		return 1;
 	        		}
 					key_bits = 128;
 				} else if(keyBitsStr == "192") {
 	        		if(hexKey.length() != 24*2) {
-	            		cerr << "incorrect AES key length.";
+	            		cerr << "incorrect AES key length\n";
 	            		return 1;
 	        		}
 					key_bits = 192;
 				} else if(keyBitsStr == "256") {
 	        		if(hexKey.length() != 32*2) {
-	            		cerr << "incorrect AES key length.";
+	            		cerr << "incorrect AES key length\n";
 	            		return 1;
 	        		}
 					key_bits = 256;
@@ -255,7 +286,7 @@ int main(int ac, char* av[])
         	if (vm.count("encrypt")) {
         		if( m == paracrypt::CBC || m == paracrypt::CFB) {
             		cerr << "Encryption is not supported in CBC and CFB modes."
-            				" Use OpenSSL to encrypt and Paracrypt to decrypt.";
+            				" Use OpenSSL to encrypt and Paracrypt to decrypt.\n";
             		return 1;
         		}
         		op = paracrypt::ENCRYPT;
@@ -272,20 +303,21 @@ int main(int ac, char* av[])
         }
 
     	paracrypt::config conf(c, op, inFile, outFile, key, key_bits, m);
+    	conf.setVerbosity(verbosity);
 
     	unsigned char* iv = NULL;
     	if(vm.count("iv")) {
-    		string hexiv;
+    		string hexiv = vm["iv"].as<string>();
     		if(hexiv.length() != 16*2) {
     			// TODO change when add support to other ciphers
-        		cerr << "incorrect AES iv length.";
+        		cerr << "incorrect AES iv length\n";
         		return 1;
     		}
     		iv = hexstring2array(hexiv);
     		conf.setIV(iv, 128);
     	}
     	else if(m != paracrypt::ECB) {
-    		cerr << "initialization vector (iv) required";
+    		cerr << "initialization vector (iv) required\n";
     		return 1;
     	}
 

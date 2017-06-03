@@ -24,7 +24,31 @@
 #include "cipher/AES/CudaAesVersions.hpp"
 #include "logging.hpp"
 
+#include <boost/log/core.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+namespace logging = boost::log;
+
 void paracrypt::exec(paracrypt::config_t c) {
+
+	boost::shared_ptr< logging::core > logger = logging::core::get();
+	switch(c.verbosity)	{
+		case QUIET:
+			logger->set_logging_enabled(false);
+			break;
+		case WARNING:
+			logger->set_filter(logging::trivial::severity >= logging::trivial::warning);
+			break;
+		case INFO:
+			logger->set_filter(logging::trivial::severity >= logging::trivial::info);
+			break;
+		case DBG:
+			logger->set_filter(logging::trivial::severity >= logging::trivial::debug);
+			break;
+		case TRACE:
+			logger->set_filter(logging::trivial::severity >= logging::trivial::trace);
+			break;
+	}
 
 	// convert API public types to internal types
 	paracrypt::Launcher::operation_t op = (paracrypt::Launcher::operation_t) c.op;

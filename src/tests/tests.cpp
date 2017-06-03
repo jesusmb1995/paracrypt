@@ -2606,12 +2606,12 @@ BOOST_AUTO_TEST_CASE(cbc_65blocks) {
 	}
 
 	// out of order has any impact in performance?
-	BOOST_AUTO_TEST_CASE(ctr_small) {
+	BOOST_AUTO_TEST_CASE(ctr_small_out_of_order) {
 		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: small (1.6 KB) file encryption and decryption",
 			paracrypt::AES16B, aes_128_ctr_dummy_tv,
 			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 100, true);
 	}
-	BOOST_AUTO_TEST_CASE(ctr_big) {
+	BOOST_AUTO_TEST_CASE(ctr_big_out_of_order) {
 		CUDA_AES_SHARED_IO_API_RANDOM_TEST("CTR mode: big (160 MB) file encryption and decryption",
 			paracrypt::AES16B, aes_128_ctr_dummy_tv,
 			true, true, NO_RANDOM_ACCESS, NO_RANDOM_ACCESS, 10*1000*1000, true);

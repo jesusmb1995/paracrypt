@@ -53,6 +53,14 @@ namespace paracrypt {
 		DECRYPT = 1,
 	} operation_t;
 
+	typedef enum verbosity {
+		QUIET = 0,
+		WARNING = 1,
+		INFO = 2,
+		DBG = 3,
+		TRACE = 4
+    } verbosity_t;
+
 	// TODO support SimpleIO and not only async IO
 
 	// TODO permit to set the desired logging level (info, waring, err, fatal, etc.)
@@ -81,6 +89,7 @@ namespace paracrypt {
 		bool outOfOrder;
 		random_access_pos_t begin;
 		random_access_pos_t end;
+		verbosity_t verbosity;
 
 		config(
 				cipher_t c,
@@ -105,6 +114,7 @@ namespace paracrypt {
 			this->outOfOrder = false;
 			this->begin = NO_RANDOM_ACCESS;
 			this->end = NO_RANDOM_ACCESS;
+			this->verbosity = WARNING;
 		};
 
 		void setIV(unsigned char* iv, int ivBits) {
@@ -136,6 +146,10 @@ namespace paracrypt {
 
 		void setEndByte(random_access_pos_t end) {
 			this->end = end;
+		}
+
+		void setVerbosity(verbosity_t verbosity) {
+			this->verbosity = verbosity;
 		}
 
 	} config_t;

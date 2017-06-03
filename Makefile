@@ -291,9 +291,8 @@ tool:
 	$(CXX) $(CXX_FLAGS_) -o $(BIN_DIR)/paracrypt$(OUT_TAG) $(SRC_DIR)/main.cpp \
 	-lparacrypt$(OUT_TAG) -L$(LIB_DIR) -lboost_program_options $(LIBS)
 
-#builds: bin_endian_ttable_generator
-#builds: tests clean
-builds: library tool #tests #library tool #bin_endian_ttable_generator ptx
+builds: tests #clean #bin_endian_ttable_generator ptx
+#builds: library tool
 
 
 ###################################################################################
