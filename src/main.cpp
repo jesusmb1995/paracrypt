@@ -18,6 +18,10 @@
  *
  */
 
+//////////////////////////////////////////////
+//       PARACRYPT COMMAND LINE TOOL        //
+//////////////////////////////////////////////
+
 #include "Paracrypt.hpp"
 
 #include <boost/program_options.hpp>
@@ -110,10 +114,13 @@ int main(int ac, char* av[])
 
         po::options_description desc(description.c_str());
         desc.add_options()
+		    // TODO group options in different sections
             ("help,h",                               "produce help message"                             )
             ("show",        po::value<string>(),     "show license warranty (w) or conditions (c)"      )
             ("quiet,q",                         "disables logging engine and do not output any messages")
             ("verbose,v",   po::value<string>(),     verboseDecryption.c_str()                          )
+
+            // TODO group options in different sections
             ("cipher,c",    po::value<string>(),     cipherDecription.c_str()                           )
             ("encrypt,e",                            "encrypt input"                                    )
             ("decrypt,d",                            "decrypt input"                                    )
@@ -122,9 +129,14 @@ int main(int ac, char* av[])
             ("in",          po::value<string>(),     "specifies the input file"                         )
             ("out",         po::value<string>(),     "specifies the output file"                        )
             ("parallelism", po::value<string>(),     cipherDecription.c_str()                           )
-            // TODO logic vs ptr access
 
-            // TODO change when add support to other ciphers
+            // TODO the code for this options need slight adaptation when if we want to add support for other ciphers
+            // TODO support different notations for staging-area-limit: MB, GB, KB, Bytes, etc.
+            ("staging-area-limit", po::value<int>()->default_value(32),
+             "maximum size (MiB) allowed for the pinned staging area between GPU and CPU (default: 32)")
+            ("stream-limit",       po::value<int>()->default_value(4),
+             "maximum number of concurrent kernels executing in each GPU (default: 4)")
+            ("enable-integer-arithmetic", "use shift and xor bitwise operations to access individual bytes in the state")
             ("disable-constant-key", "don't use GPU constant memory to store AES round keys")
             ("disable-constant-tables", "don't use GPU constant memory to store AES lookup tables")
             ("launch-out-of-order", "do not necessarily wait for kernels in the same order they were launched")
@@ -310,6 +322,7 @@ int main(int ac, char* av[])
     		string hexiv = vm["iv"].as<string>();
     		if(hexiv.length() != 16*2) {
     			// TODO change when add support to other ciphers
+    			//  here we dont check for other ciphers
         		cerr << "incorrect AES iv length\n";
         		return 1;
     		}
@@ -321,7 +334,28 @@ int main(int ac, char* av[])
     		return 1;
     	}
 
+    	if(vm.count("staging-area-limit")) {
+    		int limit = vm["staging-area-limit"].as<int>();
+    		if(limit < 0) {
+        		cerr << "invalid negative staging-area-limit value\n";
+        		return 1;
+    		}
+    		// MiB -> bytes
+    		rlim_t bytes = limit * 1024 * 1024;
+    		conf.staggingLimit(bytes);
+    	}
+    	if(vm.count("stream-limit")) {
+    		int limit = vm["stream-limit"].as<int>();
+    		if(limit < 0) {
+        		cerr << "invalid negative stream-limit value\n";
+        		return 1;
+    		}
+    		conf.streamLimit(limit);
+    	}
+
     	// TODO change when add support to other ciphers
+    	//  here we dont check for other ciphers and their
+    	//  particular options
     	if(vm.count("disable-constant-key")) {
     		conf.disableConstantKey();
     	}
@@ -330,6 +364,13 @@ int main(int ac, char* av[])
     	}
     	if(vm.count("launch-out-of-order")) {
     		conf.enableOutOfOrder();
+    	}
+    	if(vm.count("enable-integer-arithmetic")) {
+    		if(c == paracrypt::AES1B) {
+        		cerr << "integer arithmetic not available with 1B parallelism\n";
+        		return 1;
+    		}
+    		conf.enableBitwiseOperations();
     	}
 
     	paracrypt::exec(conf);

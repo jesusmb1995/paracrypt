@@ -36,6 +36,14 @@
 
 //TODO CUDACipherDevice.getDevices()
 
+#define BUFFER_SIZE_LIMIT 60*1000*1000 // 60MB staging area as limit
+
+rlim_t paracrypt::Launcher::staggingLimit = 0;
+void paracrypt::Launcher::limitStagging(rlim_t limit)
+{
+	staggingLimit = limit;
+}
+
 // Calls SharedIO.construct() with limited memory
 //  according to the devices maximum capacity
 //  and sets the number of chunks according to
@@ -55,10 +63,14 @@ paracrypt::SharedIO* paracrypt::Launcher::newAdjustedSharedIO(
 	int totalConcurrentKernels = 0;
 	rlim_t memLimit = IO::fileSize(inFilename);
 
+	size_t totalGlobalMem = 0;
 	for(int d = 0; d < n; d++) {
 		totalConcurrentKernels += devices[d]->getConcurrentKernels();
-		memLimit = std::min(memLimit,devices[d]->getDeviceProperties()->totalGlobalMem);
+		totalGlobalMem += devices[d]->getDeviceProperties()->totalGlobalMem;
 	}
+	memLimit = std::min(memLimit,totalGlobalMem);
+	if(staggingLimit != -1)
+		memLimit = std::min(memLimit,staggingLimit);
 
 	io = new CudaSharedIO(inFilename,outFilename,blockSize,totalConcurrentKernels,memLimit,begin,end);
 	return io;

@@ -21,7 +21,7 @@
 #include <stdint.h>
 #include <string>
 #include <stdio.h>
-#include "endianess.h"
+#include "utils/endianess.h"
 
 static uint32_t Te0[256] = {
     0xc66363a5U, 0xf87c7c84U, 0xee777799U, 0xf67b7b8dU,

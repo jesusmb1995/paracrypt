@@ -34,6 +34,8 @@ namespace paracrypt {
 // TODO OpenCL implementation with OpenCL devices
 //
     template < typename S, typename F > class GPUCipherDevice {
+    private:
+    	static int maxConcurrentKernels;
       protected:
     boost::unordered_map<int,S> streams;
 //	boost::shared_mutex streams_access;
@@ -64,6 +66,9 @@ namespace paracrypt {
 //	virtual void setMemCpyFromCallback(int stream_id, F func) = 0;
 	int addStream();	// thread-safe
 	void delStream(int stream_id);	// thread-safe
+
+	// limit per GPU
+	static void limitConcurrentKernels(int limit);
     };
 
 }

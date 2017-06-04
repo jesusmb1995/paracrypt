@@ -18,7 +18,7 @@
  *
  */
 
-#include "Timer.hpp"
+#include "utils/Timer.hpp"
 
 void Timer::tic() {
 	this->begin = clock();

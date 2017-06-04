@@ -1,5 +1,5 @@
 // Modified aes_core for tracing in the example tests
-#include "logging.hpp"
+#include "utils/logging.hpp"
 
 /*
  * Copyright 2002-2016 The OpenSSL Project Authors. All Rights Reserved.

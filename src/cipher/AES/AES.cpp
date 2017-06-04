@@ -21,8 +21,8 @@
 #include "AES.hpp"
 #include <cstddef>
 #include <stdlib.h>
-#include "logging.hpp"
-#include "endianess.h"
+#include "utils/logging.hpp"
+#include "utils/endianess.h"
 
 paracrypt::AES::AES()
 {

@@ -19,7 +19,7 @@
  */
 
 #include "SharedIO.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
 #include <boost/thread/locks.hpp>
 
 // Reader thread

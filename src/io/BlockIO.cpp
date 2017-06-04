@@ -19,7 +19,7 @@
  */
 
 #include "BlockIO.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
 #include <algorithm>
 #include "IO.hpp"
 

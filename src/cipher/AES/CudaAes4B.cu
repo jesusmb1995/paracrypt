@@ -19,7 +19,7 @@
  */
 
 #include "CudaAes4B.cuh"
-#include "cuda_logging.cuh"
+#include "utils/cuda_logging.cuh"
 
 __global__ void __cuda_aes_4b_encrypt__(
 		const paracrypt::BlockCipher::Mode m,

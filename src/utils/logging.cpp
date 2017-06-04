@@ -18,7 +18,7 @@
  *
  */
 
-#include "logging.hpp"
+#include "utils/logging.hpp"
 #include <fstream>
 
 void hexdump(std::string title, const unsigned char *s, int length)

@@ -19,7 +19,7 @@
  */
 
 #include <io/IO.hpp>
-#include "logging.hpp"
+#include "utils/logging.hpp"
 
 namespace paracrypt {
 

@@ -19,7 +19,8 @@
  */
 
 #include "CUDACipherDevice.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
+#include "io/CudaPinned.hpp"
 
 void paracrypt::HandlePrintError(cudaError_t err,
 					      const char *file, int line)
@@ -46,12 +47,21 @@ paracrypt::CUDACipherDevice::CUDACipherDevice(int device)
     //this->memCpyFromCallback = NULL;
     this->device = device;
 
-    // start initializating run-time library as soon as possible
+    cudaGetDeviceProperties(&(this->devProp), device);
+    this->set();
+
+    //TODO after profiling/performance-tests this does not seem to yield any performance benefits
+    // start initializating run-time library as soon as possible - dummy (pinned) malloc
     // https://devtalk.nvidia.com/default/topic/392429/first-cudamalloc-takes-long-time-/
     // https://devtalk.nvidia.com/default/topic/394143/effects-on-performance-with-no-initialization-like-not-putting-cut_device_init-/
     // https://raw.githubusercontent.com/kashif/cuda-workshop/master/cutil/inc/cutil.h
-    cudaGetDeviceProperties(&(this->devProp), device);
-    this->set();
+    /*{
+		CudaPinned* pin = new CudaPinned();
+		void* dummy;
+		pin->alloc(&dummy, 1);
+		pin->free(dummy);
+		delete pin;
+    }*/
 
     // There is no CUDA API function for retrieving blocks per SM.
     // Manually set as described to fit CUDA documentation at table

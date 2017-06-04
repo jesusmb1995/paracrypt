@@ -105,16 +105,16 @@ $(OBJ_DIR)/CudaAes1B.cu.o: $(SRC_DIR)/cipher/AES/CudaAes1B.cu
 $(OBJ_DIR)/CUDACipherDevice.o: $(SRC_DIR)/device/CUDACipherDevice.cpp
 	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/logging.o: $(SRC_DIR)/logging.cpp
+$(OBJ_DIR)/logging.o: $(SRC_DIR)/utils/logging.cpp
 	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
 $(OBJ_DIR)/AES_key_schedule.o: $(SRC_DIR)/openssl/AES_key_schedule.c
 	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/endianess.o: $(SRC_DIR)/endianess.c
+$(OBJ_DIR)/endianess.o: $(SRC_DIR)/utils/endianess.c
 	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #
-$(OBJ_DIR)/Timer.o: $(SRC_DIR)/Timer.cpp
+$(OBJ_DIR)/Timer.o: $(SRC_DIR)/utils/Timer.cpp
 	$(CXX) $(CXX_FLAGS_) $(CXX_FLAGS__) -c $< -o $@ $(INCL)
 #	
 $(OBJ_DIR)/bin_endian_ttable_generator.o: $(SRC_DIR)/cipher/AES/big_endian_ttable_generator.cpp
@@ -291,8 +291,8 @@ tool:
 	$(CXX) $(CXX_FLAGS_) -o $(BIN_DIR)/paracrypt$(OUT_TAG) $(SRC_DIR)/main.cpp \
 	-lparacrypt$(OUT_TAG) -L$(LIB_DIR) -lboost_program_options $(LIBS)
 
-builds: tests #clean #bin_endian_ttable_generator ptx
-#builds: library tool
+#builds: tests #clean #bin_endian_ttable_generator ptx
+builds: library tool
 
 
 ###################################################################################

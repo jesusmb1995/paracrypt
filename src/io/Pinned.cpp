@@ -21,7 +21,7 @@
 #include "Pinned.hpp"
 #include <sys/sysinfo.h>
 #include <algorithm>
-#include "logging.hpp"
+#include "utils/logging.hpp"
 
 //
 // Equivalent to "ulimit -l 16" (16 kb)

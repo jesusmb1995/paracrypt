@@ -23,8 +23,14 @@
 
 #include <fstream>
 #include <string>
+#include <sys/resource.h> // rlim_t
 
-// Paracrypt API for the paracrypt.so library
+////////////////////////////////////////////////
+// PARACRYPT APLICATION PROGRAMMING INTERFACE //
+////////////////////////////////////////////////
+//
+// Public API for usage with libparacrypt.so
+//
 
 namespace paracrypt {
 
@@ -90,6 +96,9 @@ namespace paracrypt {
 		random_access_pos_t begin;
 		random_access_pos_t end;
 		verbosity_t verbosity;
+		rlim_t stagingLimit;
+		int kernelParalellismLimit;
+		bool useLogicOperators;
 
 		config(
 				cipher_t c,
@@ -115,6 +124,9 @@ namespace paracrypt {
 			this->begin = NO_RANDOM_ACCESS;
 			this->end = NO_RANDOM_ACCESS;
 			this->verbosity = WARNING;
+			this->stagingLimit = -1;
+			this->kernelParalellismLimit = -1;
+			this->useLogicOperators = false;
 		};
 
 		void setIV(unsigned char* iv, int ivBits) {
@@ -152,6 +164,17 @@ namespace paracrypt {
 			this->verbosity = verbosity;
 		}
 
+		void staggingLimit(rlim_t limit) {
+			this->stagingLimit = limit;
+		}
+
+		void streamLimit(int limit) {
+			this->kernelParalellismLimit = limit;
+		}
+
+		void enableBitwiseOperations() {
+			this->useLogicOperators = true;
+		}
 	} config_t;
 
 	void exec(config_t c);

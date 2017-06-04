@@ -19,7 +19,7 @@
  */
 
 #include "GPUCipherDevice.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
 #include <math.h> 
 
 template < typename S, typename F >
@@ -53,7 +53,10 @@ int paracrypt::GPUCipherDevice < S, F >::getMaxBlocksPerSM()
 template < typename S, typename F >
 int paracrypt::GPUCipherDevice < S, F >::getConcurrentKernels()
 {
-    return this->nConcurrentKernels;
+	if(this->maxConcurrentKernels == -1)
+		return this->nConcurrentKernels;
+	else 
+		return std::min(this->maxConcurrentKernels,this->nConcurrentKernels);
 }
 
 template < typename S, typename F >
@@ -129,4 +132,13 @@ template < typename S, typename F >
 {
 //    boost::shared_lock < boost::shared_mutex > lock(this->streams_access);
     return this->streams[stream_id];
+}
+
+template < typename S, typename F >
+ int paracrypt::GPUCipherDevice < S, F >::maxConcurrentKernels = -1;
+
+template < typename S, typename F >
+    void paracrypt::GPUCipherDevice < S, F >::limitConcurrentKernels(int limit)
+{
+    maxConcurrentKernels = limit;
 }

@@ -19,7 +19,7 @@
  */
 
 #include "CudaAes1B.cuh"
-#include "cuda_logging.cuh"
+#include "utils/cuda_logging.cuh"
 
 #define AES_1B_ROUND_KEY(state_pointer, n_state) \
 { \

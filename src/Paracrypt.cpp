@@ -22,7 +22,7 @@
 #include "Launcher.hpp"
 #include "cipher/BlockCipher.hpp"
 #include "cipher/AES/CudaAesVersions.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
 
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
@@ -62,7 +62,8 @@ void paracrypt::exec(paracrypt::config_t c) {
 				"\tconstantKey=%d, constantTables=%d,\n"
 				"\tm=%i, ivBits=%i,\n"
 				"\toutOfOrder=%d,\n"
-				"\tbegin=%llu, end=%llu\n"
+				"\tbegin=%llu, end=%llu,\n"
+				"\tuseLogicOperators=%d\n"
 		")"
 	 )
 		% ((int) c.c)
@@ -73,57 +74,59 @@ void paracrypt::exec(paracrypt::config_t c) {
 		% ((int) c.m) % c.ivBits
 		% c.outOfOrder
 		% c.begin % c.end
+		% c.useLogicOperators
 	);
 
 	hexdump("key",c.key,c.key_bits/8);
 	if(c.ivBits != 0)
 		hexdump("iv",c.iv,c.ivBits/8);
 
+	if(c.stagingLimit != 0) {
+		LOG_DEBUG(boost::format("staging area limit: %llu") % c.stagingLimit);
+		paracrypt::Launcher::limitStagging(c.stagingLimit);
+	}
+
+	if(c.kernelParalellismLimit != -1) {
+		LOG_DEBUG(boost::format("maximum number of streams per GPU: %llu") % c.kernelParalellismLimit);
+		paracrypt::CUDACipherDevice::limitConcurrentKernels(c.kernelParalellismLimit);
+	}
+
+#define LAUNCH_SHARED_IO_CUDA_AES(implementation) \
+		paracrypt::Launcher::launchSharedIOCudaAES<implementation>( \
+		   		op, \
+		   		c.inFile, c.outFile, \
+		   		c.key, c.key_bits, \
+		   		c.constantKey, c.constantTables, \
+		   		m, c.iv, c.ivBits, \
+		   		c.outOfOrder, \
+		   		c.begin, c.end \
+		);
+
 	// Only CUDA AES is supported in this version
 	switch(c.c)	{
 		case paracrypt::AES16B:
-		    paracrypt::Launcher::launchSharedIOCudaAES<paracrypt::CudaAES16B>(
-		    		op,
-		    		c.inFile, c.outFile,
-		    		c.key, c.key_bits,
-		    		c.constantKey, c.constantTables,
-		    		m, c.iv, c.ivBits,
-		    		c.outOfOrder,
-		    		c.begin, c.end
-		    );
+			if(c.useLogicOperators) {
+				LAUNCH_SHARED_IO_CUDA_AES(paracrypt::CudaAES16B);
+			} else {
+				LAUNCH_SHARED_IO_CUDA_AES(paracrypt::CudaAES16BPtr);
+			}
 			break;
 		case paracrypt::AES8B:
-		    paracrypt::Launcher::launchSharedIOCudaAES<paracrypt::CudaAES8B>(
-		    		op,
-		    		c.inFile, c.outFile,
-		    		c.key, c.key_bits,
-		    		c.constantKey, c.constantTables,
-		    		m, c.iv, c.ivBits,
-		    		c.outOfOrder,
-		    		c.begin, c.end
-		    );
+			if(c.useLogicOperators) {
+				LAUNCH_SHARED_IO_CUDA_AES(paracrypt::CudaAES8B);
+			} else {
+				LAUNCH_SHARED_IO_CUDA_AES(paracrypt::CudaAES8BPtr);
+			}
 			break;
 		case paracrypt::AES4B:
-		    paracrypt::Launcher::launchSharedIOCudaAES<paracrypt::CudaAES4B>(
-		    		op,
-		    		c.inFile, c.outFile,
-		    		c.key, c.key_bits,
-		    		c.constantKey, c.constantTables,
-		    		m, c.iv, c.ivBits,
-		    		c.outOfOrder,
-		    		c.begin, c.end
-		    );
+			if(c.useLogicOperators) {
+				LAUNCH_SHARED_IO_CUDA_AES(paracrypt::CudaAES4B);
+			} else {
+				LAUNCH_SHARED_IO_CUDA_AES(paracrypt::CudaAES4BPtr);
+			}
 			break;
 		case paracrypt::AES1B:
-		    paracrypt::Launcher::launchSharedIOCudaAES<paracrypt::CudaAES1B>(
-		    		op,
-		    		c.inFile, c.outFile,
-		    		c.key, c.key_bits,
-		    		c.constantKey, c.constantTables,
-		    		m, c.iv, c.ivBits,
-		    		c.outOfOrder,
-		    		c.begin, c.end
-		    );
+				LAUNCH_SHARED_IO_CUDA_AES(paracrypt::CudaAES1B);
 			break;
 	}
 }

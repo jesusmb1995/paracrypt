@@ -1,7 +1,7 @@
 #define BOOST_TEST_MODULE paracrypt_openssl
 #include <boost/test/included/unit_test.hpp>
 #include <stdint.h>
-#include "logging.hpp"
+#include "utils/logging.hpp"
 #include "openssl/aes.h"
 
 	// From NIST 197

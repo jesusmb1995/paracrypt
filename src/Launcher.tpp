@@ -1,6 +1,6 @@
 #include "Launcher.hpp"
 #include "cipher/AES/CudaAES.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
 
 template < class Cipher_t >
 void paracrypt::Launcher::freeCiphers(Cipher_t* ciphers[], unsigned int n)
@@ -33,7 +33,8 @@ CudaAES_t** paracrypt::Launcher::linkAES(
 	std::vector<CudaAES_t*> ciphers;
 	
 	for(unsigned int d = 0; d < n; d++) {
-		for(int i = 0; i < devices[d]->getConcurrentKernels(); i++) {
+		unsigned int concurrentStreams = devices[d]->getConcurrentKernels(); 
+		for(int i = 0; i < concurrentStreams; i++) {
 			CudaAES_t* c;
 			if(d == 0 && i == 0) {
 				c = new CudaAES_t();

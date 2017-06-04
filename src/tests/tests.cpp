@@ -21,12 +21,12 @@
 #define BOOST_TEST_MODULE paracrypt
 #include <boost/test/included/unit_test.hpp>
 #include <stdint.h>
-#include "logging.hpp"
+#include "utils/logging.hpp"
 #include "openssl/AES_key_schedule.h"
 #include "device/CUDACipherDevice.hpp"
 #include "cipher/AES/CudaAesVersions.hpp"
-#include "endianess.h"
-#include "Timer.hpp"
+#include "utils/endianess.h"
+#include "utils/Timer.hpp"
 #include "assert.h"
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
@@ -2330,7 +2330,7 @@ void CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST(
 	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
 
 	// Decrypt using the API
-	cudaProfilerStart();
+	//cudaProfilerStart();
 	paracrypt::config conf(
 		c, paracrypt::DECRYPT,
 		inFileName, raccFileName,
@@ -2348,8 +2348,9 @@ void CUDA_AES_SHARED_IO_API_RANDOM_DECRYPT_TEST(
 		conf.enableOutOfOrder();
 	}
 	conf.setRandomAccess(begin,end);
+	conf.setVerbosity(paracrypt::TRACE);
 	paracrypt::exec(conf);
-	cudaProfilerStop();
+	//cudaProfilerStop();
 
 	LOG_INF("The test has finised the decryption of the file");
 
@@ -2448,7 +2449,7 @@ void CUDA_AES_SHARED_IO_API_RANDOM_TEST(
 	std::ofstream* raccFile = new std::ofstream(raccFileName.c_str(),std::fstream::out | std::fstream::binary);
 
 	// Encrypt using the API
-	cudaProfilerStart();
+	//cudaProfilerStart();
 	paracrypt::config enConf(
 		c, paracrypt::ENCRYPT,
 		inFileName, outFileName,
@@ -2466,15 +2467,16 @@ void CUDA_AES_SHARED_IO_API_RANDOM_TEST(
 		enConf.enableOutOfOrder();
 	}
 	enConf.setRandomAccess(begin,end);
+	enConf.setVerbosity(paracrypt::TRACE);
 	paracrypt::exec(enConf);
-	cudaProfilerStop();
+	//cudaProfilerStop();
 
 	if(nBlocks <= 66) {
 		fdump("Resultant file after encryption with Paracrypt",outFileName);
 	}
 
 	// Decrypt using the API
-	cudaProfilerStart();
+	//cudaProfilerStart();
 	paracrypt::config deConf(
 		c, paracrypt::DECRYPT,
 		outFileName, raccFileName,
@@ -2492,8 +2494,9 @@ void CUDA_AES_SHARED_IO_API_RANDOM_TEST(
 		deConf.enableOutOfOrder();
 	}
 	deConf.setRandomAccess(begin,end);
+	deConf.setVerbosity(paracrypt::TRACE);
 	paracrypt::exec(deConf);
-	cudaProfilerStop();
+	//cudaProfilerStop();
 
 	LOG_INF("The test has finised the encryption and decryption of the file");
 

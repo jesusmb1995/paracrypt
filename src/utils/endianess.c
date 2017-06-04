@@ -18,7 +18,7 @@
  *
  */
 
-#include "endianess.h"
+#include "utils/endianess.h"
 
  void big(uint32_t* little, uint32_t* store, int n) {
 	int i;

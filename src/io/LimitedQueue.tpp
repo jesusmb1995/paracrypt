@@ -19,7 +19,7 @@
  */
 
 #include "LimitedQueue.hpp"
-#include "logging.hpp"
+#include "utils/logging.hpp"
 
 namespace paracrypt {
 
