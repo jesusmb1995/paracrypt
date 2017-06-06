@@ -58,7 +58,7 @@ paracrypt::SharedIO* paracrypt::Launcher::newAdjustedSharedIO(
 		totalGlobalMem += devices[d]->getDeviceProperties()->totalGlobalMem;
 	}
 	memLimit = std::min(memLimit,totalGlobalMem);
-	if(staggingLimit != -1)
+	if(staggingLimit != 0)
 		memLimit = std::min(memLimit,staggingLimit);
 
 	io = new CudaSharedIO(inFilename,outFilename,blockSize,totalConcurrentKernels,memLimit,begin,end);
