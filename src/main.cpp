@@ -128,7 +128,7 @@ int main(int ac, char* av[])
             ("iv",          po::value<string>(),     "specifies initialization vector in hexadecimal"   )
             ("in",          po::value<string>(),     "specifies the input file"                         )
             ("out",         po::value<string>(),     "specifies the output file"                        )
-            ("parallelism", po::value<string>(),     cipherDecription.c_str()                           )
+            ("parallelism", po::value<string>(),     parallelism.c_str()                                )
 
             // TODO the code for this options need slight adaptation when if we want to add support for other ciphers
             // TODO support different notations for staging-area-limit: MB, GB, KB, Bytes, etc.

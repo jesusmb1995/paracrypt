@@ -25,17 +25,6 @@
 #include <algorithm>
 #include <fstream>
 
-//template <class T>
-//T *creatClass(){
-//  check base class assert
-//    return new T();
-//}
-
-// TODO templates that retrieve total number o devices and create
-//  each type of object, one function for each type
-
-//TODO CUDACipherDevice.getDevices()
-
 #define BUFFER_SIZE_LIMIT 60*1000*1000 // 60MB staging area as limit
 
 rlim_t paracrypt::Launcher::staggingLimit = 0;

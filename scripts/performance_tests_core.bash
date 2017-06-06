@@ -1,18 +1,20 @@
 #!/bin/bash
 # bash performance_tests.bash
+set -e
 
 if [ -z $1 ]; then
 	printf "error: missing tests script argument: e.g. bash performance_tests_core.bash performance_tests.bash"
 fi
 testsScript=$1
 mode="full"
-if ![ -z $2 ]; then
+if ! [ -z $2 ]; then
 	mode=$2
 fi
 
 outputFolder="../info/"
 filesExt="_performance.txt"
 averageN=4 # averages
+averageLimit=64
 
 # load paracrypt library path
 LD_LIBRARY_PATH="/usr/local/lib:$LD_LIBRARY_PATH"
@@ -35,10 +37,12 @@ if [ "$mode" == "full" ]; then
 	averageN=4
 	size=$(( 4000*1000*1000 )) # 4 GB
 	nFiles=16
+	averageLimit=64
 elif [ "$mode" == "fast" ]; then
-	averageN=1
+	averageN=2
 	size=$(( 500*1000*1000 )) # 500 MB
 	nFiles=13
+	averageLimit=16
 else
 	printf "invalid script mode: use full or fast\n"
 	exit -1
@@ -99,19 +103,19 @@ function performance {
 	fi
 	extra=
 	if ! [ -z "$6" ]; then
-		extra="-iv $6"
+		extra="$6"
 	fi
 	tag=
 	if ! [ -z "$7" ]; then
-		tag="-iv $7"
+		tag="$7"
 	fi
 	preencrypt="false"
 	if ! [ -z "$8" ]; then
-		preencrypt = "true"
+		preencrypt="true"
 	fi
 
-	output="$outputFolder$cipher$tag$filesExt"
-	printf "\ngenerating $output$\n"
+	output="$outputFolder$binary$dash$cipher$tag$filesExt"
+	printf "\n\ngenerating $output$\n"
 	if [ -f $output ]; then
 		printf "$output already exists... skipping to save time (you still can delete the file manually and call this script again)\n"
 		return
@@ -138,24 +142,20 @@ function performance {
 		fi
 
 		if [ "$op" == "-e" ]; then
-			printf "$en_execbin\n"
+			printf "$en_execbin"
 		elif [ "$op" == "-d" ]; then
-			printf "$de_execbin\n"
+			printf "$de_execbin"
 		else 
 			printf "unsupported operation"
 			exit -1
 		fi
 
 		sum_real=0
-		localAverage=$averageN
-		# use this formula for files bigger than 32 MB
-		if [ $fiSize -ge "32000000" ]; then 
-			# multiply by 2^fi so that we average 
-	 		#  aprox. during the same ammount of time
-			#  for each file, independently of the
-			#  file size. ((3/2)^fi is faster)
-			localAverage=$(( $averageN*((3/2)**($fi)) ))
+		localAverage=$(( $averageN**($fi) ))
+		if [ "$localAverage" -ge "$averageLimit" ]; then 
+			localAverage="$averageLimit" #limit
 		fi
+
 		for ((i=0; i<localAverage; i++))
 		do
 			# truncate/clean previous results in output file
@@ -178,9 +178,8 @@ function performance {
 				#		exit -1
 				#	fi
 				#fi
-				exit -1
 			fi
-			prog=$(( $i % (2**$fi) ))
+			prog=$(( $i % ($fi+1) ))
 			if [ "$prog" -eq "0" ]; then
 				printf "."
 			fi
@@ -188,21 +187,21 @@ function performance {
 		done
 		average=$(( $sum_real/$localAverage ))
 		row="$fiSize $average\n"
-		printf "$fi/$nFiles:$fiSize.$average"
+		printf "$fi/$nFiles:$fiSize.$average\n"
 		printf "$row" >> $output
 	done
 }
 
-printf "\nStarting to measure performances, this may take a while... go grab a cup of cofee :)\n"
-bash $testsScript
+printf "\nStarting to measure performances ($testsScript), this may take a while... go grab a cup of cofee :)\n"
+. "$testsScript"
 
 #for ((fi=0; fi<nFiles; fi++))
 #do
 #	fiName=${files[$fi]}
 #	rm $fiName
 #done
-rm $tmpFile
-rm $tmpFIle2
+rm "$tmpFile"
+rm "$tmpFIle2"
 
 
 

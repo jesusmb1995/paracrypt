@@ -35,9 +35,67 @@ __global__ void __cuda_aes_16b_encrypt__(
 		uint32_t* T1,
 		uint32_t* T2,
 		uint32_t* T3
-    )
+		)
 {
 	uint32_t bi = ((blockIdx.x * blockDim.x) + threadIdx.x); // block index
+
+#define SHARED_TABLES 1 //TODO temporarly - add support in the command line program tools to activate the use of shared memory for tables
+#ifdef SHARED_TABLES
+	// TODO impliment this functionallity for decryption and other levels of paralellism
+	//if(sharedTables) {
+		// load to shared memory from global memory
+		__shared__ uint32_t* sT0[256];
+		__shared__ uint32_t* sT1[256];
+		__shared__ uint32_t* sT2[256];
+		__shared__ uint32_t* sT3[256];
+		#define TOTAL_WORDS 256*4
+
+		int n_threads_loading;
+		if(blockDim.x < TOTAL_WORDS) {
+			n_threads_loading = blockDim.x;
+		} else {
+			n_threads_loading = TOTAL_WORDS;
+		}
+		if(threadIdx.x < n_threads_loading) {
+			int loadsPerThread = TOTAL_WORDS / n_threads_loading;
+			int additional = TOTAL_WORDS % n_threads_loading;
+			int loadFrom = loadsPerThread*threadIdx.x;
+			int additionalIndex = (TOTAL_WORDS-additional)+threadIdx.x;
+
+			for(i = loadFrom; i < loadsPerThread; i++) {
+				if(i < 256) {
+					sT0[i] = T0[i];
+				} else if(i < 256*2) {
+					sT1[i] = T1[i];
+				} else if(i < 256*3) {
+					sT2[i%256] = T2[i%256];
+				} else if(i < 256*4) {
+					sT3[i%256] = T3[i%256];
+				}
+			}
+
+			if(additionalIndex < additional) {
+				if(additionalIndex < 256) {
+					sT0[i] = T0[i];
+				} else if(additionalIndex < 256*2) {
+					sT1[additionalIndex] = T1[additionalIndex];
+				} else if(additionalIndex < 256*3) {
+					sT2[additionalIndex%256] = T2[additionalIndex%256];
+				} else if(additionalIndex < 256*4) {
+					sT3[additionalIndex%256] = T3[additionalIndex%256];
+				}
+			}
+		}
+
+		// substitute pointers
+		T0 = sT0;
+		T1 = sT1;
+		T2 = sT2;
+		T3 = sT3;
+		__syncthreads();
+	//}
+#endif
+
 	if(bi < n) {
 		unsigned int p = bi*4;
 		uint32_t s0,s1,s2,s3,t0,t1,t2,t3;
@@ -704,7 +762,7 @@ __global__ void __cuda_aes_16b_decrypt__(
 		else */ if(m == paracrypt::BlockCipher::CBC) {
 			uint32_t c0,c1,c2,c3;
 			if(bi == 0) {
-                // there is no previous block - use input vector
+                // there is no previous block - use initialization vector
 				c0 = iv[0];
 				c1 = iv[1];
 				c2 = iv[2];

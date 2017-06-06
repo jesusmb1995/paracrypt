@@ -816,8 +816,6 @@ void AES_RANDOM_DECRYPT_TEST(std::string title,
     LOG_INF(boost::format("%s needs %f seconds to decrypt %d blocks\n") % title.c_str() % sec % nBlocks);
 
     for(int i=0;i<nBlocks*4;i++) {
-//    	if(i%4 == 0)
-//    		LOG_TRACE(boost::format("block %d") % (i/4)); // TODO COMMENT
     	BOOST_REQUIRE_EQUAL(((uint32_t*)result)[i], ((uint32_t*)plaintext)[i]);
     }
     free(plaintext);
@@ -1451,8 +1449,6 @@ void GEN_AES_DECRYPT_FILE(
 	GEN_AES_TEST_FILE(fileName,file,(const char*)vector.output,sizeof(vector.output),nBlocks);
 }
 
-// TODO launcher random encrypt tests
-
 template < class CudaAES_t >
 void CUDA_AES_SHARED_IO_LAUNCHER_SB_OPERATION_TEST(
 		paracrypt::Launcher::operation_t op,
@@ -1596,26 +1592,15 @@ void GEN_AES_RACC_TEST_FILE(
 		FATAL(boost::format("Error creating test file: %s\n") % strerror(errno));
 	}
 
-//	srand (time(NULL));
-//	uint32_t random_block_words[4];
 	unsigned char zeroes[16];
 	memset(zeroes, 0, 16);
 
     for(unsigned int i=0; i < nBlocks; i++) {
     	if(beginBlock <= i&&i <= endBlock) {
-//    		(*file)->flush(); // TODO TOREMOVE
-//    		break; // TODO TOREMOVE
     		(*file)->write(testData,blockSize);
     	} else {
-//    		// random data at blocks we will not access
-//    		for(int j=0; j < 4; j++) {
-//    			random_block_words[j] = (uint32_t) rand();
-//    		}
     		zeroes[0] = (unsigned char) i;
     		(*file)->write((const char*)zeroes,blockSize);
-//    		(*file)->write((const char*)random_block_words,blockSize);
-//    		LOG_TRACE(boost::format("written %i bytes\n") % blockSize);// TODO TOREMOVE
-//    		hexdump("block_words",(const unsigned char*)random_block_words,blockSize);
     	}
     	if(!(*file)) {
     		FATAL(boost::format("Error writing to test file: %s\n") % strerror(errno));
@@ -1639,7 +1624,7 @@ void CUDA_AES_SHARED_IO_LAUNCHER_RACC_TEST(
 
 	unsigned int blockSize = sizeof(vector.input);
 	std::streampos beginBlock = begin/blockSize; // begin block
-	std::streampos endBlock = end/blockSize; // end block // TODO somethn wrong here ?
+	std::streampos endBlock = end/blockSize; // end block
 	if(end % blockSize != 0)
 		endBlock += 1;
 	assert(endBlock > beginBlock);
@@ -2194,12 +2179,6 @@ BOOST_AUTO_TEST_SUITE_END()
 			AES_LAUNCHER_RANDOM_TEST_SUITE(RANDOM_CTR_192, testName, className, "CTR-192", aes_192_ctr_dummy_tv); \
 			AES_LAUNCHER_RANDOM_TEST_SUITE(RANDOM_CTR_256, testName, className, "CTR-256", aes_256_ctr_dummy_tv); \
 		BOOST_AUTO_TEST_SUITE_END()
-/*  */
-// TODO random encrypt and decrypt
-// TODO random decrypt (OpenSSL encrypt)
-// TODO random padding tests.
-// TODO random access tests
-// TODO unaligned random access tests
 
 BOOST_AUTO_TEST_SUITE(LAUNCHERS)
 	BOOST_AUTO_TEST_SUITE(CUDA)
