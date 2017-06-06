@@ -15,3 +15,6 @@ sudo bash install.bash
 
 or
 make all to also compile and install development and debug builds
+
+
+bash performance_tests_core.bash performance_tests.bash fast | tee ../info/tests_log.txt

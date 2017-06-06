@@ -1,96 +1,146 @@
-# return [[sizes],[times]]
-def load_raw_data(fileName):
-	sizes=[] # in bytes
-	times=[] # in nanoseconds
-	fp = open(fileName);
-	rows = fp.read().split("\n")
-	for row in rows:
-		if row != "":
-			columns = row.split(" ")
-			size = int(columns[0])
-			time = int(columns[1])
-			sizes.append(size)
-			times.append(time)
-	fp.close()
-	return [sizes,times]
+import performances_plot_core as p
 
-one_kb = 1000.0
-one_mb = 1000.0*one_kb
+# show results for files larger than 
+#  60 MB at a closer range.
+zoom=30*1000*1000
 
-def getMB(bytess):
-	mbs = [bytes / one_mb for bytes in bytess];
-	return mbs
+# only generate table results 
+#  for files bigger than 4MB
+tableFrom=4*1000*1000
 
-def getKB(bytess):
-	kbs = [bytes / one_kb for bytes in bytess];
-	return kbs
+# number of streams per gpu
+p.plotSuite("streams",
+	"../info/",[
+		"paracrypt-aes-128-ctr_1-stream_performance.txt",
+		"paracrypt-aes-128-ctr_2-stream_performance.txt",
+		#"aes-128-ctr_3-stream_performance.txt",
+		"paracrypt-aes-128-ctr_4-stream_performance.txt",
+		#"aes-128-ctr_5-stream_performance.txt",
+		"paracrypt-aes-128-ctr_8-stream_performance.txt",
+		#"paracrypt-aes-128-ctr_12-stream_performance.txt",
+		"paracrypt-aes-128-ctr_unlimited-streams_performance.txt"
+	], zoom)
 
-def getSecs(nss):
-	ss = [ns / 1000000000.0 for ns in nss];
-	return ss
+# CPU-GPU stagging area / IO buffer size
+p.plotSuite("staging",
+	"../info/",[
+		"paracrypt-aes-128-ctr_1MB-staging_performance.txt",
+		"paracrypt-aes-128-ctr_2MB-staging_performance.txt",
+		#"paracrypt-aes-128-ctr_3MB-staging_performance.txt",
+		#"paracrypt-aes-128-ctr_4MB-staging_performance.txt",
+		"paracrypt-aes-128-ctr_8MB-staging_performance.txt",
+		#"paracrypt-aes-128-ctr_16MB-staging_performance.txt",
+		"paracrypt-aes-128-ctr_32MB-staging_performance.txt",
+		#"paracrypt-aes-128-ctr_64MB-staging_performance.txt",
+		#"paracrypt-aes-128-ctr_128MB-staging_performance.txt",
+		"paracrypt-aes-128-ctr_unlimited-staging_performance.txt"
+	], zoom)
 
-# return [[values],[units]]
-def formatBytes(bytess):
-	formats = []
-	for bytes in bytess:
-		value = 0
-		unit = ""
-		if bytes >= one_mb:
-			unit = "MB"
-			value = bytes/one_mb
-			value = int(round(value))
-		elif bytes >= one_kb:
-			unit = "KB"
-			value = bytes/one_kb
-			value = int(round(value))
-		formatted = str(value) + " " + unit;
-		formats.append(formatted)
-	return formats
+# parallelism
+p.plotSuite("implementations",
+	"../info/",[
+		"paracrypt-aes-128-ctr-16B_performance.txt",
+		"paracrypt-aes-128-ctr-8B_performance.txt",
+		"paracrypt-aes-128-ctr-4B_performance.txt",
+		"paracrypt-aes-128-ctr-1B_performance.txt"
+	], zoom)
 
-# sizeTimes -> [[sizes],[times]]
-def calcSpeed(sizes,times):
-	speeds=[]
-	assert(len(sizes) == len(times))
-	for i in range(len(sizes)):
-		speed = sizes[i] / times[i]
-		speeds.append(speed)
-	return speeds
+# constant vs non-constant GPU memory
+p.plotSuite("constants-16B",
+	"../info/",[
+		"paracrypt-aes-128-ctr-16B_performance.txt",
+		"paracrypt-aes-128-ctr_16B-disabled-constant-key_performance.txt",
+		"paracrypt-aes-128-ctr_16B-disabled-constant-tables_performance.txt",
+		"paracrypt-aes-128-ctr_16B-constant-tables_performance.txt",
+	], zoom)
+p.plotSuite("constants-8B",
+	"../info/",[
+		"paracrypt-aes-128-ctr-8B_performance.txt",
+		"paracrypt-aes-128-ctr_8B-disabled-constant-key_performance.txt",
+		"paracrypt-aes-128-ctr_8B-disabled-constant-tables_performance.txt",
+		"paracrypt-aes-128-ctr_8B-constant-tables_performance.txt",
+	], zoom)
+p.plotSuite("constants-4B",
+	"../info/",[
+		"paracrypt-aes-128-ctr-4B_performance.txt",
+		"paracrypt-aes-128-ctr_4B-disabled-constant-key_performance.txt",
+		"paracrypt-aes-128-ctr_4B-disabled-constant-tables_performance.txt",
+		"paracrypt-aes-128-ctr_4B-constant-tables_performance.txt",
+	], zoom)
+p.plotSuite("constants-1B",
+	"../info/",[
+		"paracrypt-aes-128-ctr-4B_performance.txt",
+		"paracrypt-aes-128-ctr_4B-disabled-constant-key_performance.txt",
+		"paracrypt-aes-128-ctr_4B-disabled-constant-tables_performance.txt",
+		"paracrypt-aes-128-ctr_4B-constant-tables_performance.txt",
+	], zoom)
 
+# out of order
+p.plotSuite("out-of-order",
+	"../info/",[
+		"paracrypt-aes-128-ctr-16B_performance.txt",
+		"paracrypt-aes-128-ctr_out-of-order_performance.txt"
+	], zoom)
 
-path="../info/"
+# parallelism with integer bitwise operators
+p.plotSuite("integers-16B",
+	"../info/",[
+		"paracrypt-aes-128-ctr-16B_performance.txt",
+		"paracrypt-aes-128-ctr-16B-integers_performance.txt"
+	], zoom)
 
-import matplotlib.pyplot as plt
-def plotPerformance(title,filesPath):
-	plt.figure(figsize=(20,5))
-	ticks_set = False
-	for filePath in filesPath:
-		[sizes,times] = load_raw_data(filePath)
-		mbs = getMB(sizes)
-		ss = getSecs(times)
-		speeds = calcSpeed(mbs,ss)	
-		formats = formatBytes(sizes)
-		fileTree = filePath.split("/")
-		onlyFileName = fileTree[len(fileTree)-1]
-		cipherName = onlyFileName.split("_performance.txt")[0]
-		if not ticks_set:
-			plt.xscale('log')
-			plt.xticks(sizes, formats)
-		plt.plot(sizes,speeds,'-s', label=cipherName)
-	plt.ylabel('MB/s')
-	plt.legend(loc=2) # place top-left
-	plt.gca().yaxis.grid(True)
-	plt.title(title)
-	plt.savefig(path+title+"_plot.png", bbox_inches='tight')
-	#plt.show()
+p.plotSuite("integers-8B",
+	"../info/",[
+		"paracrypt-aes-128-ctr-8B_performance.txt",
+		"paracrypt-aes-128-ctr-8B-integers_performance.txt"
+	], zoom)
 
-# openssl_aes_128_cbc = path+"openssl-aes-128-cbc_performance.txt"
-openssl_aes_128_ecb = path+"paracrypt-aes-128-ecb_performance.txt"
-paracrypt_aes_128_ecb = path+"openssl-aes-128-ecb_performance.txt"
+p.plotSuite("integers-4B",
+	"../info/",[
+		"paracrypt-aes-128-ctr-4B_performance.txt",
+		"paracrypt-aes-128-ctr-4B-integers_performance.txt"
+	], zoom)
+p.plotSuite("implementations-integers",
+	"../info/",[
+		"paracrypt-aes-128-ctr-16B-integers_performance.txt",
+		"paracrypt-aes-128-ctr-8B-integers_performance.txt",
+		"paracrypt-aes-128-ctr-4B-integers_performance.txt",
+		"paracrypt-aes-128-ctr-1B_performance.txt"
+	], zoom)
 
+# modes of operation (decryption tests)
+p.plotSuite("decryption-modes",
+	"../info/",[
+		"paracrypt-aes-128-ecb_performance.txt",
+		"paracrypt-aes-128-ctr_performance.txt",
+		"paracrypt-aes-128-cbc_performance.txt",
+		"paracrypt-aes-128-cfb_performance.txt"
+	], zoom)
 
-openssl_aes_128_ctr = path+"paracrypt-aes-128-ctr_performance.txt"
-paracrypt_aes_128_ctr = path+"openssl-aes-128-ctr_performance.txt"
+# ctr: openssl vs paracrypt
+p.plotSuite("OpenSSL-vs-Paracrypt",
+	"../info/",[
+		"openssl-aes-128-ctr_performance.txt",
+		"paracrypt-aes-128-ctr-16B_performance.txt",
+	], zoom)
 
-#plotPerformance("testing",[openssl_aes_128_cbc])
-#plotPerformance("testing",[paracrypt_aes_128_ecb, openssl_aes_128_ecb])
-plotPerformance("testing",[paracrypt_aes_128_ctr, openssl_aes_128_ctr])
+# cbc cfb decrypt: openssl vs paracrypt
+p.plotSuite("OpenSSL-vs-Paracrypt-decryption",
+	"../info/",[
+		"paracrypt-aes-128-cbc_performance.txt",
+		"paracrypt-aes-128-cfb_performance.txt",
+		"openssl-aes-128-cbc-decryption_performance.txt",
+		"openssl-aes-128-cfb-decryption_performance.txt"
+	], zoom)
+
+# key size
+p.plotSuite("key-size",
+	"../info/",[
+		"paracrypt-aes-128-ctr-16B_performance.txt",
+		"paracrypt-aes-192-ctr-16B_performance.txt",
+		"paracrypt-aes-256-ctr-16B_performance.txt",
+		"openssl-aes-128-ctr_performance.txt",
+		"openssl-aes-192-ctr_performance.txt",
+		"openssl-aes-256-ctr_performance.txt"
+	], zoom)
+
