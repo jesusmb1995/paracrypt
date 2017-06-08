@@ -21,6 +21,9 @@
 #include "SharedIO.hpp"
 #include "utils/logging.hpp"
 #include <boost/thread/locks.hpp>
+#ifdef DEBUG
+	#include "nvToolsExt.h"
+#endif
 
 // Reader thread
 void paracrypt::SharedIO::reading() {
@@ -42,7 +45,14 @@ void paracrypt::SharedIO::reading() {
 			c = this->emptyChunks->dequeue();
 		lock.unlock();
 
+#ifdef DEBUG
+	    nvtxRangeId_t id1 = nvtxRangeStartA("Chunk read");
+#endif
 		c.nBlocks = this->inFileRead(c.data,this->getChunkSize(),&c.status,&c.blockOffset,&c.padding);
+#ifdef DEBUG
+	    nvtxRangeEnd(id1);
+#endif
+
 
 		lock.lock();
 			readyToReadChunks->enqueue(c);
@@ -112,7 +122,13 @@ void paracrypt::SharedIO::writing() {
 			c = this->outputChunks->dequeue();
 		lock.unlock();
 
+#ifdef DEBUG
+	    nvtxRangeId_t id1 = nvtxRangeStartA("Chunk write");
+#endif
 		this->outFileWrite(c.data,c.nBlocks,c.blockOffset,c.padding);
+#ifdef DEBUG
+	    nvtxRangeEnd(id1);
+#endif
 		DEV_TRACE(boost::format("SharedIO writer: %llu block chunk beginning at block"
 				" %llu has been written to the output file.") % c.nBlocks % c.blockOffset);
 

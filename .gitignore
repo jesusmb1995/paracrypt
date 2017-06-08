@@ -4,4 +4,6 @@ obj/*
 lib/*
 .fuse_hidden*
 info/*
+doc/*
+archive/*
 **~

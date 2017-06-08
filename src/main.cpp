@@ -132,8 +132,8 @@ int main(int ac, char* av[])
 
             // TODO the code for this options need slight adaptation when if we want to add support for other ciphers
             // TODO support different notations for staging-area-limit: MB, GB, KB, Bytes, etc.
-            ("staging-area-limit", po::value<int>()->default_value(32),
-             "maximum size (MiB) allowed for the pinned staging area between GPU and CPU (default: 32)")
+            ("staging-area-limit", po::value<int>()->default_value(8),
+             "maximum size (MiB) allowed for the pinned staging area between GPU and CPU (default: 8)")
             ("stream-limit",       po::value<int>()->default_value(4),
              "maximum number of concurrent kernels executing in each GPU (default: 4)")
             ("enable-integer-arithmetic", "use shift and xor bitwise operations to access individual bytes in the state")

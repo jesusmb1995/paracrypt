@@ -291,7 +291,7 @@ tool:
 	$(CXX) $(CXX_FLAGS_) -o $(BIN_DIR)/paracrypt$(OUT_TAG) $(SRC_DIR)/main.cpp \
 	-lparacrypt$(OUT_TAG) -L$(LIB_DIR) -lboost_program_options $(LIBS)
 
-#builds: tests #clean #bin_endian_ttable_generator ptx
+#builds: tests
 builds: library tool
 
 
@@ -321,11 +321,13 @@ all:
 devel: OUT_TAG=_dev
 devel: CXX_FLAGS_ += -g -DDEBUG -DDEVEL
 devel: NVCC_FLAGS_ += -g -DDEBUG -DDEVEL
+devel: LIBS += -lnvToolsExt
 devel: builds
 #
 debug: OUT_TAG=_dbg
 debug: CXX_FLAGS_ += -g -DDEBUG
 debug: NVCC_FLAGS_ += -g -DDEBUG
+debug: LIBS += -lnvToolsExt
 debug: builds
 #
 # NOTE: consider using -O2 that takes considerable 

@@ -1,6 +1,0 @@
-#!/bin/bash
-shopt -s extglob
-
-# Kernighan and Ritchie style
-indent -kr **/*.@(c|cpp|cu|h|hpp|cuh)
-indent -kr src/tests/*.@(c|cpp|cu|h|hpp|cuh)

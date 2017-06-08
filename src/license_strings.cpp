@@ -35,4 +35,30 @@ string warranty =
 "ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n";
 
 // TODO
-string conditions = "";
+string conditions = 
+"This is only a short summary and is not a substitute for the full license.\n"
+"You should have received a copy of the GNU General Public License\n"
+"along with Paracrypt.  If not, see <http://www.gnu.org/licenses/>.\n"
+"\n"
+"You may copy, distribute and modify the software as long as you track changes/dates\n"
+"in source files. Any modifications to or software including (via compiler) GPL-licensed\n"
+"code must also be made available under the GPL along with build & install instructions.\n"
+"\n"
+"You can:\n"
+" - Use for commerial purposes\n"
+" - Modify\n"
+" - Distribute\n"
+" - Place Warranty\n"
+" - Use Patent Claims\n"
+"\n"
+"You cannot:\n"
+" - Sublicense\n"
+" - Hold Liable\n"
+"\n"
+"You must:\n"
+" - Include original software\n"
+" - State changes\n"
+" - Disclosure source\n"
+" - Include lincense\n"
+" - Include copyright\n"
+" - Include install instructions\n";
